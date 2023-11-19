@@ -1,7 +1,7 @@
 // import axios from "axios"
 import "./App.css"
 // import { useEffect, useState } from "react"
-import Dashboard from "./components/Dashboard"
+import Dashboard from "./pages/Dashboard"
 
 function App() {
   return (
