@@ -2,22 +2,25 @@ require("dotenv/config")
 const express = require("express")
 const cors = require("cors")
 const { join } = require("path")
-const { userRouter } = require("./../router/userRouter")
+// const userRouter = require("./../router/userRouter")
+const authRouter = require("../router/auth")
 
 const PORT = process.env.PORT || 8000
 const app = express()
 
-app.use(
-  cors({
-    origin: [
-      process.env.WHITELISTED_DOMAIN &&
-        process.env.WHITELISTED_DOMAIN.split(","),
-    ],
-  })
-)
+// app.use(
+//   cors({
+//     origin: [
+//       process.env.WHITELISTED_DOMAIN &&
+//         process.env.WHITELISTED_DOMAIN.split(","),
+//     ],
+//   })
+// )
+app.use(cors())
 
 app.use(express.json())
-app.use(userRouter)
+// app.use(userRouter)
+app.use(authRouter)
 
 //#region API ROUTES
 

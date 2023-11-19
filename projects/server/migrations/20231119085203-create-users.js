@@ -9,25 +9,18 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id: {
-        type: Sequelize.NUMBER
-      },
       name: {
         type: Sequelize.STRING
       },
       email: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      password: {
         type: Sequelize.STRING
       },
-      username: {
-        type: Sequelize.STRING
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+      isAdmin: {
+        type: Sequelize.BOOLEAN
       }
     });
   },

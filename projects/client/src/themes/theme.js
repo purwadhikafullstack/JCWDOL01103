@@ -9,12 +9,12 @@ export const theme = extendTheme({
     },
   },
   colors: {
-    // primaryColor: ,
+    primaryColor: "#CD5C08",
     // secondaryColor: ,
     // thirdColor: ,
     // forthColor: ,
     // negativeColor: ,
-    // blackColor: ,
+    blackColor: "black",
   },
   fonts: {
     // body: ``,
