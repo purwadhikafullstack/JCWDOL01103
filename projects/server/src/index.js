@@ -2,8 +2,8 @@ require("dotenv/config")
 const express = require("express")
 const cors = require("cors")
 const { join } = require("path")
-const { userRouter } = require("./../router/userRouter")
-
+const userRouter = require("./../router/userRouter")
+const db = require("./../models")
 const PORT = process.env.PORT || 8000
 const app = express()
 
@@ -23,6 +23,13 @@ app.use(userRouter)
 
 // ===========================
 // NOTE : Add your routes here
+
+try {
+  db.sequelize.sync({ alter: true })
+  console.log("database connected")
+} catch (error) {
+  console.log(error)
+}
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`)

@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken")
 
 const userController = {
   createUser: async (req, res) => {
-    const { name, email, username, password, confPassword, address } = req.body
+    const { name, email, username, password, confPassword, address, role } =
+      req.body
     if (password !== confPassword) {
       return res
         .status(400)
@@ -20,6 +21,7 @@ const userController = {
         username: username,
         password: hashPassword,
         address: address,
+        role: role,
       })
       res.status(201).json({ msg: "Successfully register" })
     } catch (error) {
@@ -99,6 +101,11 @@ const userController = {
       expiresIn: "1h",
     })
     req.token = token
+    const userID = userLogin.user_id
+    const name = userLogin.name
+    const email = userLogin.email
+    const role = userLogin.role
+    res.status(200).json({ userID, name, email, role })
   },
 }
 
