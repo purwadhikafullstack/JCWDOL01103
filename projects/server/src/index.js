@@ -3,6 +3,7 @@ const express = require("express")
 const cors = require("cors")
 const { join } = require("path")
 const userRouter = require("./../router/userRouter")
+const addressRouter = require("./../router/addressRouter")
 const db = require("./../models")
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -18,6 +19,7 @@ app.use(
 
 app.use(express.json())
 app.use(userRouter)
+app.use(addressRouter)
 
 //#region API ROUTES
 

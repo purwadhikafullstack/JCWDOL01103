@@ -4,6 +4,6 @@ const router = express.Router()
 
 router.post("/register", userController.createUser)
 router.post("/login", userController.login)
-router.patch("/users/:id", userController.updateAddress)
+// router.patch("/users/:id", userController.updateAddress)
 
 module.exports = router

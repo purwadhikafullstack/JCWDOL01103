@@ -1,7 +1,7 @@
 "use strict"
 const { Model } = require("sequelize")
 module.exports = (sequelize, DataTypes) => {
-  class user extends Model {
+  class address extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,67 +9,100 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      user.hasMany(models.address, {
+      address.belongsTo(models.user, {
         foreignKey: "user_id",
         onDelete: "CASCADE",
       })
     }
   }
-  user.init(
+  address.init(
     {
-      user_id: {
+      address_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      name: {
+      user_id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+      },
+      address_name: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: true,
-          len: [3, 100],
+          len: [5, 255],
         },
       },
-      email: {
+      province: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: true,
+          len: [2, 100],
         },
       },
-      username: {
+      city: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: true,
+          len: [2, 100],
         },
       },
-      address: {
+      subdistrict: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: true,
+          len: [2, 100],
         },
       },
-      password: {
-        type: DataTypes.STRING,
+      full_address: {
+        type: DataTypes.TEXT,
         allowNull: false,
         validate: {
-          notEmpty: true,
+          len: [5, 1000],
         },
       },
-      role: {
+      postal_code: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: true,
+          len: [5, 10],
         },
+      },
+      is_main_address: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+      },
+      latitude: {
+        type: DataTypes.DECIMAL(9, 6),
+        allowNull: false,
+        validate: {
+          min: -180,
+          max: 180,
+        },
+      },
+      longitude: {
+        type: DataTypes.DECIMAL(8, 6),
+        allowNull: false,
+        validate: {
+          min: -90,
+          max: 90,
+        },
+      },
+      deleted_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null,
       },
     },
     {
       sequelize,
-      modelName: "user",
+      modelName: "address",
     }
   )
-  return user
+  return address
 }
