@@ -3,7 +3,7 @@ import Banner from "../molecules/Banner";
 import WhyUs from "../molecules/WhyUs";
 import CategoryList from "../molecules/CategoryList";
 // import ProductCard from "../molecules/ProductCard";
-// import Brand from "../molecules/Brand";
+import Brand from "../molecules/Brand";
 import Footer from "../organisms/Footer";
 
 const Homepage = () => {
@@ -13,8 +13,8 @@ const Homepage = () => {
       <Banner />
       <WhyUs />
       <CategoryList />
-      {/* <ProductCard />
-      <Brand /> */}
+      {/* <ProductCard /> */}
+      <Brand />
       <Footer />
     </>
   );

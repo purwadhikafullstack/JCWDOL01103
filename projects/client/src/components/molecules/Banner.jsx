@@ -9,7 +9,7 @@ import "swiper/css/scrollbar";
 
 const Banner = () => {
   return (
-    <Container as="section" maxW="8xl">
+    <Container as="section" maxW="8xl" mt={"70px"}>
       <Box
         mx={{ base: 1, xl: 0 }}
         maxW="8xl"

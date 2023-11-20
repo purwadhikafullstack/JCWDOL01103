@@ -3,7 +3,7 @@ import { BiAlbum, BiAward, BiRocket, BiDollar } from "react-icons/bi";
 
 const WhyUs = () => {
   return (
-    <Container as="section" maxW="8xl" mt={16} textAlign={"center"}>
+    <Container as="section" maxW="8xl" mt={"150px"} textAlign={"center"}>
       <Heading fontSize={"4xl"} fontWeight={"black"} as={"h1"} mt={5} mb={10}>
         Get More at Soundsense
       </Heading>
@@ -18,8 +18,6 @@ const WhyUs = () => {
           _hover={{
             borderColor: "gray.400",
             boxShadow: "md",
-            transform: "scale(1.01)",
-            transition: "all 0.1s ease-in-out",
           }}
         >
           <BiAlbum color="black" fontSize="50px" style={{ margin: "0 auto" }} />
@@ -40,8 +38,6 @@ const WhyUs = () => {
           _hover={{
             borderColor: "gray.400",
             boxShadow: "md",
-            transform: "scale(1.01)",
-            transition: "all 0.1s ease-in-out",
           }}
         >
           <BiAward color="black" fontSize="50px" style={{ margin: "0 auto" }} />
@@ -62,8 +58,6 @@ const WhyUs = () => {
           _hover={{
             borderColor: "gray.400",
             boxShadow: "md",
-            transform: "scale(1.01)",
-            transition: "all 0.1s ease-in-out",
           }}
         >
           <BiRocket
@@ -89,8 +83,6 @@ const WhyUs = () => {
           _hover={{
             borderColor: "gray.400",
             boxShadow: "md",
-            transform: "scale(1.01)",
-            transition: "all 0.1s ease-in-out",
           }}
         >
           <BiDollar

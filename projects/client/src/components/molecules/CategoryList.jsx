@@ -13,7 +13,7 @@ import { Container, SimpleGrid, Box, Image, Heading } from "@chakra-ui/react";
 
 const CategoryList = () => {
   return (
-    <Container as="section" maxW="8xl" mt={16} textAlign={"center"}>
+    <Container as="section" maxW="8xl" mt={"150px"} textAlign={"center"}>
       <Heading fontSize={"4xl"} fontWeight={"black"} as={"h1"} mt={5} mb={10}>
         Popular Categories
       </Heading>

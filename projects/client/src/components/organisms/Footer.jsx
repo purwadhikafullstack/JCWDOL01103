@@ -18,7 +18,7 @@ import {
 const Footer = () => {
   return (
     <Container as="footer" maxW="100vw" color={"white"} bg={"black"}>
-      <Container maxW="8xl" py={10} mt={3}>
+      <Container maxW="8xl" py={10} mt={20}>
         <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} gap={3}>
           <Box>
             <Image

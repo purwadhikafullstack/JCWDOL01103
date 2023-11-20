@@ -3,7 +3,7 @@ import { Container, Flex, Heading, Image } from "@chakra-ui/react";
 
 const Navbar = () => {
   return (
-    <Container as="nav" maxW="8xl" mt={5}>
+    <Container as="nav" maxW="8xl" mt={10}>
       <Flex justify="space-between" align="center">
         <Image
           src={soundsenseLogo}
