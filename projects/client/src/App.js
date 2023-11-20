@@ -1,14 +1,13 @@
 // import axios from "axios"
-import "./App.css"
-// import { useEffect, useState } from "react"
-import Dashboard from "./components/Dashboard"
+import "./App.css";
+import Homepage from "./components/pages/Homepage";
 
 function App() {
   return (
     <div className="App">
-      <Dashboard />
+      <Homepage />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
