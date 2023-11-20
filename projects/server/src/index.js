@@ -4,6 +4,7 @@ const cors = require("cors")
 const { join } = require("path")
 // const userRouter = require("./../router/userRouter")
 const authRouter = require("../router/auth")
+const validateApi = require("../middlewares/apiValidatorMiddleware")
 
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -19,13 +20,13 @@ const app = express()
 app.use(cors())
 
 app.use(express.json())
-// app.use(userRouter)
-app.use(authRouter)
+// app.use(validateApi)
 
 //#region API ROUTES
 
 // ===========================
 // NOTE : Add your routes here
+app.use(authRouter)
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`)

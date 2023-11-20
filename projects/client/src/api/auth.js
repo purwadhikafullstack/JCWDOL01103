@@ -7,7 +7,16 @@ const config = {
 };
 
 export const register = async (data) => {
-  console.log(data)
   const response = await server.post("/register", data);
   return response.data;
 };
+
+export const verificationValidator = async (token) => {
+  const response = await server.get(`/verification/${token}`)
+  return response
+}
+
+export const verification = async (data) => {
+  const response = await server.patch("/verification", data);
+  return response.data;
+}

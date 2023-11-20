@@ -1,10 +1,19 @@
 const jwt = require('jsonwebtoken')
 
-const tokenKey = "secretKey123"
+const tokenKey = process.env.JWT_TOKEN
 
 const createToken = (payload) => {
     return jwt.sign(payload, tokenKey,{
         // expiresIn:'6h'
+    })
+}
+
+const decodeToken = (payload) => {
+    return jwt.verify(payload, tokenKey, (err, decode) => {
+        if(err){
+            return null
+        }
+        return decode
     })
 }
 
@@ -18,4 +27,4 @@ const authToken = (req, res, next) => {
     })
 }
 
-module.exports = {createToken, authToken}
+module.exports = {createToken, authToken, decodeToken}

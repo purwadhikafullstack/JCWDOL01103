@@ -1,21 +1,14 @@
 const db = require("./../models");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const transporter = require("../helpers/nodemailer");
-const { createToken } = require("../helpers/jwt");
+const { createToken, decodeToken } = require("../helpers/jwt");
 
 const register = async (req, res) => {
   try {
     const { email } = req.body;
-    const isEmailExist = await db.Users.findOne({
-      where: { email },
-    });
-    if (isEmailExist) {
-      return res.status(409).json({
-        message: "email has been registered",
-      });
-    }
     const newUser = await db.Users.create({
-        email: email,
+        email: email.toLowerCase(),
     });
     let userId = newUser.id
     let token = createToken({email, userId})
@@ -23,17 +16,17 @@ const register = async (req, res) => {
         from: `Admin <xordyzen@gmail.com>`,
         to: `${email}`,
         subject: 'Account verification',
-        html:`<a href='http://localhost:3000/authentication/${token}'>Click here for verify</a>`
+        html:`<a href='http://localhost:3000/verification/${token}'>Click here for verify</a>`
     }
     transporter.sendMail(mail,(errMail, resMail)=>{
         if(errMail){
             console.log(errMail)
-            res.status(500).send({
+            return res.status(500).send({
                 message:"Email registration failed!",
                 success: false
             })
         }
-        res.status(200).send({
+        return res.status(200).send({
             message:"Check your email to verification!",
             success: true
         })
@@ -49,17 +42,56 @@ const register = async (req, res) => {
   }
 };
 
+const validatorVerification = async(req, res, next) => {
+  const {token} = req.params
+  const user = decodeToken(token)
+  if(!user){
+    return res.status(404).json({
+      message: "Invalid token",
+      verified: false
+    })
+  }
+  const checkUser = await db.Users.findOne({
+    where: {
+      email: user.email,
+      password: null
+    }
+  })
+  if(checkUser){
+    return res.status(200).json({
+      message:"Email has not been verified",
+      verified: false
+    })
+  }
+  return res.status(200).json({
+    message: "Email has been verified",
+    verified: true
+  });
+}
+
 const verification = async (req, res) => {
+  const { id, name, email, password, confirmPassword } = req.body;
   try {
-    const { name, email, password, confirmPassword } = req.body;
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        message: "Password and Confirm Password must the same !",
-      });
+    // if (password !== confirmPassword) {
+    //   return res.status(400).json({
+    //     message: "Password and Confirm Password must the same !",
+    //   });
+    // }
+    const user = await db.Users.findOne({
+      where:{
+        id: id,
+        email: email,
+        password: null
+      }
+    })
+    if(!user) {
+      return res.status(400).json(({
+        message:"User has been verified"
+      }))
     }
     const salt = await bcrypt.genSalt(12);
     const hashPassword = await bcrypt.hash(password, salt);
-    await user.update(
+    await db.Users.update(
       {
         name: name,
         password: hashPassword,
@@ -67,39 +99,40 @@ const verification = async (req, res) => {
       },
       {
         where: {
+          id: id,
           email: email,
         },
       }
     );
-    res.status(201).json({ message: "Successfully register" });
+    res.status(200).json({ message: "Verification success" });
   } catch (err) {
     return res.status(500).json({
       message: "error",
+      err: err.toString()
     });
   }
 };
 
 const login = async (req, res) => {
   try {
-    const result = await db.Users.findAll({
-      raw: true,
-      attribute: ["id", "email"],
-    });
+    const token = createToken(req.userData)
     return res.status(200).json({
       status: 200,
-      data: result,
-      message: "berhasil",
+      message: "Login Success",
+      token: token,
     });
   } catch (e) {
-    res.status(500).json({
+     return res.status(500).json({
       status: 500,
-      message: "Error",
-      error: e.toString(),
+      message: "Login Failed",
+      error: e.toString()
     });
   }
 };
+
 module.exports = { 
     register, 
     verification,
-    login
+    login,
+    validatorVerification
 };

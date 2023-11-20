@@ -1,0 +1,163 @@
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Text,
+  VStack,
+  useToast,
+} from "@chakra-ui/react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { verification } from "../../api/auth";
+import { useNavigate } from "react-router-dom";
+
+function FormVerification({decodedToken}) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPwd, setShowConfirmPwd] = useState(false);
+  const toast = useToast();
+  const navigate = useNavigate()
+  const handleRegister = () => {};
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required("Required"),
+      password: Yup.string()
+        .required("Required")
+        .min(8, "Password is too short - should be 8 chars minimum."),
+      confirmPassword: Yup.string().oneOf(
+        [Yup.ref("password"), null],
+        "Passwords didn't match"
+      ),
+    }),
+    onSubmit: async (values) => {
+      //   setIsLoading(true);
+      try {
+        await verification({
+            id: decodedToken.userId,
+            email: decodedToken.email,
+            name: values.name,
+            password: values.password,
+            confirmPassword: values.confirmPassword
+        })
+        toast({
+          title: "Success",
+          description: `Registration Success`,
+          status: "success",
+          position: "top-right",
+          duration: 3000,
+          isClosable: true,
+        });
+        setTimeout(()=>{
+            navigate("/")
+        },3000)
+      } catch (error) {
+        toast({
+          title: "Failed",
+          description: error.response.data.message,
+          status: "error",
+          position: "top-right",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+      //   setIsLoading(false);
+    },
+  });
+  return (
+    <form onSubmit={formik.handleSubmit}>
+      <Flex w="full" flexDir="column" rowGap="1rem" justifyContent="center">
+        <VStack alignItems="flex-start">
+          <FormControl isInvalid={formik.errors.name && formik.touched.name}>
+            <Text>Fullname</Text>
+            <Input
+              placeholder="Input your name"
+              id="name"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.name}
+            />
+            <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
+          </FormControl>
+        </VStack>
+        <VStack alignItems="flex-start">
+          <FormControl
+            isInvalid={formik.errors.password && formik.touched.password}
+          >
+            <Text>Password</Text>
+            <InputGroup size="md">
+              <Input
+                pr="4.5rem"
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter password"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.password}
+                autoComplete="off"
+              />
+              <InputRightElement width="30px" mr="2">
+                <Box
+                  cursor="pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <FaEyeSlash color="grey" />
+                  ) : (
+                    <FaEye color="grey" />
+                  )}
+                </Box>
+              </InputRightElement>
+            </InputGroup>
+            <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
+          </FormControl>
+        </VStack>
+        <VStack alignItems="flex-start">
+          <FormControl
+            isInvalid={formik.errors.confirmPassword && formik.touched.confirmPassword}
+          >
+            <Text>Confirm Password</Text>
+            <InputGroup size="md">
+              <Input
+                id="confirmPassword"
+                pr="4.5rem"
+                type={showConfirmPwd ? "text" : "password"}
+                placeholder="Enter confirm password"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.confirmPassword}
+                autoComplete="off"
+              />
+              <InputRightElement width="30px" mr="2">
+                <Box
+                  cursor="pointer"
+                  onClick={() => setShowConfirmPwd(!showConfirmPwd)}
+                >
+                  {showConfirmPwd ? (
+                    <FaEyeSlash color="grey" />
+                  ) : (
+                    <FaEye color="grey" />
+                  )}
+                </Box>
+              </InputRightElement>
+            </InputGroup>
+            <FormErrorMessage>{formik.errors.confirmPassword}</FormErrorMessage>
+          </FormControl>
+        </VStack>
+        <Button type="submit" mt="1rem">Submit</Button>
+      </Flex>
+    </form>
+  );
+}
+
+export default FormVerification;

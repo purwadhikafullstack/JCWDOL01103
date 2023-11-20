@@ -10,19 +10,21 @@ import {
   FormControl,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import React from "react";
-import { useFormik, useFormikContext } from "formik";
+import React, { useState } from "react";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import { register } from "../../api/auth";
 
 function FormRegister({ isLogin, onClickRegister }) {
+  const [regisSuccess, setRegisSuccess] = useState(false);
   const toast = useToast();
   const handleRegister = () => {
-    if(isLogin){
-      onClickRegister(false)
-      formik.resetForm()
-    }else{
-      formik.handleSubmit()
+    if (isLogin) {
+      onClickRegister(false);
+      setRegisSuccess(false);
+      formik.resetForm();
+    } else {
+      formik.handleSubmit();
     }
   };
   const formik = useFormik({
@@ -44,6 +46,7 @@ function FormRegister({ isLogin, onClickRegister }) {
           duration: 3000,
           isClosable: true,
         });
+        setRegisSuccess(true);
       } catch (error) {
         toast({
           title: "Failed",
@@ -74,19 +77,24 @@ function FormRegister({ isLogin, onClickRegister }) {
         display={isLogin ? "block" : "none"}
       >
         Sign in with your account to access all features in this website
-        {/* To create an account just enter your email address */}
       </Text>
 
       <Collapse in={!isLogin} animateOpacity>
         <form onSubmit={formik.handleSubmit}>
-          <Text>To create an account just enter your email address</Text>
+          <Text>
+            {regisSuccess
+              ? "Check your email to verify!"
+              : "To create an account just enter your email address"}
+          </Text>
           <Flex
             py="20px"
             color="blackColor"
             alignItems="center"
             flexDir="column"
           >
-            <FormControl isInvalid={formik.errors.email && formik.touched.email}>
+            <FormControl
+              isInvalid={formik.errors.email && formik.touched.email}
+            >
               <VStack alignItems="flex-start" p="0" m="0" w="full">
                 <Text>Email</Text>
                 <Input
@@ -106,12 +114,13 @@ function FormRegister({ isLogin, onClickRegister }) {
         variant={isLogin ? "outline" : "solid"}
         color="white"
         bg={isLogin ? "transparent" : "primaryColor"}
-        onClick={handleRegister}
         _hover={{
           color: isLogin ? "primaryColor" : "blackColor",
           bg: isLogin ? "white" : "gray.300",
         }}
+        onClick={handleRegister}
         type="submit"
+        isDisabled={regisSuccess}
       >
         Create Account
       </Button>
