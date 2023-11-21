@@ -24,7 +24,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        autoIncrement: true,
       },
       address_name: {
         type: DataTypes.STRING,

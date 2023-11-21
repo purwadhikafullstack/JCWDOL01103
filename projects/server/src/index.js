@@ -4,6 +4,11 @@ const cors = require("cors")
 const { join } = require("path")
 const userRouter = require("./../router/userRouter")
 const addressRouter = require("./../router/addressRouter")
+const {
+  getGeolocation,
+  getLocation,
+  getRajaOngkirData,
+} = require("./../api/api")
 const db = require("./../models")
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -84,3 +89,27 @@ app.listen(PORT, (err) => {
     console.log(`APP RUNNING at ${PORT} ✅`)
   }
 })
+
+getGeolocation("Dadap,Tangerang")
+  .then((result) => {
+    console.log("Geolocation: ", result)
+  })
+  .catch((error) => {
+    console.error("Error :", error.message)
+  })
+
+getLocation(-6.0874339, 106.7071904)
+  .then((result) => {
+    console.log("Location : ", result)
+  })
+  .catch((error) => {
+    console.error("Error : ", error.message)
+  })
+
+getRajaOngkirData("name=Bali", "province")
+  .then((result) => {
+    console.log("Province : ", result)
+  })
+  .catch((error) => {
+    console.error("Error : ", error.message)
+  })
