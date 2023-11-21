@@ -3,8 +3,20 @@ import { BiAlbum, BiAward, BiRocket, BiDollar } from "react-icons/bi";
 
 const WhyUs = () => {
   return (
-    <Container as="section" maxW="8xl" mt={"150px"} textAlign={"center"}>
-      <Heading fontSize={"4xl"} fontWeight={"black"} as={"h1"} mt={5} mb={10}>
+    <Container
+      as="section"
+      maxW={{ xl: "7xl", "2xl": "8xl" }}
+      mt={{ base: "45px", xl: "100px" }}
+      textAlign={"center"}
+    >
+      <Heading
+        fontSize={{ base: "32px", xl: "4xl" }}
+        fontWeight={"black"}
+        as={"h1"}
+        mt={5}
+        mb={10}
+        lineHeight="1"
+      >
         Get More at Soundsense
       </Heading>
       <SimpleGrid columns={{ base: 1, xl: 4 }} gap={5}>
@@ -14,9 +26,9 @@ const WhyUs = () => {
           placeContent={"center"}
           border={"1px"}
           borderRadius={"lg"}
-          borderColor={"gray.200"}
+          borderColor={"blackAlpha.300"}
           _hover={{
-            borderColor: "gray.400",
+            borderColor: "blackAlpha.500",
             boxShadow: "md",
           }}
         >
@@ -34,9 +46,9 @@ const WhyUs = () => {
           placeContent={"center"}
           border={"1px"}
           borderRadius={"lg"}
-          borderColor={"gray.200"}
+          borderColor={"blackAlpha.300"}
           _hover={{
-            borderColor: "gray.400",
+            borderColor: "blackAlpha.500",
             boxShadow: "md",
           }}
         >
@@ -54,9 +66,9 @@ const WhyUs = () => {
           placeContent={"center"}
           border={"1px"}
           borderRadius={"lg"}
-          borderColor={"gray.200"}
+          borderColor={"blackAlpha.300"}
           _hover={{
-            borderColor: "gray.400",
+            borderColor: "blackAlpha.500",
             boxShadow: "md",
           }}
         >
@@ -79,9 +91,9 @@ const WhyUs = () => {
           placeContent={"center"}
           border={"1px"}
           borderRadius={"lg"}
-          borderColor={"gray.200"}
+          borderColor={"blackAlpha.300"}
           _hover={{
-            borderColor: "gray.400",
+            borderColor: "blackAlpha.500",
             boxShadow: "md",
           }}
         >

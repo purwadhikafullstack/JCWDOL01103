@@ -1,4 +1,5 @@
 import soundsenseLogoWhite from "../../assets/img/soundsense-light.png";
+import appDownload from "../../assets/img/app-download.png";
 import {
   BiLogoFacebook,
   BiLogoInstagram,
@@ -13,13 +14,18 @@ import {
   Text,
   Flex,
   Heading,
+  Link,
 } from "@chakra-ui/react";
 
 const Footer = () => {
   return (
     <Container as="footer" maxW="100vw" color={"white"} bg={"black"}>
-      <Container maxW="8xl" py={10} mt={20}>
-        <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} gap={3}>
+      <Container
+        maxW={{ xl: "7xl", "2xl": "8xl" }}
+        py={{ base: "50px", xl: "100px" }}
+        mt={"100px"}
+      >
+        <SimpleGrid columns={{ base: 1, lg: 4 }} gap={3}>
           <Box>
             <Image
               src={soundsenseLogoWhite}
@@ -27,6 +33,10 @@ const Footer = () => {
               h="55px"
               objectFit="cover"
             />
+            <Text fontSize={"sm"} mt={5} lineHeight={"1.4"} pr={10}>
+              Explore Soundsense's musical haven – quality instruments, expert
+              guidance, vibrant community. Elevate your journey with us.
+            </Text>
             <Flex gap={4} mt={5}>
               <Box
                 w={"40px"}
@@ -63,26 +73,70 @@ const Footer = () => {
               </Box>
             </Flex>
           </Box>
-          <Box>
-            <Heading as={"h3"} fontSize={"xl"} fontWeight={"bold"} mb={4}>
-              About
+          <Box mt={{ base: 5, xl: 0 }}>
+            <Heading as={"h3"} fontSize={"xl"} fontWeight={"bold"} mb={5}>
+              Information
             </Heading>
-            <Text>d reprehenderit numquam aperiam dignissimos dolorum.</Text>
+            <Text fontSize={"md"} mb={2}>
+              <Link>About Us</Link>
+            </Text>
+            <Text fontSize={"md"} mb={2}>
+              <Link>Blog</Link>
+            </Text>
+            <Text fontSize={"md"} mb={2}>
+              <Link>Contact</Link>
+            </Text>
+            <Text fontSize={"md"} mb={2}>
+              <Link>Pricing</Link>
+            </Text>
+            <Text fontSize={"md"} mb={2}>
+              <Link>Testimonials</Link>
+            </Text>
           </Box>
-          <Box>
-            <Heading as={"h3"} fontSize={"xl"} fontWeight={"bold"} mb={4}>
-              Sitemap
+          <Box mt={{ base: 5, xl: 0 }}>
+            <Heading as={"h3"} fontSize={"xl"} fontWeight={"bold"} mb={5}>
+              Services
             </Heading>
-            <Text>d reprehenderit numquam aperiam dignissimos dolorum.</Text>
+            <Text fontSize={"md"} mb={2}>
+              <Link>How to Order</Link>
+            </Text>
+            <Text fontSize={"md"} mb={2}>
+              <Link>How to Payment</Link>
+            </Text>
+            <Text fontSize={"md"} mb={2}>
+              <Link>Shipping Information</Link>
+            </Text>
+            <Text fontSize={"md"} mb={2}>
+              <Link>Order Tracking</Link>
+            </Text>
+            <Text fontSize={"md"} mb={2}>
+              <Link>Transaction Cancellation</Link>
+            </Text>
           </Box>
-          <Box>
+          <Box mt={{ base: 5, xl: 0 }}>
             <Heading as={"h3"} fontSize={"xl"} fontWeight={"bold"} mb={4}>
-              Contact
+              Install Soundsense App
             </Heading>
-            <Text>d reprehenderit numquam aperiam dignissimos dolorum.</Text>
+            <Image
+              src={appDownload}
+              alt="Soundsense Logo"
+              h="150px"
+              objectFit="cover"
+            />
           </Box>
         </SimpleGrid>
       </Container>
+      <Text
+        textAlign={"center"}
+        fontSize={"sm"}
+        pb={5}
+        color={"white"}
+        borderTop={"1px"}
+        borderColor={"whiteAlpha.300"}
+        pt={3}
+      >
+        &#169; Soundsense 2023 | All Rights Reserved
+      </Text>
     </Container>
   );
 };

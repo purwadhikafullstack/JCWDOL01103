@@ -13,8 +13,19 @@ import { Container, SimpleGrid, Box, Image, Heading } from "@chakra-ui/react";
 
 const CategoryList = () => {
   return (
-    <Container as="section" maxW="8xl" mt={"150px"} textAlign={"center"}>
-      <Heading fontSize={"4xl"} fontWeight={"black"} as={"h1"} mt={5} mb={10}>
+    <Container
+      as="section"
+      maxW={{ xl: "7xl", "2xl": "8xl" }}
+      mt={{ base: "45px", xl: "100px" }}
+      textAlign={"center"}
+    >
+      <Heading
+        fontSize={{ base: "32px", xl: "4xl" }}
+        fontWeight={"black"}
+        as={"h1"}
+        mt={5}
+        mb={10}
+      >
         Popular Categories
       </Heading>
       <SimpleGrid
@@ -23,7 +34,8 @@ const CategoryList = () => {
         textAlign={"center"}
       >
         <Box
-          boxSize={{ base: "180px", xl: "250px" }}
+          boxSize={"100%"}
+          py={10}
           bg={"blackAlpha.100"}
           borderRadius={"lg"}
           display="flex"
@@ -32,7 +44,9 @@ const CategoryList = () => {
           boxShadow={"sm"}
           _hover={{
             border: "1px",
-            borderColor: "gray.400",
+            boxShadow: "lg",
+            borderColor: "blackAlpha.400",
+            bg: "blackAlpha.300",
           }}
         >
           <Image
@@ -43,7 +57,8 @@ const CategoryList = () => {
           />
         </Box>
         <Box
-          boxSize={{ base: "180px", xl: "250px" }}
+          boxSize={"100%"}
+          py={10}
           bg={"blackAlpha.100"}
           borderRadius={"lg"}
           display="flex"
@@ -52,7 +67,9 @@ const CategoryList = () => {
           boxShadow={"sm"}
           _hover={{
             border: "1px",
-            borderColor: "gray.400",
+            boxShadow: "lg",
+            borderColor: "blackAlpha.400",
+            bg: "blackAlpha.300",
           }}
         >
           <Image
@@ -63,7 +80,8 @@ const CategoryList = () => {
           />
         </Box>
         <Box
-          boxSize={{ base: "180px", xl: "250px" }}
+          boxSize={"100%"}
+          py={10}
           bg={"blackAlpha.100"}
           borderRadius={"lg"}
           display="flex"
@@ -72,7 +90,9 @@ const CategoryList = () => {
           boxShadow={"sm"}
           _hover={{
             border: "1px",
-            borderColor: "gray.400",
+            boxShadow: "lg",
+            borderColor: "blackAlpha.400",
+            bg: "blackAlpha.300",
           }}
         >
           <Image
@@ -83,7 +103,8 @@ const CategoryList = () => {
           />
         </Box>
         <Box
-          boxSize={{ base: "180px", xl: "250px" }}
+          boxSize={"100%"}
+          py={10}
           bg={"blackAlpha.100"}
           borderRadius={"lg"}
           display="flex"
@@ -92,7 +113,9 @@ const CategoryList = () => {
           boxShadow={"sm"}
           _hover={{
             border: "1px",
-            borderColor: "gray.400",
+            boxShadow: "lg",
+            borderColor: "blackAlpha.400",
+            bg: "blackAlpha.300",
           }}
         >
           <Image
@@ -103,7 +126,8 @@ const CategoryList = () => {
           />
         </Box>
         <Box
-          boxSize={{ base: "180px", xl: "250px" }}
+          boxSize={"100%"}
+          py={10}
           bg={"blackAlpha.100"}
           borderRadius={"lg"}
           display="flex"
@@ -112,7 +136,9 @@ const CategoryList = () => {
           boxShadow={"sm"}
           _hover={{
             border: "1px",
-            borderColor: "gray.400",
+            boxShadow: "lg",
+            borderColor: "blackAlpha.400",
+            bg: "blackAlpha.300",
           }}
         >
           <Image
@@ -123,7 +149,8 @@ const CategoryList = () => {
           />
         </Box>
         <Box
-          boxSize={{ base: "180px", xl: "250px" }}
+          boxSize={"100%"}
+          py={10}
           bg={"blackAlpha.100"}
           borderRadius={"lg"}
           display="flex"
@@ -132,7 +159,9 @@ const CategoryList = () => {
           boxShadow={"sm"}
           _hover={{
             border: "1px",
-            borderColor: "gray.400",
+            boxShadow: "lg",
+            borderColor: "blackAlpha.400",
+            bg: "blackAlpha.300",
           }}
         >
           <Image
@@ -143,7 +172,8 @@ const CategoryList = () => {
           />
         </Box>
         <Box
-          boxSize={{ base: "180px", xl: "250px" }}
+          boxSize={"100%"}
+          py={10}
           bg={"blackAlpha.100"}
           borderRadius={"lg"}
           display="flex"
@@ -152,7 +182,9 @@ const CategoryList = () => {
           boxShadow={"sm"}
           _hover={{
             border: "1px",
-            borderColor: "gray.400",
+            boxShadow: "lg",
+            borderColor: "blackAlpha.400",
+            bg: "blackAlpha.300",
           }}
         >
           <Image
@@ -163,7 +195,8 @@ const CategoryList = () => {
           />
         </Box>
         <Box
-          boxSize={{ base: "180px", xl: "250px" }}
+          boxSize={"100%"}
+          py={10}
           bg={"blackAlpha.100"}
           borderRadius={"lg"}
           display="flex"
@@ -172,7 +205,9 @@ const CategoryList = () => {
           boxShadow={"sm"}
           _hover={{
             border: "1px",
-            borderColor: "gray.400",
+            boxShadow: "lg",
+            borderColor: "blackAlpha.400",
+            bg: "blackAlpha.300",
           }}
         >
           <Image
@@ -183,7 +218,8 @@ const CategoryList = () => {
           />
         </Box>
         <Box
-          boxSize={{ base: "180px", xl: "250px" }}
+          boxSize={"100%"}
+          py={10}
           bg={"blackAlpha.100"}
           borderRadius={"lg"}
           display="flex"
@@ -192,7 +228,9 @@ const CategoryList = () => {
           boxShadow={"sm"}
           _hover={{
             border: "1px",
-            borderColor: "gray.400",
+            boxShadow: "lg",
+            borderColor: "blackAlpha.400",
+            bg: "blackAlpha.300",
           }}
         >
           <Image
@@ -203,7 +241,8 @@ const CategoryList = () => {
           />
         </Box>
         <Box
-          boxSize={{ base: "180px", xl: "250px" }}
+          boxSize={"100%"}
+          py={10}
           bg={"blackAlpha.100"}
           borderRadius={"lg"}
           display="flex"
@@ -212,7 +251,9 @@ const CategoryList = () => {
           boxShadow={"sm"}
           _hover={{
             border: "1px",
-            borderColor: "gray.400",
+            boxShadow: "lg",
+            borderColor: "blackAlpha.400",
+            bg: "blackAlpha.300",
           }}
         >
           <Image
