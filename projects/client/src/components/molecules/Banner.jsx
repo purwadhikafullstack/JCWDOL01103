@@ -29,8 +29,6 @@ const Banner = () => {
           spaceBetween={50}
           autoplay={{ delay: 3000 }}
           slidesPerView={1}
-          onSwiper={swiper => console.log(swiper)}
-          onSlideChange={() => console.log("slide change")}
         >
           <SwiperSlide>
             <Image

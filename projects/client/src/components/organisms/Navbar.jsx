@@ -6,8 +6,6 @@ import {
   Image,
   Menu,
   MenuButton,
-  MenuGroup,
-  MenuDivider,
   MenuList,
   MenuItem,
   Text,
