@@ -1,4 +1,4 @@
-import { getRajaOngkirData } from "../api/api"
+const { getRajaOngkirData } = require("./../api/api")
 
 const rajaOngkirController = {
   getProvince: async (req, res) => {

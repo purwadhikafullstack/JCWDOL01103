@@ -4,6 +4,7 @@ const cors = require("cors")
 const { join } = require("path")
 const userRouter = require("./../router/userRouter")
 const addressRouter = require("./../router/addressRouter")
+const rajaOngkirRouter = require("./../router/rajaOngkirRouter")
 const {
   getGeolocation,
   getLocation,
@@ -13,18 +14,38 @@ const db = require("./../models")
 const PORT = process.env.PORT || 8000
 const app = express()
 
+// app.use(
+//   cors({
+//     origin: [
+//       process.env.WHITELISTED_DOMAIN &&
+//         process.env.WHITELISTED_DOMAIN.split(","),
+//       "http://localhost:3000/",
+//     ],
+//     methods: "GET,POST,DELETE,PATCH",
+//   })
+// )
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*")
+  next()
+})
+
 app.use(
   cors({
     origin: [
-      process.env.WHITELISTED_DOMAIN &&
-        process.env.WHITELISTED_DOMAIN.split(","),
+      ...(process.env.WHITELISTED_DOMAIN
+        ? process.env.WHITELISTED_DOMAIN.split(",")
+        : []),
+      "http://localhost:3000",
     ],
+    methods: "GET,POST,DELETE,PATCH",
   })
 )
 
 app.use(express.json())
 app.use(userRouter)
 app.use(addressRouter)
+app.use(rajaOngkirRouter)
 
 //#region API ROUTES
 
@@ -72,7 +93,9 @@ app.use((err, req, res, next) => {
 //#endregion
 
 //#region CLIENT
-const clientPath = "../../client/build"
+// const clientPath = "../../client/build"
+const clientPath = "../client/build"
+
 app.use(express.static(join(__dirname, clientPath)))
 
 // Serve the HTML page

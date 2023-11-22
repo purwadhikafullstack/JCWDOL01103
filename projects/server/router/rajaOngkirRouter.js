@@ -2,7 +2,6 @@ const express = require("express")
 const {
   rajaOngkirController,
 } = require("./../controllers/rajaOngkirController")
-const { getRajaOngkirData } = require("../api/api")
 const router = express.Router()
 
 router.get("/rajaongkir/province", rajaOngkirController.getProvince)

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
   Box,
   Button,
@@ -15,6 +15,7 @@ import {
   Flex,
 } from "@chakra-ui/react"
 import { DeleteIcon } from "@chakra-ui/icons"
+import getRajaOngkirData from "./../api/api"
 
 const Address = () => {
   const [addresses, setAddresses] = useState([])
@@ -24,6 +25,22 @@ const Address = () => {
     district: "",
     detail: "",
   })
+
+  const [provinces, setProvinces] = useState([])
+
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      try {
+        const query = ""
+        const type = "province"
+        const provinceData = await getRajaOngkirData(query, type)
+        setProvinces(provinceData)
+      } catch (error) {
+        console.error("Error fetching provinces : ", error.message)
+      }
+    }
+    fetchProvinces()
+  }, [])
 
   const addAddress = () => {
     if (
@@ -66,8 +83,12 @@ const Address = () => {
               setNewAddress({ ...newAddress, province: e.target.value })
             }
           >
-            <option value="province">Jakarta</option>
-            <option value="province">Banten</option>
+            {/* {provinces.map((province) => (
+              <option key={province.province_id} value={province.province_id}>
+                {province.province}
+              </option>
+            ))} */}
+            <option value="DKI Jakarta">DKI Jakarta</option>
           </Select>
         </FormControl>
         <FormControl isRequired>
@@ -79,8 +100,8 @@ const Address = () => {
               setNewAddress({ ...newAddress, city: e.target.value })
             }
           >
-            <option value="city">Tangerang</option>
-            <option value="city">Bandung</option>
+            <option value="Tangerang">Tangerang</option>
+            <option value="Bandung">Bandung</option>
           </Select>
         </FormControl>
         <FormControl isRequired>
