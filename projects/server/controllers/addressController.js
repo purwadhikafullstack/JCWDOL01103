@@ -42,6 +42,7 @@ const addressController = {
         .json({ error: `You have to fill ${missingFields.join(", ")}` })
     }
     try {
+      console.log("Received request to create address : ", data)
       const createdAddress = await address.create({
         ...data,
         latitude: data.latitude || null,
@@ -50,7 +51,7 @@ const addressController = {
       res.json(createdAddress)
     } catch (error) {
       console.error(error)
-      res.status(500).json(error.message)
+      res.status(500).json({ msg: error.message })
     }
   },
 

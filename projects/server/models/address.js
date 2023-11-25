@@ -38,7 +38,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notEmpty: true,
-          len: [2, 100],
         },
       },
       city: {
@@ -46,7 +45,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notEmpty: true,
-          len: [2, 100],
         },
       },
       subdistrict: {
@@ -78,7 +76,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       latitude: {
         type: DataTypes.DECIMAL(9, 6),
-        allowNull: false,
+        allowNull: true,
         validate: {
           min: -180,
           max: 180,
@@ -86,7 +84,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       longitude: {
         type: DataTypes.DECIMAL(8, 6),
-        allowNull: false,
+        allowNull: true,
         validate: {
           min: -90,
           max: 90,
