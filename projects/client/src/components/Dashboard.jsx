@@ -8,14 +8,9 @@ import {
   MenuList,
   MenuItem,
   Avatar,
-  IconButton,
-  Icon,
   MenuDivider,
-  HStack,
   Link,
 } from "@chakra-ui/react"
-// import { HamburgerIcon } from "@chakra-ui/icons"
-import { LuUser2 } from "react-icons/lu"
 
 const Dashboard = () => {
   return (
@@ -29,11 +24,8 @@ const Dashboard = () => {
         </Text>
         <Spacer />
         <Menu>
-          <MenuButton as={IconButton} mx={3}>
-            <HStack spacing={1} ml={2}>
-              <Icon as={LuUser2} boxSize={7} />
-              <Avatar name="Alexander" src="" size="sm" mx={2} />
-            </HStack>
+          <MenuButton mx={3}>
+            <Avatar name="Alexander" src="" size="sm" mx={2} />
           </MenuButton>
           <MenuList>
             <MenuItem>

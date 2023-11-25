@@ -1,28 +1,72 @@
-const { getRajaOngkirData } = require("./../api/api")
+const db = require("./../models")
+const provinces = db.provinces
+const cities = db.cities
 
 const rajaOngkirController = {
-  getProvince: async (req, res) => {
+  getProvinces: async (req, res) => {
     try {
-      const { name } = req.query
-      const query = name ? `province${name}` : ""
-      const provinces = await getRajaOngkirData(query, "province")
-      res.status(200).json(provinces)
+      const province = await provinces.findAll({
+        attributes: ["province_id", "province_name"],
+      })
+      res.status(200).json(province)
     } catch (error) {
-      res
-        .status(500)
-        .json({ error: `Internal Server Error : ${error.message}` })
+      res.status(500).json({ msg: error.message })
     }
   },
-  getCity: async (req, res) => {
+
+  getProvincesById: async (req, res) => {
     try {
-      const { name } = req.query
-      const query = name ? `cities${name}` : ""
-      const cities = await getRajaOngkirData(query, "city")
-      res.status(200).json(cities)
+      const response = await provinces.findOne({
+        where: {
+          province_id: req.params.id,
+        },
+      })
+      if (!response)
+        return res.status(404).json({ msg: "Provinsi not found !" })
+      res.status(200).json(response)
     } catch (error) {
-      res
-        .status(500)
-        .json({ error: `Internal Server Error : ${error.message}` })
+      res.status(500).json({ msg: error.message })
+    }
+  },
+  getCities: async (req, res) => {
+    try {
+      const city = await cities.findAll({
+        attributes: ["city_id", "province_id", "city_name", "postal_code"],
+      })
+      res.status(200).json(city)
+    } catch (error) {
+      res.status(500).json({ msg: error.message })
+    }
+  },
+
+  getCitiesById: async (req, res) => {
+    try {
+      const response = await cities.findAll({
+        where: {
+          city_id: req.params.id,
+        },
+      })
+      if (!response)
+        return res.status(404).json({ msg: "Provinsi not found !" })
+      res.status(200).json(response)
+    } catch (error) {
+      res.status(500).json({ msg: error.message })
+    }
+  },
+  getCitiesByProvinceId: async (req, res) => {
+    try {
+      const response = await cities.findAll({
+        where: {
+          province_id: req.params.id,
+        },
+      })
+      if (response.length === 0)
+        return res
+          .status(404)
+          .json({ msg: "No cities found for the province !" })
+      res.status(200).json(response)
+    } catch (error) {
+      res.status(500).json({ msg: error.message })
     }
   },
 }

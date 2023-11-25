@@ -4,11 +4,10 @@ const {
 } = require("./../controllers/rajaOngkirController")
 const router = express.Router()
 
-router.get("/rajaongkir/province", rajaOngkirController.getProvince)
-router.get("/rajaongkir/city", rajaOngkirController.getCity)
-// router.get("/rajaongkir/subdistrict", rajaOngkirController.getSubdistrict)
-
-// router.get("/rajaongkir/province", getRajaOngkirData("province"))
-// router.get("/rajaongkir/city", getRajaOngkirData("city"))
+router.get("/province", rajaOngkirController.getProvinces)
+router.get("/province/:id", rajaOngkirController.getProvincesById)
+router.get("/city", rajaOngkirController.getCities)
+router.get("/city/:id", rajaOngkirController.getCitiesById)
+router.get("/cities/:id", rajaOngkirController.getCitiesByProvinceId)
 
 module.exports = router

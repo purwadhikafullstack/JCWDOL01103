@@ -5,11 +5,7 @@ const { join } = require("path")
 const userRouter = require("./../router/userRouter")
 const addressRouter = require("./../router/addressRouter")
 const rajaOngkirRouter = require("./../router/rajaOngkirRouter")
-const {
-  getGeolocation,
-  getLocation,
-  getRajaOngkirData,
-} = require("./../api/api")
+// const { getGeolocation, getLocation } = require("./../api/api")
 const db = require("./../models")
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -19,16 +15,11 @@ const app = express()
 //     origin: [
 //       process.env.WHITELISTED_DOMAIN &&
 //         process.env.WHITELISTED_DOMAIN.split(","),
-//       "http://localhost:3000/",
+//       "http://localhost:3300/",
 //     ],
 //     methods: "GET,POST,DELETE,PATCH",
 //   })
 // )
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*")
-  next()
-})
 
 app.use(
   cors({
@@ -96,12 +87,12 @@ app.use((err, req, res, next) => {
 // const clientPath = "../../client/build"
 const clientPath = "../client/build"
 
-app.use(express.static(join(__dirname, clientPath)))
+// app.use(express.static(join(__dirname, clientPath)))
 
 // Serve the HTML page
-app.get("*", (req, res) => {
-  res.sendFile(join(__dirname, clientPath, "index.html"))
-})
+// app.get("*", (req, res) => {
+//   res.sendFile(join(__dirname, clientPath, "index.html"))
+// })
 
 //#endregion
 
@@ -113,26 +104,18 @@ app.listen(PORT, (err) => {
   }
 })
 
-getGeolocation("Dadap,Tangerang")
-  .then((result) => {
-    console.log("Geolocation: ", result)
-  })
-  .catch((error) => {
-    console.error("Error :", error.message)
-  })
+// getGeolocation("Dadap,Tangerang")
+//   .then((result) => {
+//     console.log("Geolocation: ", result)
+//   })
+//   .catch((error) => {
+//     console.error("Error :", error.message)
+//   })
 
-getLocation(-6.0874339, 106.7071904)
-  .then((result) => {
-    console.log("Location : ", result)
-  })
-  .catch((error) => {
-    console.error("Error : ", error.message)
-  })
-
-getRajaOngkirData("name=Bali", "province")
-  .then((result) => {
-    console.log("Province : ", result)
-  })
-  .catch((error) => {
-    console.error("Error : ", error.message)
-  })
+// getLocation(-6.0874339, 106.7071904)
+//   .then((result) => {
+//     console.log("Location : ", result)
+//   })
+//   .catch((error) => {
+//     console.error("Error : ", error.message)
+//   })

@@ -47,18 +47,18 @@ const getLocation = async (geolocation) => {
   }
 }
 
-const getRajaOngkirData = async (query, type) => {
-  const apiKey = process.env.RAJAONGKIR_API
-  const apiUrl = `https://api.rajaongkir.com/starter/${type}?key=${apiKey}&${query}`
+// const getRajaOngkirData = async (query, type) => {
+//   const apiKey = process.env.RAJAONGKIR_API
+//   const apiUrl = `https://api.rajaongkir.com/starter/${type}?key=${apiKey}&${query}`
 
-  try {
-    const response = await axios.get(apiUrl)
-    const results = response.data.rajaongkir.results
-    return results
-  } catch (error) {
-    console.error("Error getting RajaOngkir data: ", error.message)
-    throw error
-  }
-}
+//   try {
+//     const response = await axios.get(apiUrl)
+//     const results = response.data.rajaongkir.results
+//     return results
+//   } catch (error) {
+//     console.error("Error getting RajaOngkir data: ", error.message)
+//     throw error
+//   }
+// }
 
-module.exports = { getGeolocation, getLocation, getRajaOngkirData }
+module.exports = { getGeolocation, getLocation }

@@ -15,56 +15,83 @@ import {
   Flex,
 } from "@chakra-ui/react"
 import { DeleteIcon } from "@chakra-ui/icons"
-import getRajaOngkirData from "./../api/api"
+import addressService from "./../api/api"
 
 const Address = () => {
   const [addresses, setAddresses] = useState([])
   const [newAddress, setNewAddress] = useState({
     province: "",
     city: "",
-    district: "",
-    detail: "",
+    subdistrict: "",
+    full_address: "",
+    postal_code: "",
+    is_main_address: false,
   })
 
   const [provinces, setProvinces] = useState([])
+  const [cities, setCities] = useState([])
 
   useEffect(() => {
-    const fetchProvinces = async () => {
-      try {
-        const query = ""
-        const type = "province"
-        const provinceData = await getRajaOngkirData(query, type)
-        setProvinces(provinceData)
-      } catch (error) {
-        console.error("Error fetching provinces : ", error.message)
-      }
-    }
-    fetchProvinces()
+    getAddressList()
+    getProvinces()
   }, [])
 
-  const addAddress = () => {
-    if (
-      newAddress.province &&
-      newAddress.city &&
-      newAddress.district &&
-      newAddress.detail
-    ) {
-      setAddresses([...addresses, newAddress])
-      setNewAddress({
-        province: "",
-        city: "",
-        district: "",
-        detail: "",
-      })
-    } else {
-      alert("Lengkapi semua field sebelum menambahkan alamat")
+  const getAddressList = async () => {
+    try {
+      const addressList = await addressService.getAddresses()
+      setAddresses(addressList)
+    } catch (error) {
+      console.error("Error fetching addresses: ", error.message)
     }
   }
 
-  const deleteAddress = (index) => {
-    const updateAddresses = [...addresses]
-    updateAddresses.splice(index, 1)
-    setAddresses(updateAddresses)
+  const addAddress = async () => {
+    try {
+      const createdAddress = await addressService.createAddress(newAddress)
+      setAddresses((prevAddress) => [...prevAddress, createdAddress])
+      setNewAddress({
+        province: "",
+        city: "",
+        subdistrict: "",
+        full_address: "",
+        postal_code: "",
+        is_main_address: false,
+      })
+    } catch (error) {
+      console.error("Error creating address : ", error.message)
+    }
+  }
+
+  const deleteAddress = async (index) => {
+    try {
+      const addressId = addresses[index].address_id
+      await addressService.deleteAddress(addressId)
+
+      setAddresses((prevAddress) => {
+        const updateAddresses = [...prevAddress]
+        updateAddresses.splice(index, 1)
+        return updateAddresses
+      })
+    } catch (error) {
+      console.error("Error deleting address: ", error.message)
+    }
+  }
+
+  const getProvinces = async () => {
+    try {
+      const provinces = await addressService.getProvinces()
+      setProvinces(provinces)
+    } catch (error) {
+      console.error("Error fetching provinces : ", error.message)
+    }
+  }
+  const getCities = async (selectedProvince) => {
+    try {
+      const cities = await addressService.getCities(selectedProvince)
+      setCities(cities)
+    } catch (error) {
+      console.error("Error fetching provinces : ", error.message)
+    }
   }
 
   return (
@@ -79,16 +106,18 @@ const Address = () => {
           <Select
             placeholder="-- Provinsi --"
             value={newAddress.province}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, province: e.target.value })
-            }
+            onChange={(e) => {
+              const selectedProvince = e.target.value
+              console.log(selectedProvince)
+              setNewAddress({ ...newAddress, province: selectedProvince })
+              getCities(selectedProvince)
+            }}
           >
-            {/* {provinces.map((province) => (
+            {provinces.map((province) => (
               <option key={province.province_id} value={province.province_id}>
-                {province.province}
+                {province.province_name}
               </option>
-            ))} */}
-            <option value="DKI Jakarta">DKI Jakarta</option>
+            ))}
           </Select>
         </FormControl>
         <FormControl isRequired>
@@ -100,27 +129,30 @@ const Address = () => {
               setNewAddress({ ...newAddress, city: e.target.value })
             }
           >
-            <option value="Tangerang">Tangerang</option>
-            <option value="Bandung">Bandung</option>
+            {cities.map((city) => (
+              <option key={city.city_id} value={city.city_id}>
+                {city.city_name}
+              </option>
+            ))}
           </Select>
         </FormControl>
         <FormControl isRequired>
           <FormLabel>Kecamatan</FormLabel>
           <Input
-            value={newAddress.district}
+            value={newAddress.subdistrict}
             onChange={(e) =>
-              setNewAddress({ ...newAddress, district: e.target.value })
+              setNewAddress({ ...newAddress, subdistrict: e.target.value })
             }
           />
         </FormControl>
         <FormControl isRequired>
-          <FormLabel>Detail Alamat</FormLabel>
+          <FormLabel>Alamat Lengkap</FormLabel>
           <Textarea
             size="sm"
             variant={"outline"}
-            value={newAddress.detail}
+            value={newAddress.full_address}
             onChange={(e) =>
-              setNewAddress({ ...newAddress, detail: e.target.value })
+              setNewAddress({ ...newAddress, full_address: e.target.value })
             }
           />
         </FormControl>
@@ -136,7 +168,7 @@ const Address = () => {
           {addresses.map((address, index) => (
             <ListItem key={index} mb={2} mx={10}>
               <Flex align={"center"} gap={5}>
-                {address.detail}, {address.district}, {address.city},{" "}
+                {address.full_address}, {address.subdistrict}, {address.city},{" "}
                 {address.province}
                 <IconButton
                   icon={<DeleteIcon />}

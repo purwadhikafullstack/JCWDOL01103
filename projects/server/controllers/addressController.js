@@ -100,15 +100,10 @@ const addressController = {
     const { address_id } = req.params
 
     try {
-      const deletedAddress = await address.update(
-        {
-          deleted_at: new Date(),
-        },
-        {
-          where: { address_id, deleted_at: null },
-        }
-      )
-      if (deletedAddress[0] === 0) {
+      const deletedAddress = await address.destroy({
+        where: { address_id, deleted_at: null },
+      })
+      if (!deletedAddress) {
         return res
           .status(404)
           .json({ error: "Address not found or already deleted" })
