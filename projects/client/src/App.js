@@ -1,12 +1,11 @@
-// import axios from "axios"
-import "./App.css";
+import { Route, Routes } from "react-router-dom";
 import Homepage from "./pages/Homepage";
 
 function App() {
   return (
-    <div className="App">
-      <Homepage />
-    </div>
+    <Routes>
+      <Route path="/" element={<Homepage />} />
+    </Routes>
   );
 }
 
