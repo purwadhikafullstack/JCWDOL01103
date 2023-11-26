@@ -1,6 +1,6 @@
 // import axios from "axios"
 import "./App.css";
-import Homepage from "./components/pages/Homepage";
+import Homepage from "./pages/Homepage";
 
 function App() {
   return (
