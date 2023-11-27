@@ -1,14 +1,19 @@
-// import axios from "axios"
-import "./App.css"
-// import { useEffect, useState } from "react"
-import Dashboard from "./components/Dashboard"
+import { Route, Routes } from "react-router-dom";
+import Authentication from "./pages/Authentication";
+import Verification from "./pages/Verification";
+import NotFound from "./pages/NotFound";
+import Test from "./pages/Test";
 
 function App() {
   return (
-    <div className="App">
-      <Dashboard />
-    </div>
-  )
+    <Routes>
+      <Route path="/" element={<Test/>} />
+      <Route path="/login" element={<Authentication/>}/>
+      <Route path="/verification/:token" element={<Verification />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+    
+  );
 }
 
 export default App
