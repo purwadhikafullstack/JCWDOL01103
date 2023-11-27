@@ -31,12 +31,13 @@ const profileController = {
     const { name } = req.body;
 
     if (!name) {
-      return res.status(400).json({ msg: "Name is required" });
+      return res.status(400).json({ message: "Name is required" });
     }
 
     if (typeof name !== "string") {
-      return res.status(400).json({ msg: "Name must be a string" });
+      return res.status(400).json({ message: "Name must be a string" });
     }
+
     try {
       const findUser = await user.findOne({
         where: {
@@ -45,7 +46,7 @@ const profileController = {
       });
 
       if (!findUser) {
-        return res.status(404).json({ msg: "User not found" });
+        return res.status(404).json({ message: "User not found" });
       }
 
       const updateName = await user.update(
@@ -75,7 +76,7 @@ const profileController = {
     const image = req.file;
 
     if (!image) {
-      return res.status(400).json({ msg: "Image is required" });
+      return res.status(400).json({ message: "Image is required" });
     }
 
     try {
@@ -86,7 +87,7 @@ const profileController = {
       });
 
       if (!findUser) {
-        return res.status(404).json({ msg: "User not found" });
+        return res.status(404).json({ message: "User not found" });
       }
 
       const updateImage = await user.update(
@@ -123,7 +124,7 @@ const profileController = {
       });
 
       if (!findUser) {
-        return res.status(404).json({ msg: "User not found" });
+        return res.status(404).json({ message: "User not found" });
       }
 
       const isOldPasswordValid = await bcrypt.compare(
@@ -132,13 +133,13 @@ const profileController = {
       );
 
       if (!isOldPasswordValid) {
-        return res.status(400).json({ msg: "Old password is incorrect" });
+        return res.status(400).json({ message: "Old password is incorrect" });
       }
 
       if (newPassword !== confNewPassword) {
         return res
           .status(400)
-          .json({ msg: "Password and Confirm Password must the same !" });
+          .json({ message: "Password and Confirm Password must the same !" });
       }
 
       const salt = await bcrypt.genSalt(10);

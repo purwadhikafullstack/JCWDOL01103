@@ -29,7 +29,6 @@ const fileFilter = (req, file, cb) => {
   ) {
     return cb(new Error("File Format not match"));
   }
-
   cb(null, true);
 };
 
