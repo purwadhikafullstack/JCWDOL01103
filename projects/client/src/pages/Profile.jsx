@@ -156,7 +156,7 @@ const Profile = () => {
             <Text mt={1}>{profileData.data?.email}</Text>
           </GridItem>
         </Grid>
-        <Divider my={"80px"} />
+        <Divider my={{ base: "40px", xl: "80px" }} />
         <Box>
           <Heading
             fontSize={{ base: "20px", xl: "2xl" }}
@@ -180,7 +180,7 @@ const Profile = () => {
           </Text>
           <Input
             my={2}
-            py={"auto"}
+            py="auto"
             type="file"
             ref={image}
             name="image"
