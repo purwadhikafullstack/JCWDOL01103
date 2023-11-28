@@ -1,11 +1,11 @@
 {
   "development": {
     "username": "root",
-    "password": null,
-    "database": "SoundSense",
+    "password": "1234567890",
+    "database": "sound_sense",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "port": "3300"
+    "port": "3306"
   },
   "test": {
     "username": "root",
