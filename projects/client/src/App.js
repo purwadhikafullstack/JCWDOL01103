@@ -9,7 +9,6 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Homepage />} />
-      <Route path="/" element={<Test/>} />
       <Route path="/login" element={<Authentication/>}/>
       <Route path="/verification/:token" element={<Verification />} />
       <Route path="*" element={<NotFound />} />
