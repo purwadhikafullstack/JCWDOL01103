@@ -11,9 +11,38 @@ const addressController = {
           "user_id",
           "province",
           "city",
+          "subdistrict",
+          "address_name",
+          "postal_code",
+          "is_main_address",
           "full_address",
         ],
       })
+      res.status(200).json(addresses)
+    } catch (error) {
+      res.status(500).json({ msg: error.message })
+    }
+  },
+  getAddressesById: async (req, res) => {
+    try {
+      const { address_id } = req.params
+      const addresses = await address.findOne({
+        where: { addressId: address_id },
+        attributes: [
+          "address_id",
+          "user_id",
+          "province",
+          "city",
+          "subdistrict",
+          "address_name",
+          "postal_code",
+          "is_main_address",
+          "full_address",
+        ],
+      })
+      if (!addresses) {
+        return res.status(404).json({ msg: "Address not found" })
+      }
       res.status(200).json(addresses)
     } catch (error) {
       res.status(500).json({ msg: error.message })

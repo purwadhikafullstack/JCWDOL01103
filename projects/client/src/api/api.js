@@ -6,6 +6,16 @@ const addressService = {
   getAddresses: async () => {
     try {
       const response = await axios.get(`${API_URL}/address`)
+      console.log(response.data)
+      return response.data
+    } catch (error) {
+      console.error("Error fetching address : ", error.message)
+      throw error
+    }
+  },
+  getAddressesById: async (addressId) => {
+    try {
+      const response = await axios.get(`${API_URL}/form-address/${addressId}`)
       return response.data
     } catch (error) {
       console.error("Error fetching address : ", error.message)

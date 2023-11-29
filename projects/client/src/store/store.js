@@ -1,7 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore } from "@reduxjs/toolkit"
+import addressReducer from "./../features/addressSlice"
 
 const store = configureStore({
-    reducer: {},
-  });
-  
-  export default store;
+  reducer: {
+    address: addressReducer,
+  },
+})
+
+export default store
