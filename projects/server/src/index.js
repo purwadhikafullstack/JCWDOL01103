@@ -5,6 +5,7 @@ const { join } = require("path");
 const profileRouter = require("./../router/profileRouter");
 const db = require("./../models");
 const PORT = process.env.PORT || 8000;
+const path = require("path");
 const app = express();
 
 // app.use(
@@ -16,7 +17,7 @@ const app = express();
 //   })
 // );
 app.use(cors());
-
+app.use("/uploads", express.static(path.join(__dirname, "..", "public")));
 app.use(express.json());
 
 //#region API ROUTES

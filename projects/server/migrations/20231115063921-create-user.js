@@ -30,13 +30,6 @@ module.exports = {
           notEmpty: true,
         },
       },
-      ver: {
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
-      },
       role: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,

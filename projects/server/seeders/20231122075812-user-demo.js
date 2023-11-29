@@ -12,7 +12,6 @@ module.exports = {
         email: "usertes@gmail.com",
         password:
           "$2b$10$Jmwb/MKy2EPzqFeKUdoREubTpNaBh3Q9Yz/2SXPC8pwVVu/6EkNVO",
-        ver: "yes",
         role: "user",
         image: null,
         createdAt: currentDate,
@@ -24,7 +23,6 @@ module.exports = {
         email: "admintes@gmail.com",
         password:
           "$2b$10$ZsGWlbztRK1tQSvKDY2YJemLd5ff21QQwq7DXu6n7WaOZRpl.FPmi",
-        ver: "yes",
         role: "admin",
         image: null,
         createdAt: currentDate,
@@ -36,7 +34,6 @@ module.exports = {
         email: "mastertes@gmail.com",
         password:
           "$2b$10$sqC/Zt.TqB6Xv01IV6lu2Of8D.bVlje/3Dc9tUWFi06jp2wdxN4Em",
-        ver: "yes",
         role: "master",
         image: null,
         createdAt: currentDate,

@@ -7,7 +7,7 @@ const profileController = {
   getProfile: async (req, res) => {
     try {
       const profile = await user.findOne({
-        attributes: { exclude: ["password", "ver", "role"] },
+        attributes: { exclude: ["password", "role"] },
         where: {
           user_id: req.params.id,
         },
