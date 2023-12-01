@@ -23,7 +23,7 @@ function Verification() {
         }
         setDecodedToken(jwtDecode(param.token));
       } catch (err) {
-        toast(toastConfig("Error", "Failed", err.toString()));
+        toast(toastConfig("error", "Failed", err.toString()));
       }
     })();
   }, []);

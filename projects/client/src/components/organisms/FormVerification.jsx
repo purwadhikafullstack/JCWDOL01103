@@ -19,6 +19,7 @@ import { verification } from "../../api/auth";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginGoogle } from "../../store/slicer/authSlice";
+import { toastConfig } from "../../utils/toastConfig";
 
 function FormVerification({ decodedToken }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -52,14 +53,7 @@ function FormVerification({ decodedToken }) {
             password: values.password,
             confirmPassword: values.confirmPassword
         })
-        toast({
-          title: "Success",
-          description: "Verification Success",
-          status: "success",
-          position: "top-right",
-          duration: 2000,
-          isClosable: true,
-        });
+        toast(toastConfig("success", "Success","Verification Success"));
         setTimeout(() => {
           if (location.state && location.state.loginBy === "google") {
             dispatch(loginGoogle(location.state.token));
@@ -68,14 +62,7 @@ function FormVerification({ decodedToken }) {
           return navigate("/login");
         }, 2000);
       } catch (error) {
-        toast({
-          title: "Failed",
-          description: error.response.data.message,
-          status: "error",
-          position: "top-right",
-          duration: 3000,
-          isClosable: true,
-        });
+        toast(toastConfig("error", "Failed", error.response.data.message));
       }
     },
   });

@@ -79,7 +79,7 @@ function FormSignIn({ isLogin, onClickLogin, isLaptop }) {
           })
         );
       } catch (error) {
-        toast(toastConfig("Error", "Failed", error.response.data.message));
+        toast(toastConfig("error", "Failed", error.response.data.message));
       }
     },
   });

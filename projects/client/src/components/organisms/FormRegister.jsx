@@ -14,6 +14,7 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { register } from "../../api/auth";
+import { toastConfig } from "../../utils/toastConfig";
 
 function FormRegister({ isLogin, onClickRegister, isLaptop }) {
   const [regisSuccess, setRegisSuccess] = useState(false);
@@ -45,24 +46,10 @@ function FormRegister({ isLogin, onClickRegister, isLaptop }) {
       //   setIsLoading(true);
       try {
         await register({ email: values.emailRegis });
-        toast({
-          title: "Success",
-          description: `Registration Success`,
-          status: "success",
-          position: "top-right",
-          duration: 3000,
-          isClosable: true,
-        });
+        toast(toastConfig("success", "Success", "Registration Success"));
         setRegisSuccess(true);
       } catch (error) {
-        toast({
-          title: "Failed",
-          description: error.response.data.message,
-          status: "error",
-          position: "top-right",
-          duration: 3000,
-          isClosable: true,
-        });
+        toast(toastConfig("error", "Failed", error.response.data.message));
       }
       //   setIsLoading(false);
     },

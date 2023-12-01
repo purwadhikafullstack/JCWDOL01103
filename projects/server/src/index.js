@@ -5,6 +5,8 @@ const { join } = require("path")
 const db = require("./../models")
 
 const authRouter = require("../router/auth")
+const regionRouter = require("../router/region")
+const warehouseRouter = require("../router/warehouse")
 // const validateApi = require("../middlewares/apiValidatorMiddleware")
 
 const PORT = process.env.PORT || 8000
@@ -22,18 +24,20 @@ app.use(cors())
 
 app.use(express.json())
 app.use(authRouter)
+app.use(regionRouter)
+app.use(warehouseRouter)
 
 //#region API ROUTES
 
 // ===========================
 // NOTE : Add your routes here
 
-try {
-  db.sequelize.sync({ alter: true })
-  console.log("database connected")
-} catch (error) {
-  console.log(error)
-}
+// try {
+//   db.sequelize.sync({ alter: true })
+//   console.log("database connected")
+// } catch (error) {
+//   console.log(error)
+// }
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`)
