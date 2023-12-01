@@ -5,6 +5,7 @@ const { check } = require("express-validator");
 const queryValidation = require("../helpers/expressValidator");
 
 router.get("/warehouses/:id", warehouseController.getWarehouse);
+router.delete("/warehouses/:id", warehouseController.deleteWarehouse);
 router.get("/warehouses", warehouseController.getWarehouses);
 router.post(
   "/warehouses",

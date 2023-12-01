@@ -1,5 +1,5 @@
 const db = require("../models");
-const {Sequelize, Op} = require("sequelize") 
+const { Sequelize, Op } = require("sequelize");
 
 const getWarehouse = async (req, res) => {
   const { id } = req.params;
@@ -14,7 +14,7 @@ const getWarehouse = async (req, res) => {
         include: {
           model: db.Provinces,
           as: "province",
-        }
+        },
       },
     });
     return res.status(200).json({
@@ -50,7 +50,7 @@ const getWarehouses = async (req, res) => {
     };
   }
   if (query.sort) {
-    sortType.push(query.sort.split("_"))
+    sortType.push(query.sort.split("_"));
   }
   try {
     const { count, rows } = await db.Warehouses.findAndCountAll({
@@ -58,7 +58,7 @@ const getWarehouses = async (req, res) => {
       limit: pageSize,
       where: whereClause,
       attributes: {
-        exclude: ["city_id"]
+        exclude: ["city_id"],
       },
       order: sortType,
       include: {
@@ -66,12 +66,12 @@ const getWarehouses = async (req, res) => {
         as: "region",
         where: whereClauseProvince,
         attributes: {
-          exclude: ["province_id"]
+          exclude: ["province_id"],
         },
         include: {
           model: db.Provinces,
           as: "province",
-        }
+        },
       },
     });
     const totalPages = Math.ceil(count / pageSize);
@@ -85,9 +85,9 @@ const getWarehouses = async (req, res) => {
       totalWarehouse: count,
       totalPages: totalPages,
       currentPage: page,
-      warehouses: warehouseRow
+      warehouses: warehouseRow,
     };
-    if (!rows){
+    if (!rows) {
       return res.status(400).json({
         message: "Get Warehouse Failed",
         error: error.toString(),
@@ -103,7 +103,7 @@ const getWarehouses = async (req, res) => {
       error: error.toString(),
     });
   }
-}
+};
 
 const createWarehouse = async (req, res) => {
   const { name, city_id, street } = req.body;
@@ -127,11 +127,11 @@ const createWarehouse = async (req, res) => {
 
 const updateWarehouse = async (req, res) => {
   const params = req.params;
-  const data = req.body
+  const data = req.body;
   try {
     const warehouse = await db.Warehouses.findByPk(params.id);
-    if (!warehouse){
-      return res.status(500).json({
+    if (!warehouse) {
+      return res.status(400).json({
         message: "Warehouse not found",
         error: error.toString(),
       });
@@ -150,13 +150,34 @@ const updateWarehouse = async (req, res) => {
       error: error.toString(),
     });
   }
-}
+};
 
 const deleteWarehouse = async (req, res) => {
-  result = {
-    name: "Antony",
-    province: "Jawa Barat"
+  const params = req.params;
+  try {
+    const warehouse = await db.Warehouses.findByPk(params.id);
+    if (!warehouse) {
+      return res.status(400).json({
+        message: "Warehouse not found",
+        error: error.toString(),
+      });
+    }
+    await warehouse.destroy();
+    return res.status(200).json({
+      message: "Delete Warehouse Successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Delete warehouse failed",
+      error: error.toString(),
+    });
   }
-}
+};
 
-module.exports = { getWarehouse, createWarehouse, getWarehouses, updateWarehouse };
+module.exports = {
+  getWarehouse,
+  createWarehouse,
+  getWarehouses,
+  updateWarehouse,
+  deleteWarehouse,
+};

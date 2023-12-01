@@ -1,21 +1,24 @@
-import { Button, Flex, useToast } from "@chakra-ui/react";
+import { AlertDialog, Button, Flex, useToast } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import FilterBar from "../components/organisms/FilterBar";
 import TableWarehouse from "../components/molecules/TableWarehouse";
 import Pagination from "../components/molecules/Pagination";
 import ModalCreateWarehouse from "../components/organisms/ModalCreateWarehouse";
-import { getWarehouses } from "../api/warehouses";
+import { deleteWarehouse, getWarehouses } from "../api/warehouses";
 import { useDispatch } from "react-redux";
 import { setSelectedWarehouse } from "../store/slicer/formWarehouseSlice";
 import { toastConfig } from "../utils/toastConfig";
 import { getProvinces } from "../api/region";
+import AlertConfirmation from "../components/organisms/AlertConfirmation";
 
 const DashboardWarehouse = () => {
   // const [selectedData, setSelectedData] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [categories, setCategories] = useState();
   const [data, setData] = useState(null);
+  const [deleteDataId, setDeleteDataId] = useState(null);
   const dispatch = useDispatch();
   const toast = useToast();
   const [paramObj, setParamObj] = useState({
@@ -26,9 +29,9 @@ const DashboardWarehouse = () => {
   useEffect(() => {
     (async () => {
       const response = await getWarehouses(paramObj);
-      const result = await getProvinces()
+      const result = await getProvinces();
       setData(response.data);
-      setCategories(result.data)
+      setCategories(result.data);
     })();
   }, []);
 
@@ -54,6 +57,18 @@ const DashboardWarehouse = () => {
   async function onChangePageHandler(value) {
     await getWarehouseData({ page: value });
   }
+  const onClickDelete = async (id) => {
+    try {
+      const response = await deleteWarehouse(id);
+      toast(toastConfig("success", "Success", response.message));
+      setDeleteDataId(null);
+      setTimeout(()=>{
+        window.location.reload()
+      },1500)
+    } catch (error) {
+      toast(toastConfig("error", "Failed", error.response.data.message));
+    }
+  };
   return (
     <Flex
       h="full"
@@ -69,8 +84,8 @@ const DashboardWarehouse = () => {
           filterValue={(value) => setParamObj(value)}
           onSearchPressEnter={getWarehouseData}
           categories={categories}
-          categoriesName='province_name'
-          categoriesId='province_id'
+          categoriesName="province_name"
+          categoriesId="province_id"
         />
         <Button
           bg="primaryColor"
@@ -97,9 +112,11 @@ const DashboardWarehouse = () => {
             onClickEdit={(e) => {
               setOpenCreateModal(true);
             }}
-            onClickDelete={() => {
-              console.log("aa");
+            onClickDelete={(dt) => {
+              setDeleteDataId(dt.id);
+              setOpenDeleteDialog(true);
             }}
+            onClickConfirm={() => {}}
           />
         </Flex>
         <Pagination
@@ -115,6 +132,19 @@ const DashboardWarehouse = () => {
           // setSelectedData(null);
           dispatch(setSelectedWarehouse(null));
         }}
+      />
+      <AlertConfirmation
+        header="Are you sure ?"
+        description="This action will delete data permantently"
+        buttonConfirm="Delete"
+        buttonCancel="Cancel"
+        isOpen={openDeleteDialog}
+        onClose={() => {
+          setOpenDeleteDialog(false);
+          setDeleteDataId(null);
+        }}
+        onOpen={() => setOpenDeleteDialog(true)}
+        onClickConfirm={() => onClickDelete(deleteDataId)}
       />
     </Flex>
   );
