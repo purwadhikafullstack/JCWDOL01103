@@ -30,6 +30,14 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       street: DataTypes.STRING,
+      latitude: {
+        allowNull: false,
+        type: DataTypes.DECIMAL(10, 8),
+      },
+      longitude: {
+        allowNull: false,
+        type: DataTypes.DECIMAL(11, 8),
+      }
     },
     {
       sequelize,

@@ -108,18 +108,23 @@ const getWarehouses = async (req, res) => {
 const createWarehouse = async (req, res) => {
   const { name, city_id, street } = req.body;
   try {
+    let latitude = req.geometry.lat;
+    let longitude = req.geometry.lng;
     const result = await db.Warehouses.create({
       name: name,
       city_id: city_id,
       street: street,
+      latitude: latitude,
+      longitude: longitude
     });
     return res.status(200).json({
       message: "Create Warehouse Successfully",
       data: result,
     });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({
-      message: "Get Warehouse Failed",
+      message: "Create Warehouse Failed",
       error: error.toString(),
     });
   }

@@ -1,15 +1,10 @@
 import {
-  Box,
-  Button,
-  Flex,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Text,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { FormWarehouse } from "./FormWarehouse";

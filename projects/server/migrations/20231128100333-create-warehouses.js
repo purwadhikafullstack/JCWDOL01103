@@ -20,6 +20,14 @@ module.exports = {
       street: {
         type: Sequelize.STRING,
       },
+      latitude: {
+        allowNull: false,
+        type: Sequelize.DECIMAL(10, 8),
+      },
+      longitude: {
+        allowNull: false,
+        type: Sequelize.DECIMAL(11, 8),
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -29,7 +37,7 @@ module.exports = {
         type: Sequelize.DATE,
       },
       deletedAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE,
       },
     });

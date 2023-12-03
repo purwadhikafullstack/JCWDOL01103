@@ -20,6 +20,7 @@ import { createWarehouse, updateWarehouse } from "../../api/warehouses";
 import ButtonConfirmation from "./ButtonConfirmation";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export const FormWarehouse = () => {
   const [provinces, setProvinces] = useState(null);
@@ -42,7 +43,7 @@ export const FormWarehouse = () => {
       street: Yup.string(),
     }),
     onSubmit: () => {
-      onOpen()
+      onOpen();
     },
   });
   const onConfirmHandler = async () => {
@@ -52,23 +53,26 @@ export const FormWarehouse = () => {
         city_id: formik.values.city_id,
         street: formik.values.street,
       };
-      const response = data ? await updateWarehouse(data.id, query) : await createWarehouse(query);
-      console.log(response)
+      const response = data
+        ? await updateWarehouse(data.id, query)
+        : await createWarehouse(query);
+      console.log(response);
       toast(toastConfig("success", "Success", response.message));
-      setTimeout(()=>{
-        window.location.reload()
-      },2000)
+      setTimeout(() => {
+        // window.location.reload();
+        onClose()
+      }, 1000);
     } catch (error) {
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
-  }
+  };
   useEffect(() => {
     (async () => {
       const response = await getProvinces();
       setProvinces(response.data);
     })();
   }, []);
-  
+
   useEffect(() => {
     (async () => {
       if (provinces !== null && formik.values.province_id !== "") {

@@ -36,13 +36,13 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
     <Flex gap="4" w="full" flexWrap={{ base: "wrap", xl: "nowrap" }}>
       <InputGroup
         minW="fit-content"
-        maxW={{ base: "100%", sm: "30%" }}
+        maxW={{ base: "100%" }}
         bg="secondaryColor"
         borderRadius="lg"
       >
         <Input
           type="text"
-          placeholder="Search Product Name"
+          placeholder="Search Warehouse Name"
           focusBorderColor="primaryColor"
           onChange={(e) => setProductName(e.target.value)}
           value={productName}
@@ -81,7 +81,7 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
           value={category}
         >
           <option key="0" value="">
-            All
+            Filter by Province
           </option>
           {categoryData?.map((dt, idx) => {
             return (

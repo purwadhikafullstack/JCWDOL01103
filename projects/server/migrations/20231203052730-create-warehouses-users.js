@@ -2,11 +2,13 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Warehouses_Users', {
+    await queryInterface.createTable('warehouses_users', {
       warehouse_id: {
+        allowNull:false,
         type: Sequelize.INTEGER
       },
       user_id: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       createdAt: {
@@ -20,6 +22,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Warehouses_Users');
+    await queryInterface.dropTable('warehouses_users');
   }
 };

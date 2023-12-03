@@ -1,4 +1,10 @@
-import { AlertDialog, Button, Flex, useToast } from "@chakra-ui/react";
+import {
+  AlertDialog,
+  Button,
+  Flex,
+  useMediaQuery,
+  useToast,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import FilterBar from "../components/organisms/FilterBar";
 import TableWarehouse from "../components/molecules/TableWarehouse";
@@ -21,6 +27,7 @@ const DashboardWarehouse = () => {
   const [deleteDataId, setDeleteDataId] = useState(null);
   const dispatch = useDispatch();
   const toast = useToast();
+  const [isLaptop] = useMediaQuery("(min-width: 768px)");
   const [paramObj, setParamObj] = useState({
     name: "",
     province_id: "",
@@ -62,9 +69,9 @@ const DashboardWarehouse = () => {
       const response = await deleteWarehouse(id);
       toast(toastConfig("success", "Success", response.message));
       setDeleteDataId(null);
-      setTimeout(()=>{
-        window.location.reload()
-      },1500)
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
@@ -79,7 +86,14 @@ const DashboardWarehouse = () => {
       bg="gray.100"
       gap="5"
     >
-      <Flex h="fit-content" pt="10" rowGap="10">
+      <Flex
+        h="fit-content"
+        flexDir={isLaptop ? "row" : "column"}
+        pt="10"
+        rowGap="10"
+        columnGap="4"
+        justifyContent="center"
+      >
         <FilterBar
           filterValue={(value) => setParamObj(value)}
           onSearchPressEnter={getWarehouseData}
@@ -87,7 +101,10 @@ const DashboardWarehouse = () => {
           categoriesName="province_name"
           categoriesId="province_id"
         />
+
         <Button
+          alignSelf={isLaptop ? "unset" :"flex-end"}
+          maxW="fit-content"
           bg="primaryColor"
           color="secondaryColor"
           cursor="pointer"

@@ -1,4 +1,5 @@
 const db = require("../models");
+const {Op} = require("sequelize")
 
 const getProvince = async (req, res) => {
   const { id } = req.params;
@@ -36,20 +37,24 @@ const getProvinces = async (req, res) => {
 };
 
 const getCity = async (req, res) => {
-  const { id } = req.params;
+  const query = req.query;
+  const whereClause = { }
+  if (query.name) {
+    whereClause.city_name = {
+      [Op.like]: `%${query.name}%`,
+    };
+  }
   try {
-    const city = await db.Cities.findOne({
-      where: {
-        city_id: id,
-      },
+    const city = await db.Cities.findAll({
+      where: whereClause
     });
     return res.status(200).json({
-      message: "Get Province Successfully",
+      message: "Get City Successfully",
       data: city,
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Get Province Failed",
+      message: "Get City Failed",
       error: error.toString(),
     });
   }
