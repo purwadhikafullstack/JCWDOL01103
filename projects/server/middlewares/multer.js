@@ -25,7 +25,9 @@ const fileFilter = (req, file, cb) => {
 
   if (
     file.mimetype.split("/")[1].toLowerCase() !== "jpg" &&
-    file.mimetype.split("/")[1].toLowerCase() !== "jpeg"
+    file.mimetype.split("/")[1].toLowerCase() !== "jpeg" &&
+    file.mimetype.split("/")[1].toLowerCase() !== "webp" &&
+    file.mimetype.split("/")[1].toLowerCase() !== "png"
   ) {
     return cb(new Error("File Format not match"));
   }

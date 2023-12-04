@@ -2,11 +2,13 @@ require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
-const profileRouter = require("./../router/profileRouter");
 const db = require("./../models");
 const PORT = process.env.PORT || 8000;
 const path = require("path");
 const app = express();
+
+const profileRouter = require("./../router/profileRouter");
+const productRouter = require("./../router/productRouter");
 
 // app.use(
 //   cors({
@@ -16,6 +18,7 @@ const app = express();
 //     ],
 //   })
 // );
+
 app.use(cors());
 app.use("/uploads", express.static(path.join(__dirname, "..", "public")));
 app.use(express.json());
@@ -23,6 +26,7 @@ app.use(express.json());
 //#region API ROUTES
 
 app.use(profileRouter);
+app.use(productRouter);
 
 // ===========================
 // NOTE : Add your routes here
