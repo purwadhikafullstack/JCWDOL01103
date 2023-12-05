@@ -11,6 +11,11 @@ export const register = async (data) => {
   return response.data;
 };
 
+export const getUser = async (id) => {
+  const response = await server.get(`/users/${id}`, config)
+  return response.data;
+}
+
 export const verificationValidator = async (token) => {
   const response = await server.get(`/verification/${token}`)
   return response
@@ -35,3 +40,5 @@ export const verifyGoogleLogin = async (token) => {
   const response = await server.get(`/verification/google/${token}`)
   return response.data
 }
+
+

@@ -5,6 +5,7 @@ import Verification from "./pages/Verification";
 import NotFound from "./pages/NotFound";
 import Test from "./pages/Test";
 import DashboardWarehouse from "./pages/DashboardWarehouse";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -13,6 +14,8 @@ function App() {
       <Route path="/login" element={<Authentication/>}/>
       <Route path="/verification/:token" element={<Verification />} />
       <Route path="/dashboard/warehouse" element={<DashboardWarehouse/>}/>
+      <Route path="/test" element={<Test/>}/>
+      <Route path="/dashboard" element={<Dashboard/>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

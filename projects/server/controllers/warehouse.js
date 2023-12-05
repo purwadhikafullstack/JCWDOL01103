@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Sequelize, Op } = require("sequelize");
+const { Op } = require("sequelize");
 
 const getWarehouse = async (req, res) => {
   const { id } = req.params;
@@ -46,8 +46,11 @@ const getWarehouses = async (req, res) => {
   }
   if (query.name) {
     whereClause.name = {
-      [Op.like]: `%${query.name}%`,
+      [Op.like]: `%${query.name}%`
     };
+    // whereClauseProvince.city_name = {
+    //   [Op.like]: `%${query.name}%`
+    // };
   }
   if (query.sort) {
     sortType.push(query.sort.split("_"));
@@ -94,7 +97,7 @@ const getWarehouses = async (req, res) => {
       });
     }
     return res.status(200).json({
-      message: "Create Warehouse Successfully",
+      message: "Get Warehouse Successfully",
       data: result,
     });
   } catch (error) {

@@ -29,5 +29,6 @@ router.patch(
 );
 router.post("/login", authMiddlewares.validatorLogin, authControllers.login);
 router.post("/login/google/:googleToken", authMiddlewares.authGoogle, authControllers.login)
+router.get("/users/:id", authControllers.getUser)
 
 module.exports = router;

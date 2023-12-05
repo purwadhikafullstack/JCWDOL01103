@@ -1,6 +1,7 @@
 const db = require("./../models");
 const bcrypt = require("bcrypt");
 const transporter = require("../helpers/nodemailer");
+const jwt = require("jsonwebtoken");
 const { createToken, decodeToken } = require("../helpers/jwt");
 
 const register = async (req, res) => {
@@ -43,18 +44,18 @@ const register = async (req, res) => {
   }
 };
 
-const validatorVerification = async (req, res, next) => {
+const validatorVerification = async (req, res) => {
   const { token } = req.params;
   const user = decodeToken(token);
-  if (!user) {
-    return res.status(404).json({
-      message: "Invalid token",
+  if (!user.data) {
+    return res.status(200).json({
+      error: user,
       verified: false,
     });
   }
   const checkUser = await db.Users.findOne({
     where: {
-      email: user.email,
+      email: user.data.email,
       password: null,
     },
   });
@@ -111,7 +112,8 @@ const verification = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const token = createToken(req.userData);
+    const {id, email, role} = req.userData
+    const token = createToken({user_id:id, email, role});
     return res.status(200).json({
       status: 200,
       message: "Login Success",
@@ -126,9 +128,58 @@ const login = async (req, res) => {
   }
 };
 
+const getUser = async (req, res) => {
+  const {id} = req.params
+  try {
+    const user = await db.Users.findOne({
+      where: {
+        id: id,
+      },
+      attributes:['id','name','email','role']
+    });
+    return res.status(200).json({
+      status: 200,
+      message: "Get user success",
+      data: user,
+    });
+  } catch (e) {
+    return res.status(500).json({
+      status: 500,
+      message: "Login Failed",
+      error: e.toString(),
+    });
+  }
+}
+
+const authValidator = async (req, res) => {
+  const token = req.params.id
+  try {
+    const verify = jwt.verify(token, process.env.JWT_TOKEN, (err, decode) => {
+      if (err) {
+        return err;
+      }
+      return decode;
+    });
+    console.log(verify)
+    return res.status(200).json({
+      code: 403,
+      message: "Authorized",
+      data: verify
+    });
+  } catch (error) {
+    return res.status(403).json({
+      code: 403,
+      message: "Unauthorized",
+      error: err.toString(),
+    });
+  }
+};
+
 module.exports = {
   register,
   verification,
   login,
   validatorVerification,
+  getUser,
+  authValidator
 };

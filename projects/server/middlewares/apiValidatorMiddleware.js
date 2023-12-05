@@ -48,9 +48,7 @@ const validateApi = async (req, res, next) => {
     }
 
     if (userdb.isAdmin) {
-      const allowedAdminPages = [
-        "/dashboard",
-      ];
+      const allowedAdminPages = ["/dashboard"];
       if (
         req.path.startsWith("/dashboard/") ||
         allowedAdminPages.includes(req.path)
@@ -60,9 +58,7 @@ const validateApi = async (req, res, next) => {
     }
 
     if (!userdb.isAdmin) {
-      const allowedCashierPages = [
-        "/home"
-      ];
+      const allowedCashierPages = ["/home"];
       if (
         allowedCashierPages.includes(req.path) ||
         req.path.startsWith("/products/")

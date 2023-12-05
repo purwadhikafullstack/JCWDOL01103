@@ -93,7 +93,6 @@ function TableWarehouse({
                         _hover={{ bg: "gray.500", color: "white" }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          console.log(dt);
                           dispatch(setSelectedWarehouse(dt));
                           onClickEdit(e);
                         }}

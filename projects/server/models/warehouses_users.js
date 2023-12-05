@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Warehouses_Users.init(
     {
+      id: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
       warehouse_id: {
         type: DataTypes.INTEGER,
         allowNull: false,

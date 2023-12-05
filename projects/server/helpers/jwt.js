@@ -11,9 +11,12 @@ const createToken = (payload) => {
 const decodeToken = (payload) => {
     return jwt.verify(payload, tokenKey, (err, decode) => {
         if(err){
-            return null
+            return err
         }
-        return decode
+        return {
+            message:"success",
+            data: decode
+        }
     })
 }
 

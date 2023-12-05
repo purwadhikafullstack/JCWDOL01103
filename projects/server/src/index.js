@@ -7,6 +7,7 @@ const db = require("./../models")
 const authRouter = require("../router/auth")
 const regionRouter = require("../router/region")
 const warehouseRouter = require("../router/warehouse")
+const admWarehouseRouter = require("../router/adminWarehouse")
 // const validateApi = require("../middlewares/apiValidatorMiddleware")
 
 const PORT = process.env.PORT || 8000
@@ -26,6 +27,7 @@ app.use(express.json())
 app.use(authRouter)
 app.use(regionRouter)
 app.use(warehouseRouter)
+app.use(admWarehouseRouter)
 
 //#region API ROUTES
 
