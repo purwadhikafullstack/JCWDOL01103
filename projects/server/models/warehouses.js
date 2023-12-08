@@ -29,7 +29,10 @@ module.exports = (sequelize, DataTypes) => {
           key: "city_id",
         },
       },
-      street: DataTypes.STRING,
+      street: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       latitude: {
         allowNull: false,
         type: DataTypes.DECIMAL(10, 8),
@@ -37,14 +40,14 @@ module.exports = (sequelize, DataTypes) => {
       longitude: {
         allowNull: false,
         type: DataTypes.DECIMAL(11, 8),
-      }
+      },
     },
     {
       sequelize,
       modelName: "Warehouses",
       tableName: "warehouses",
       paranoid: true,
-      timestamps: true
+      timestamps: true,
     }
   );
   return Warehouses;

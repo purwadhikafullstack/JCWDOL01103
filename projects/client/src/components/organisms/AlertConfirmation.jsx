@@ -25,6 +25,7 @@ const AlertConfirmation = ({
       isOpen={isOpen}
       leastDestructiveRef={cancelRef}
       onClose={onClose}
+      isCentered
     >
       <AlertDialogOverlay>
         <AlertDialogContent>

@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "city_id",
         as: "warehouse",
       });
+      // Cities.hasMany(models.Addresses, {
+      //   foreignKey: "city_id",
+      //   as: "region",
+      // });
     }
   }
   Cities.init( {

@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const transporter = require("../helpers/nodemailer");
 const jwt = require("jsonwebtoken");
 const { createToken, decodeToken } = require("../helpers/jwt");
+const { encryptData, decryptData } = require("../helpers/encrypt");
 
 const register = async (req, res) => {
   try {
@@ -11,9 +12,9 @@ const register = async (req, res) => {
       email: email.toLowerCase(),
       role: 'user'
     });
-    let user_id = newUser.id;
+    let id = encryptData(newUser.id);
     let role = newUser.role
-    let token = createToken({ email, user_id, role });
+    let token = createToken({ email, id, role });
     let mail = {
       from: `Admin <xordyzen@gmail.com>`,
       to: `${email}`,
@@ -74,9 +75,12 @@ const validatorVerification = async (req, res) => {
 const verification = async (req, res) => {
   const { id, name, email, password } = req.body;
   try {
+    console.log(id)
+    const decryptedId = decryptData(id)
+    console.log(decryptedId)
     const user = await db.Users.findOne({
       where: {
-        id: id,
+        id: decryptedId,
         email: email,
         password: null,
       },
@@ -96,7 +100,7 @@ const verification = async (req, res) => {
       },
       {
         where: {
-          id: id,
+          id: decryptedId,
           email: email,
         },
       }
@@ -104,7 +108,7 @@ const verification = async (req, res) => {
     res.status(200).json({ message: "Verification success" });
   } catch (err) {
     return res.status(500).json({
-      message: "error",
+      message: err.toString(),
       err: err.toString(),
     });
   }
@@ -113,7 +117,8 @@ const verification = async (req, res) => {
 const login = async (req, res) => {
   try {
     const {id, email, role} = req.userData
-    const token = createToken({user_id:id, email, role});
+    const encryptedId = encryptData(id)
+    const token = createToken({id:encryptedId, email, role});
     return res.status(200).json({
       status: 200,
       message: "Login Success",
@@ -130,10 +135,11 @@ const login = async (req, res) => {
 
 const getUser = async (req, res) => {
   const {id} = req.params
+  const decryptedId = id
   try {
     const user = await db.Users.findOne({
       where: {
-        id: id,
+        id: decryptedId,
       },
       attributes:['id','name','email','role']
     });
@@ -160,7 +166,6 @@ const authValidator = async (req, res) => {
       }
       return decode;
     });
-    console.log(verify)
     return res.status(200).json({
       code: 403,
       message: "Authorized",

@@ -28,7 +28,7 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
 
   async function handleSearch(e) {
     if (e.key === "Enter") {
-      onSearchPressEnter();
+      onSearchPressEnter && onSearchPressEnter();
     }
   }
 

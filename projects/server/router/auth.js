@@ -17,18 +17,26 @@ router.patch(
     check("email").notEmpty(),
     check("name").notEmpty(),
     check("password").notEmpty(),
-    check("confirmPassword").notEmpty()
-    .custom((value,{req}) =>{
-        if(value !== req.body.password){
-            throw new Error('Password confirmation does not match with password')
+    check("confirmPassword")
+      .notEmpty()
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error("Password confirmation does not match with password");
         }
         return true;
-    })
+      }),
   ]),
   authControllers.verification
 );
 router.post("/login", authMiddlewares.validatorLogin, authControllers.login);
-router.post("/login/google/:googleToken", authMiddlewares.authGoogle, authControllers.login)
-router.get("/users/:id", authControllers.getUser)
+router.post(
+  "/login/google/:googleToken",
+  authMiddlewares.authGoogle,
+  authControllers.login
+);
+router.get("/users/:id", authControllers.getUser);
+// router.get("/users", (req, res) =>
+//   res.status(200).json({ message: "Connect" })
+// );
 
 module.exports = router;

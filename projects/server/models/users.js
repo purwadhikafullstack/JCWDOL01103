@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const { v4: uuidv4 } = require('uuid');
 module.exports = (sequelize, DataTypes) => {
   class Users extends Model {
     /**
@@ -7,22 +8,21 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    // static associate(models) {
-    //   // define association here
-    //   Users.belongsToMany(models.Warehouses, {
-    //     through: 'Warehouse_User',
-    //     foreignKey: 'warehouse_id',
-    //     otherKey: 'user_id',
-    //   });
-    // }
+    static associate(models) {
+      Users.hasMany(models.Addresses,{
+        foreignKey: 'user_id',
+        as: 'addresses'
+      })
+    }
   }
   Users.init(
     {
       id: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.UUID,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
+        defaultValue: DataTypes.UUIDV4,
       },
       name: DataTypes.STRING,
       email: {

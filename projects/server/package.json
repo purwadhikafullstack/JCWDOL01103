@@ -21,7 +21,8 @@
     "google-auth-library": "^9.2.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.3",
-    "nodemailer": "^6.9.7"
+    "nodemailer": "^6.9.7",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.19",

@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
 const { createToken } = require("../helpers/jwt");
 const verifyToken = require("../helpers/googleAuth");
+const { encryptData } = require("../helpers/encrypt");
 
 const validatorRegister = async (req, res, next) => {
   const email = req.body.email;
@@ -61,7 +62,7 @@ const authGoogle = async (req, res, next) => {
       return res.status(403).json({
         status: 403,
         message: "Failed",
-        error: "Invalid Token",
+        error: "Invalid Google Token",
       });
     }
     const user = await db.Users.findOne({
@@ -75,11 +76,11 @@ const authGoogle = async (req, res, next) => {
         email: userDecoded.email.toLowerCase(),
         role: 'user'
       });
-      let user_id = newUser.id;
+      let id = encryptData(newUser.id);
       let email = newUser.email;
       let name = newUser.name;
       let role = 'user'
-      const token = createToken({ user_id, email, name, role });
+      const token = createToken({ id, email, name, role });
       return res.status(200).json({
         status: 200,
         message: "Register & Login Success",
@@ -88,11 +89,11 @@ const authGoogle = async (req, res, next) => {
       });
     }
     if (user && !user.password) {
-      let user_id = user.id;
+      let id = encryptData(user.id);
       let email = user.email;
       let name = user.name;
       let role = 'user';
-      const token = createToken({ user_id, email, name, role });
+      const token = createToken({ id, email, name, role });
       return res.status(200).json({
         status: 200,
         message: "Login Success",
@@ -101,7 +102,7 @@ const authGoogle = async (req, res, next) => {
       });
     }
     req.userData = {
-      user_id: user.id,
+      id: user.id,
       name: user.name,
       email: user.email,
       role: user.role

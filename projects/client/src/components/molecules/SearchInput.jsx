@@ -12,7 +12,7 @@ export const SearchInput = ({ placeholder, onChangeInput, onPressEnter }) => {
 
   async function handleSearch(e) {
     if (e.key === "Enter") {
-        onPressEnter()
+        onPressEnter && onPressEnter()
     }
   }
   return (

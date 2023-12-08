@@ -5,7 +5,6 @@ const getGeoLocation = async (req, res, next) => {
   const { city_id } = req.body;
   try {
     const cities = await db.Cities.findOne({
-      // raw:true,
       where: {
         city_id: city_id,
       },

@@ -8,7 +8,8 @@ const authRouter = require("../router/auth")
 const regionRouter = require("../router/region")
 const warehouseRouter = require("../router/warehouse")
 const admWarehouseRouter = require("../router/adminWarehouse")
-// const validateApi = require("../middlewares/apiValidatorMiddleware")
+const addressRouter = require("../router/address")
+const apiValidator= require("../middlewares/apiValidatorMiddleware")
 
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -24,10 +25,12 @@ const app = express()
 app.use(cors())
 
 app.use(express.json())
+app.use(apiValidator.validateApi)
 app.use(authRouter)
 app.use(regionRouter)
 app.use(warehouseRouter)
 app.use(admWarehouseRouter)
+app.use(addressRouter)
 
 //#region API ROUTES
 

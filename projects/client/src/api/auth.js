@@ -12,7 +12,8 @@ export const register = async (data) => {
 };
 
 export const getUser = async (id) => {
-  const response = await server.get(`/users/${id}`, config)
+  const idEncoded = encodeURIComponent(id)
+  const response = await server.get(`/users/${idEncoded}`, config)
   return response.data;
 }
 

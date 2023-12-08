@@ -46,8 +46,9 @@ function FormVerification({ decodedToken }) {
     }),
     onSubmit: async (values) => {
       try {
+        console.log(decodedToken)
         await verification({
-            id: decodedToken.user_id,
+            id: decodedToken.id,
             email: decodedToken.email,
             name: values.name,
             password: values.password,

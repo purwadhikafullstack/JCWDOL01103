@@ -49,7 +49,7 @@ const Navbar = () => {
       try {
         if (authState) {
           const userDecoded = jwtDecode(userState);
-          const userDetails = await getUser(userDecoded.user_id);
+          const userDetails = await getUser(userDecoded.id);
           setUserInfo(userDetails.data);
         }
       } catch (error) {

@@ -44,7 +44,8 @@ function FormSignIn({ isLogin, onClickLogin, isLaptop }) {
     (async () => {
       try{
         if (googleToken) {
-          const response = await googleLogin(googleToken.toString());
+          const encodedToken = encodeURIComponent(googleToken)
+          const response = await googleLogin(encodedToken);
           if (response.data.is_verified === false) {
             return navigate(`/verification/${response.data.token}`,{state:{loginBy:'google', token:response.data.token}});
           }

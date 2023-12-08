@@ -9,7 +9,6 @@ const assignAdminWarehouse = async (req, res) => {
         role: "admin",
       },
     });
-    console.log(admin);
     if (!admin) {
       return res.status(400).json({
         message: "This account is not admin!",
@@ -25,7 +24,7 @@ const assignAdminWarehouse = async (req, res) => {
       },
     });
     if (!created) {
-      const result = await db.Warehouses_Users.update(
+      await db.Warehouses_Users.update(
         {
           warehouse_id: warehouse_id,
         },
