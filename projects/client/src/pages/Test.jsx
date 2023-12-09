@@ -13,7 +13,7 @@ function Test() {
   const navigate = useNavigate();
   const authState = useSelector((state) => state.login.isAuthorized);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [openSelectWarehouse, setOpenSelectWarehouse] = useState(false)
+  const [openSelectWarehouse, setOpenSelectWarehouse] = useState(false);
   // const token = useSelector((state)=> state.login.user)
   // const user = jwtDecode(token)
   useEffect(() => {
@@ -36,8 +36,14 @@ function Test() {
     <>
       <h1>Test Page</h1>
       {/* <Button onClick={onClickLogout}>Logout</Button> */}
-      <Button colorScheme="blue" onClick={()=>setOpenSelectWarehouse(true)}>Edit Warehouse</Button>
-      <ModalSelectWarehouse isOpen={openSelectWarehouse} onClose={()=>setOpenSelectWarehouse(false)} onClickRow={(val)=> console.log(val)}/>
+      <Button colorScheme="blue" onClick={() => setOpenSelectWarehouse(true)}>
+        Edit Warehouse
+      </Button>
+      <ModalSelectWarehouse
+        isOpen={openSelectWarehouse}
+        onClose={() => setOpenSelectWarehouse(false)}
+        onClickRow={(val) => console.log(val)}
+      />
     </>
   );
 }
