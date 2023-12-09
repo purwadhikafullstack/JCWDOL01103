@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { HiOutlinePencil, HiOutlineTrash } from "react-icons/hi";
-import { changeAddress, getAddresses } from "../api/userAddress";
+import { changeAddress, deleteAddress, getAddresses } from "../api/userAddress";
 import { SearchInput } from "../components/molecules/SearchInput";
 import { BsPinAngle, BsThreeDots } from "react-icons/bs";
 import AlertConfirmation from "../components/organisms/AlertConfirmation";
@@ -28,17 +28,29 @@ const UserAddress = () => {
   const [isLaptop] = useMediaQuery("(min-width: 768px)");
   const [data, setData] = useState(null);
   const [openAlert, setOpenAlert] = useState(false);
+  const [openAlertDelete, setOpenAlertDelete] = useState(false);
   const [openModalForm, setOpenModalForm] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [filterInput, setFilterInput] = useState("");
   const toast = useToast();
 
-  const handleChangeAddress = async () => {
+  const handleChangeAddress = async (actionType) => {
     try {
-      const response = await changeAddress({ id: selectedAddress.id });
-      toast(toastConfig("success", "Success", response.data.message));
+      const response =
+        actionType === "delete"
+          ? await deleteAddress(selectedAddress.id)
+          : await changeAddress({ id: selectedAddress.id });
+      toast(
+        toastConfig(
+          "success",
+          "Success",
+          actionType === "delete" ? response.message : response.data.message
+        )
+      );
       setOpenAlert(false);
+      setOpenAlertDelete(false);
       fetchAddress();
+      setSelectedAddress(null);
     } catch (error) {
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
@@ -67,14 +79,23 @@ const UserAddress = () => {
       bg="gray.100"
       gap="3"
     >
-      <HStack w='full' justify='space-between'>
-        <Heading as="h4" size='md'>Addrest List</Heading>
-        <Button bg='primaryColor' size='sm' color="white"><BiPlus/> Add address</Button>
+      <HStack w="full" justify="space-between">
+        <Heading as="h4" size="md">
+          Addrest List
+        </Heading>
+        <Button
+          bg="primaryColor"
+          size="sm"
+          color="white"
+          onClick={() => setOpenModalForm(true)}
+        >
+          <BiPlus /> Add address
+        </Button>
       </HStack>
-        <SearchInput
-          placeholder="Search here"
-          onChangeInput={(val) => setFilterInput(val)}
-        />
+      <SearchInput
+        placeholder="Search here"
+        onChangeInput={(val) => setFilterInput(val)}
+      />
       <VStack w="full" gap="4">
         {data?.map((dt) => {
           return (
@@ -119,7 +140,13 @@ const UserAddress = () => {
                 </Text>
               </Box>
               <Flex gap="3" justifyContent="flex-end">
-                <IconButton icon={<HiOutlinePencil />} />
+                <IconButton
+                  icon={<HiOutlinePencil />}
+                  onClick={() => {
+                    setSelectedAddress(dt);
+                    setOpenModalForm(true);
+                  }}
+                />
                 {!dt.is_primary && (
                   <Menu>
                     <MenuButton
@@ -128,7 +155,15 @@ const UserAddress = () => {
                       icon={<BsThreeDots />}
                     />
                     <MenuList>
-                      <MenuItem icon={<HiOutlineTrash />}>Delete</MenuItem>
+                      <MenuItem
+                        icon={<HiOutlineTrash />}
+                        onClick={() => {
+                          setOpenAlertDelete(true);
+                          setSelectedAddress(dt);
+                        }}
+                      >
+                        Delete
+                      </MenuItem>
                       <MenuItem
                         icon={<BsPinAngle />}
                         onClick={() => {
@@ -149,14 +184,27 @@ const UserAddress = () => {
       <AlertConfirmation
         isOpen={openAlert}
         onClose={() => setOpenAlert(false)}
-        onOpen={() => setOpenAlert(true)}
         header="Do you want to change it ?"
         description="This action will change main address and you can change it again if you want"
         buttonConfirm="Yes"
         buttonCancel="Cancel"
         onClickConfirm={() => handleChangeAddress()}
       />
-      {/* <ModalFormAddress isOpen={openModalForm} onClose={()=>setOpenModalForm(false)}/> */}
+      <AlertConfirmation
+        isOpen={openAlertDelete}
+        onClose={() => setOpenAlertDelete(false)}
+        header="Do you want to delete it ?"
+        description="This action will delete this address permanently. You cannot undo this action."
+        buttonConfirm="Delete"
+        buttonCancel="Cancel"
+        onClickConfirm={() => handleChangeAddress("delete")}
+      />
+      <ModalFormAddress
+        data={selectedAddress}
+        isOpen={openModalForm}
+        onClose={() => setOpenModalForm(false)}
+        onCloseComplete={fetchAddress}
+      />
     </Flex>
   );
 };

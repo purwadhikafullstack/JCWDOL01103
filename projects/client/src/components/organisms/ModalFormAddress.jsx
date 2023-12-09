@@ -15,7 +15,6 @@ import {
   Select,
   Textarea,
   Button,
-  useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
@@ -24,8 +23,8 @@ import { toastConfig } from "../../utils/toastConfig";
 import { getCities, getProvinces } from "../../api/region";
 import ButtonConfirmation from "./ButtonConfirmation";
 import { createAddress, updateAddress } from "../../api/userAddress";
-function ModalFormAddress({ data, ...config }) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
+  const [openAlert, setOpenAlert] = useState(false);
   const [provinces, setProvinces] = useState(null);
   const [cities, setCities] = useState(null);
   const toast = useToast();
@@ -42,7 +41,7 @@ function ModalFormAddress({ data, ...config }) {
       street: Yup.string().required("Required"),
     }),
     onSubmit: () => {
-      onOpen();
+      setOpenAlert(true);
     },
   });
   const onConfirmHandler = async () => {
@@ -56,9 +55,9 @@ function ModalFormAddress({ data, ...config }) {
         ? await updateAddress(data.id, query)
         : await createAddress(query);
       toast(toastConfig("success", "Success", response.message));
-      setTimeout(() => {
-        onClose();
-      }, 1000);
+      setOpenAlert(false);
+      formik.resetForm();
+      onClose();
     } catch (error) {
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
@@ -81,7 +80,7 @@ function ModalFormAddress({ data, ...config }) {
 
   useEffect(() => {
     async function fetchData() {
-      if (data && !formik.dirty) {
+      if (data) {
         const response = await getCities(data.region.province.province_id);
         setCities(response.data);
         formik.setValues({
@@ -93,9 +92,16 @@ function ModalFormAddress({ data, ...config }) {
       }
     }
     fetchData();
-  }, [data, formik.dirty]);
+  }, [data]);
   return (
-    <Modal {...config}>
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {
+        formik.resetForm();
+        onClose();
+      }}
+      onCloseComplete={onCloseComplete}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Create new address</ModalHeader>
@@ -112,9 +118,9 @@ function ModalFormAddress({ data, ...config }) {
                 <FormControl
                   isInvalid={formik.errors.name && formik.touched.name}
                 >
-                  <FormLabel>Address name</FormLabel>
+                  <FormLabel htmlFor="name">Address name</FormLabel>
                   <Input
-                    placeholder="Input warehouse name"
+                    placeholder="Input address name"
                     id="name"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
@@ -128,7 +134,7 @@ function ModalFormAddress({ data, ...config }) {
                   formik.errors.province_id && formik.touched.province_id
                 }
               >
-                <FormLabel>Product Category</FormLabel>
+                <FormLabel htmlFor="province_id">Product Category</FormLabel>
                 <Select
                   id="province_id"
                   placeholder="Select option"
@@ -149,7 +155,7 @@ function ModalFormAddress({ data, ...config }) {
               <FormControl
                 isInvalid={formik.errors.city_id && formik.touched.city_id}
               >
-                <FormLabel>Product Category</FormLabel>
+                <FormLabel htmlFor="city_id">Product Category</FormLabel>
                 <Select
                   id="city_id"
                   placeholder="Select option"
@@ -171,7 +177,7 @@ function ModalFormAddress({ data, ...config }) {
                 <FormControl
                   isInvalid={formik.errors.street && formik.touched.street}
                 >
-                  <FormLabel>Address</FormLabel>
+                  <FormLabel htmlFor="street">Address</FormLabel>
                   <Textarea
                     size="md"
                     resize="none"
@@ -193,11 +199,11 @@ function ModalFormAddress({ data, ...config }) {
                   buttonConfirm="Yes"
                   buttonDiscard="No"
                   title="Are you sure ?"
-                  desc="This action will be creating a new data of warehouse"
+                  desc="This action will be creating or updating a new data of address"
                   onClickConfirm={onConfirmHandler}
                   onClick={formik.handleSubmit}
-                  isOpen={isOpen}
-                  onClose={onClose}
+                  isOpen={openAlert}
+                  onClose={() => setOpenAlert(false)}
                 >
                   {data ? "Update" : "Create"}
                 </ButtonConfirmation>
@@ -205,6 +211,7 @@ function ModalFormAddress({ data, ...config }) {
                   bg="primaryColor"
                   color="secondaryColor"
                   cursor="pointer"
+                  onClick={onClose}
                 >
                   Cancel
                 </Button>

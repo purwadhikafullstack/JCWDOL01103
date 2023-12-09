@@ -75,9 +75,7 @@ const validatorVerification = async (req, res) => {
 const verification = async (req, res) => {
   const { id, name, email, password } = req.body;
   try {
-    console.log(id)
     const decryptedId = decryptData(id)
-    console.log(decryptedId)
     const user = await db.Users.findOne({
       where: {
         id: decryptedId,

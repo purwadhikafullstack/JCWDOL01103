@@ -23,11 +23,11 @@ function ButtonConfirmation({
   isOpen,
   onOpen,
   onClose,
+  onCloseComplete
 }) {
   const cancelRef = React.useRef();
   const onClickHandler = () => {
     const result = onClick()
-    console.log(result)
     result && onClose()
   }
   return (

@@ -11,7 +11,6 @@ router.post(
   "/addresses",
   checkRole(["user"]),
   queryValidation([
-    check("user_id").notEmpty(),
     check("city_id").notEmpty(),
     check("name").notEmpty(),
     check("street").notEmpty(),
@@ -39,4 +38,5 @@ router.post(
   ]),
   addressController.setPrimaryAddress
 );
+router.delete("/addresses/:id", addressController.deleteAddress);
 module.exports = router;

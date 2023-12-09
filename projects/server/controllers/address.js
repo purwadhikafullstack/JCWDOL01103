@@ -3,9 +3,10 @@ const { encryptData, decryptData } = require("../helpers/encrypt");
 const { Op } = require("sequelize");
 
 const createAddress = async (req, res) => {
-  const { user_id, city_id, name, street } = req.body;
+  const { city_id, name, street } = req.body;
   let latitude = req.geometry.lat;
   let longitude = req.geometry.lng;
+  const user_id = req.user.id
   try {
     const address = await db.Addresses.findOne({
       where:{user_id : user_id}
@@ -73,7 +74,7 @@ const getAddresses = async (req, res) => {
       },
       order: [
         ['is_primary', 'DESC'],
-        ['updatedAt', 'ASC'],
+        ['updatedAt', 'DESC'],
       ],
     });
 
@@ -127,21 +128,22 @@ const getAddress = async (req, res) => {
 const updateAddress = async (req, res) => {
   const { id } = req.params;
   const { city_id, name, street } = req.body;
+  const decryptedId = decryptData(id)
   try {
-    const address = await db.Addresses.findByPK({ id });
+    const address = await db.Addresses.findByPk(decryptedId);
     if (!address) {
       return res.status(400).json({
         message: "Address not found",
         error: error.toString(),
       });
     }
-    await warehouse.update({
+    await address.update({
       city_id: city_id,
       name: name,
       street: street,
     });
     return res.status(200).json({
-      message: "Update Warehouse Successfully",
+      message: "Update Address Successfully",
     });
   } catch (error) {
     return res.status(500).json({
@@ -152,9 +154,10 @@ const updateAddress = async (req, res) => {
 };
 
 const deleteAddress = async (req, res) => {
-  const params = req.params;
+  const {id} = req.params;
+  let decryptedId = decryptData(id);
   try {
-    const address = await db.Addresses.findByPk(params.id);
+    const address = await db.Addresses.findByPk(decryptedId);
     if (!address) {
       return res.status(400).json({
         message: "Address not found",
@@ -179,7 +182,8 @@ const setPrimaryAddress = async(req, res) => {
     let decryptedId = decryptData(id);
     await db.Addresses.update({is_primary: false},{
       where: {
-        user_id: req.user.id
+        user_id: req.user.id,
+        is_primary: true
       }
     })
     await db.Addresses.update({is_primary: true},{

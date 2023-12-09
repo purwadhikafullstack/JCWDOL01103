@@ -18,7 +18,14 @@ export const createAddress = async (data) => {
   return response.data;
 };
 
-export const updateAddress = async (data, id) => {
-  const response = await server.post(`/addresses/${id}`, data, config);
+export const updateAddress = async (id, data) => {
+  const idEncoded = encodeURIComponent(id);
+  const response = await server.patch(`/addresses/${idEncoded}`, data, config);
   return response.data;
 };
+
+export const deleteAddress = async (id) => {
+    const idEncoded = encodeURIComponent(id);
+    const response = await server.delete(`/addresses/${idEncoded}`)
+    return response.data;
+}
