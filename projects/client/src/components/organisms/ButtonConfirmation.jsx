@@ -21,9 +21,7 @@ function ButtonConfirmation({
   onClick,
   children,
   isOpen,
-  onOpen,
   onClose,
-  onCloseComplete
 }) {
   const cancelRef = React.useRef();
   const onClickHandler = () => {

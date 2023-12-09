@@ -31,43 +31,49 @@ const getWarehouse = async (req, res) => {
 
 const getWarehouses = async (req, res) => {
   const query = req.query;
-  const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 10;
+  const page = parseInt(query.page) || 1;
+  const pageSize = parseInt(query.pageSize) || 10;
   const offset = (page - 1) * pageSize;
 
   let whereClause = {};
-  let whereClauseProvince = {};
-  let sortType = [];
-  if (query.delete_status) {
-    whereClause.delete_status = query.delete_status;
+  let whereClause2 = {};
+  let sortType = [["updatedAt","DESC"]]
+  if(query.province_id){
+    whereClause2["$region.province.province_id$"] = query.province_id
   }
-  if (query.province_id) {
-    whereClauseProvince.province_id = query.province_id;
-  }
-  if (query.name) {
-    whereClause.name = {
-      [Op.like]: `%${query.name}%`
+  if (query.search) {
+    whereClause = {
+      [Op.or]: [
+        {
+          name: {
+            [Op.like]: `%${query.search}%`,
+          },
+        },
+        {
+          "$region.city_name$": {
+            [Op.like]: `%${query.search}%`,
+          },
+        },
+      ],
     };
-    // whereClauseProvince.city_name = {
-    //   [Op.like]: `%${query.name}%`
-    // };
   }
+  
   if (query.sort) {
-    sortType.push(query.sort.split("_"));
+    const filter = query.sort.split("_")
+    sortType[0] = filter 
   }
   try {
     const { count, rows } = await db.Warehouses.findAndCountAll({
       offset: (page - 1) * pageSize,
       limit: pageSize,
-      where: whereClause,
+      order: sortType,
+      where: {[Op.and]: [whereClause2, whereClause]},
       attributes: {
         exclude: ["city_id"],
       },
-      order: sortType,
       include: {
         model: db.Cities,
         as: "region",
-        where: whereClauseProvince,
         attributes: {
           exclude: ["province_id"],
         },

@@ -2,20 +2,6 @@ const jwt = require("jsonwebtoken");
 const db = require("../models");
 const { decryptData } = require("../helpers/encrypt");
 
-// let privilage = {
-//   guest: ["/login", "/register", "/verification"],
-//   user: [ "/verification", "/users", "/addresses", "/cities", "/provinces", "/warehouses"],
-//   admin: ["/verification", "/users", "/addresses", "/cities", "/provinces", "/warehouses"],
-//   super: [
-//     "/verification",
-//     "/users",
-//     "/addresses",
-//     "/cities",
-//     "/provinces",
-//     "/warehouses",
-//     "/admin-warehouse",
-//   ],
-// };
 const validateApi = (req, res, next) => {
   const { authorization } = req.headers;
   if(!authorization){

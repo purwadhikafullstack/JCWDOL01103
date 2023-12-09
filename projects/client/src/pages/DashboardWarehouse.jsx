@@ -29,17 +29,17 @@ const DashboardWarehouse = () => {
   const toast = useToast();
   const [isLaptop] = useMediaQuery("(min-width: 768px)");
   const [paramObj, setParamObj] = useState({
-    name: "",
-    province_id: "",
-    sort: "name_ASC",
+    search: "",
+    sort: "",
   });
+  const fetchData = async() => {
+    const response = await getWarehouses(paramObj);
+    const result = await getProvinces();
+    setData(response.data);
+    setCategories(result.data);
+  }
   useEffect(() => {
-    (async () => {
-      const response = await getWarehouses(paramObj);
-      const result = await getProvinces();
-      setData(response.data);
-      setCategories(result.data);
-    })();
+    fetchData()
   }, []);
 
   const getWarehouseData = async (param = {}) => {
@@ -69,9 +69,8 @@ const DashboardWarehouse = () => {
       const response = await deleteWarehouse(id);
       toast(toastConfig("success", "Success", response.message));
       setDeleteDataId(null);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      setOpenDeleteDialog(false);
+      fetchData();
     } catch (error) {
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
@@ -100,6 +99,7 @@ const DashboardWarehouse = () => {
           categories={categories}
           categoriesName="province_name"
           categoriesId="province_id"
+          defaultCategories="Filter by Province"
         />
 
         <Button
@@ -146,9 +146,9 @@ const DashboardWarehouse = () => {
         isOpen={openCreateModal}
         onClose={() => {
           setOpenCreateModal(false);
-          // setSelectedData(null);
           dispatch(setSelectedWarehouse(null));
         }}
+        onCloseComplete={fetchData}
       />
       <AlertConfirmation
         header="Are you sure ?"

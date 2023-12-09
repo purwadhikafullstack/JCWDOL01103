@@ -8,10 +8,10 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { FiSearch, FiX } from "react-icons/fi";
-const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, categoriesName }) => {
+const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, categoriesName, defaultCategories }) => {
   const [category, setCategory] = useState("");
-  const [productName, setProductName] = useState("");
-  const [sortValue, setSortValue] = useState("name_ASC");
+  const [searchInput, setSearchInput] = useState("");
+  const [sortValue, setSortValue] = useState("");
   const [categoryData, setCategoryData] = useState([]);
 
   useEffect(() => {
@@ -20,11 +20,11 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
 
   useEffect(() => {
     filterValue({
-      name: productName,
+      search: searchInput,
       [categoriesId]: category,
       sort: sortValue,
     });
-  }, [category, sortValue, productName]);
+  }, [category, sortValue, searchInput]);
 
   async function handleSearch(e) {
     if (e.key === "Enter") {
@@ -44,12 +44,12 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
           type="text"
           placeholder="Search Warehouse Name"
           focusBorderColor="primaryColor"
-          onChange={(e) => setProductName(e.target.value)}
-          value={productName}
+          onChange={(e) => setSearchInput(e.target.value)}
+          value={searchInput}
           onKeyDown={handleSearch}
         />
         <InputRightElement width="fit-content">
-          {productName === "" ? (
+          {searchInput === "" ? (
             <Button
               h="100%"
               w="fit-content"
@@ -65,7 +65,7 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
               w="fit-content"
               bg="transparent"
               _hover={{ bg: "transparent", color: "negativeColor" }}
-              onClick={() => setProductName("")}
+              onClick={() => setSearchInput("")}
             >
               <FiX />
             </Button>
@@ -81,7 +81,7 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
           value={category}
         >
           <option key="0" value="">
-            Filter by Province
+            {defaultCategories}
           </option>
           {categoryData?.map((dt, idx) => {
             return (
@@ -98,6 +98,7 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
           onChange={(e) => setSortValue(e.target.value)}
           value={sortValue}
         >
+          <option value="">Sort</option>
           <option value="name_ASC">Name (A-Z)</option>
           <option value="name_DESC">Name (Z-A)</option>
         </Select>

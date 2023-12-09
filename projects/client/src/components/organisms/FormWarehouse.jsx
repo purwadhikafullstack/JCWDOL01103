@@ -19,10 +19,8 @@ import { getCities, getProvinces } from "../../api/region";
 import { createWarehouse, updateWarehouse } from "../../api/warehouses";
 import ButtonConfirmation from "./ButtonConfirmation";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
-export const FormWarehouse = () => {
+export const FormWarehouse = ({onCloseComplete, onClickCancel}) => {
   const [provinces, setProvinces] = useState(null);
   const [cities, setCities] = useState(null);
   const toast = useToast();
@@ -56,12 +54,9 @@ export const FormWarehouse = () => {
       const response = data
         ? await updateWarehouse(data.id, query)
         : await createWarehouse(query);
-      console.log(response);
       toast(toastConfig("success", "Success", response.message));
-      setTimeout(() => {
-        // window.location.reload();
-        onClose()
-      }, 1000);
+      onClose()
+      onCloseComplete("success")
     } catch (error) {
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
@@ -102,7 +97,7 @@ export const FormWarehouse = () => {
       <Flex w="full" flexDir="column" rowGap="1rem" justifyContent="center">
         <VStack alignItems="flex-start">
           <FormControl isInvalid={formik.errors.name && formik.touched.name}>
-            <FormLabel>Warehouse Name</FormLabel>
+            <FormLabel htmlFor="name">Warehouse Name</FormLabel>
             <Input
               placeholder="Input warehouse name"
               id="name"
@@ -116,7 +111,7 @@ export const FormWarehouse = () => {
         <FormControl
           isInvalid={formik.errors.province_id && formik.touched.province_id}
         >
-          <FormLabel>Product Category</FormLabel>
+          <FormLabel htmlFor="province_id">Product Category</FormLabel>
           <Select
             id="province_id"
             placeholder="Select option"
@@ -137,7 +132,7 @@ export const FormWarehouse = () => {
         <FormControl
           isInvalid={formik.errors.city_id && formik.touched.city_id}
         >
-          <FormLabel>Product Category</FormLabel>
+          <FormLabel htmlFor="city_id">Product Category</FormLabel>
           <Select
             id="city_id"
             placeholder="Select option"
@@ -159,7 +154,7 @@ export const FormWarehouse = () => {
           <FormControl
             isInvalid={formik.errors.street && formik.touched.street}
           >
-            <FormLabel>Address</FormLabel>
+            <FormLabel htmlFor="street">Address</FormLabel>
             <Textarea
               size="md"
               resize="none"
@@ -186,10 +181,11 @@ export const FormWarehouse = () => {
             onClick={formik.handleSubmit}
             isOpen={isOpen}
             onClose={onClose}
+            onCloseComplete={onCloseComplete}
           >
             {data ? "Update" : "Create"}
           </ButtonConfirmation>
-          <Button bg="primaryColor" color="secondaryColor" cursor="pointer">
+          <Button bg="primaryColor" color="secondaryColor" cursor="pointer" onClick={onClickCancel}>
             Cancel
           </Button>
         </Flex>

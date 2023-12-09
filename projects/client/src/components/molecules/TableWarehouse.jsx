@@ -36,7 +36,6 @@ function TableWarehouse({
         <Thead position="sticky" top="0" bg="white" zIndex="3">
           <Tr>
             <Th>No</Th>
-            <Th>Id</Th>
             <Th>Warehouse Name</Th>
             <Th>Province</Th>
             <Th>City</Th>
@@ -77,7 +76,6 @@ function TableWarehouse({
                   <Td borderTopLeftRadius="lg" borderBottomLeftRadius="lg">
                     {dt.indexNumber}
                   </Td>
-                  <Td fontWeight="semibold">{dt.id}</Td>
                   <Td fontWeight="semibold">{dt.name}</Td>
                   <Td>{dt.region.province.province_name}</Td>
                   <Td>{dt.region.city_name}</Td>

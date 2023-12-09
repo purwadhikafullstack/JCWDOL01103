@@ -3,7 +3,7 @@ import { config, server } from "./index";
 export const getWarehouses = async (params) => {
   const response = await server.get("/warehouses", {
     params: params,
-    //   headers: config.headers,
+      headers: config.headers,
   });
   return response.data;
 };
