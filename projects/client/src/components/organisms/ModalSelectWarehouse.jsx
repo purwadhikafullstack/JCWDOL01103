@@ -55,7 +55,7 @@ export const ModalSelectWarehouse = ({ isOpen, onOpen, onClose, onClickRow}) => 
                   borderRadius="md"
                   py="2"
                   px="4"
-                  onClick={()=>onClickRow(dt.id)}
+                  onClick={()=>onClickRow(dt)}
                 >
                   <Text fontWeight="semibold">{dt.name}</Text>
                   <Text>

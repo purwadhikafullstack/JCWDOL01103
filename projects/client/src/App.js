@@ -7,6 +7,7 @@ import Test from "./pages/Test";
 import DashboardWarehouse from "./pages/DashboardWarehouse";
 import Dashboard from "./pages/Dashboard";
 import UserAddress from "./pages/UserAddress";
+import Journal from "./pages/Journal";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Route path="/test" element={<Test/>}/>
       <Route path="/dashboard" element={<Dashboard/>} />
       <Route path="/user-address" element={<UserAddress/>}/>
+      <Route path="/journal" element={<Journal/>}/>
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
