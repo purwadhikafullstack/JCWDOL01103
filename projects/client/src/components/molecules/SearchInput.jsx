@@ -2,7 +2,7 @@ import { Button, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { FiSearch, FiX } from "react-icons/fi";
 
-export const SearchInput = ({ placeholder, onChangeInput, onPressEnter }) => {
+export const SearchInput = ({ placeholder, onChangeInput, onPressEnter, onClickCross }) => {
   const [filterInput, setFilterInput] = useState("");
   useEffect(() => {
     (() => {
@@ -10,11 +10,17 @@ export const SearchInput = ({ placeholder, onChangeInput, onPressEnter }) => {
     })();
   }, [filterInput]);
 
-  async function handleSearch(e) {
+  function handleSearch(e) {
     if (e.key === "Enter") {
         onPressEnter && onPressEnter()
     }
   }
+
+  function handleXButton(){
+    setFilterInput("")
+    onClickCross && onClickCross()
+  }
+
   return (
     <InputGroup
       minW="fit-content"
@@ -47,7 +53,7 @@ export const SearchInput = ({ placeholder, onChangeInput, onPressEnter }) => {
             w="fit-content"
             bg="transparent"
             _hover={{ bg: "transparent", color: "negativeColor" }}
-            onClick={() => setFilterInput("")}
+            onClick={handleXButton}
           >
             <FiX />
           </Button>

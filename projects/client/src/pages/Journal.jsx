@@ -9,7 +9,6 @@ import {
   HStack,
   Heading,
   IconButton,
-  Input,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -23,25 +22,23 @@ import {
   Th,
   Thead,
   Tr,
-  VStack,
+  useToast,
 } from "@chakra-ui/react";
+import ReactSelect from "react-select";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ModalSelectWarehouse } from "../components/organisms/ModalSelectWarehouse";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { getProducts } from "../api/stock";
+import { toastConfig } from "../utils/toastConfig";
 
 const Journal = () => {
   const [openAlert, setOpenAlert] = useState(false);
   const [warehouse, setWarehouse] = useState(null);
   const [openModalWarehouse, setOpenModalWarehouse] = useState(false);
-
-  //   useEffect(() => {
-  //     (async () => {
-  //       try {
-  //         const response = await getWarehouses();
-  //       } catch (error) {}
-  //     })();
-  //   }, []);
+  const [products, setProducts] = useState([]);
+  const [updatedOpt, setUpdatedOpt] = useState([]);
+  const toast = useToast();
   const formik = useFormik({
     initialValues: {
       warehouse_id: "",
@@ -72,9 +69,52 @@ const Journal = () => {
     }),
     onSubmit: () => {
       setOpenAlert(true);
-      console.log(formik.values)
     },
   });
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await getProducts();
+        const options = response.data.map((dt) => {
+          return {
+            ...dt,
+            value: dt.id,
+            label: dt.product_name,
+          };
+        });
+        setProducts(options);
+        setUpdatedOpt(options);
+      } catch (error) {
+        toast(toastConfig("error", "Failed", error.message));
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    const updatedOptions = products?.map((dt) => {
+      return {
+        ...dt,
+        isDisabled: formik.values.listedProduct.some(
+          (selectedOption) => selectedOption.product_id.value == dt.value
+        ),
+      };
+    });
+    setUpdatedOpt([...updatedOptions]);
+  }, [formik.values.listedProduct]);
+  const onChangeProductHandler = async (opt, idx) => {
+    try {
+      formik.setFieldValue(`listedProduct[${idx}].product_id`, opt);
+      const query = {
+        warehouse_id: formik.values.warehouse_id,
+        product_id: opt.id,
+      };
+      const getQuantityBefore = await getProducts(query);
+      const quantityBefore = getQuantityBefore.data.length > 0 ? getQuantityBefore.data[0].stock : 0
+      formik.setFieldValue(`listedProduct[${idx}].quantity_before`, quantityBefore);
+    } catch (error) {
+      toast(toastConfig("error", "Failed", error.message));
+    }
+  };
   const onAddHandler = () => {
     const listed = {
       product_id: "",
@@ -93,6 +133,20 @@ const Journal = () => {
     newArr.splice(idx, 1);
     formik.setFieldValue("listedProduct", [...newArr]);
   };
+
+  const onChangeAmountHandler = (value, idx) =>{
+    let valueBefore = parseInt(formik.values.listedProduct[idx]?.quantity_before)
+    let amount = formik.values.journal_type === "reducing" ? parseInt(value) * -1 : parseInt(value)
+    const result = valueBefore + amount
+    formik.setFieldValue(`listedProduct[${idx}].quantity_after`, result);
+    formik.setFieldValue(`listedProduct[${idx}].amount`, value);
+  }
+  // useEffect(()=>{
+  //   (async()=>{
+  //     await onChangeProductHandler()
+  //     onChangeAmountHandler()
+  //   })()
+  // },[formik.values.journal_type, formik.values.warehouse_id])
   return (
     <Flex
       h="full"
@@ -119,8 +173,8 @@ const Journal = () => {
               onBlur={formik.handleBlur}
               value={formik.values.journal_type}
             >
-              <option value="adding">Stock Addition</option>
-              <option value="reducing">Stock Reduction</option>
+              <option value="adding">Addition Stock</option>
+              <option value="reducing">Reduction Stock</option>
             </Select>
             <FormErrorMessage>{formik.errors.journal_type}</FormErrorMessage>
           </FormControl>
@@ -166,7 +220,8 @@ const Journal = () => {
             <FormErrorMessage>{formik.errors.warehouse_id}</FormErrorMessage>
           </FormControl>
           <Flex
-            overflow="scroll"
+            overflowX="scroll"
+            overflowY="hidden"
             border="1px"
             borderRadius="md"
             borderColor="inherit"
@@ -177,7 +232,7 @@ const Journal = () => {
                   <Th>Product Name</Th>
                   <Th>Before</Th>
                   <Th>After</Th>
-                  <Th>Difference</Th>
+                  <Th>Amount</Th>
                   <Th>Actions</Th>
                 </Tr>
               </Thead>
@@ -188,29 +243,29 @@ const Journal = () => {
                       <Td minW="300px">
                         <FormControl
                           isInvalid={
-                            formik.errors.listedProduct?.[idx]?.product_id &&
-                            formik.touched.listedProduct?.[idx]?.product_id
+                            formik.errors.listedProduct?.[idx]?.product_id.id &&
+                            formik.touched.listedProduct?.[idx]?.product_id.id
                           }
                         >
-                          <Select
-                            id={`listedProduct[${idx}].product_id`}
+                          <ReactSelect
+                            id={`listedProduct[${idx}].product_id.id`}
                             placeholder="Select Product"
-                            onChange={formik.handleChange}
+                            onChange={(opt) => onChangeProductHandler(opt, idx)}
                             onBlur={formik.handleBlur}
                             value={formik.values.listedProduct[idx].product_id}
-                          >
-                            <option value="tambah">Monitor 24 inch</option>
-                            <option value="kurang">
-                              Keyboard 10 keys less
-                            </option>
-                          </Select>
+                            options={updatedOpt}
+                            menuPortalTarget={document.querySelector("body")}
+                            components={{
+                              IndicatorSeparator: () => null,
+                            }}
+                          ></ReactSelect>
                           <FormErrorMessage>
-                            {formik.errors.listedProduct?.[idx]?.product_id}
+                            {formik.errors.listedProduct?.[idx]?.product_id.id}
                           </FormErrorMessage>
                         </FormControl>
                       </Td>
-                      <Td>504</Td>
-                      <Td>504</Td>
+                      <Td>{formik.values.listedProduct[idx].quantity_before}</Td>
+                      <Td>{formik.values.listedProduct[idx].quantity_after}</Td>
                       <Td maxWidth="50px">
                         <FormControl
                           isInvalid={
@@ -223,12 +278,7 @@ const Journal = () => {
                             min={0}
                             id={`listedProduct[${idx}].amount`}
                             name={`listedProduct[${idx}].amount`}
-                            // onChange={formik.handleChange}
-                            onChange={(value) =>
-                              formik.handleChange(
-                                `listedProduct[${idx}].amount`
-                              )(value)
-                            }
+                            onChange={(value) => onChangeAmountHandler(value, idx)}
                             onBlur={formik.handleBlur}
                             value={formik.values.listedProduct?.[idx]?.amount}
                           >

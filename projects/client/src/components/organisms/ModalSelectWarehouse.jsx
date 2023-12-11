@@ -30,7 +30,6 @@ export const ModalSelectWarehouse = ({ isOpen, onOpen, onClose, onClickRow}) => 
       }
     })();
   }, [filterValue, page]);
-//   const onEnterHandler = () => {};
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -41,7 +40,6 @@ export const ModalSelectWarehouse = ({ isOpen, onOpen, onClose, onClickRow}) => 
           <SearchInput
             placeholder="Search warehouse name"
             onChangeInput={(val) => setFilterValue(val)}
-            // onPressEnter={() => {}}
           />
           <Flex overflow="scroll" flexDir="column" gap="4">
             {data?.warehouses?.map((dt) => {

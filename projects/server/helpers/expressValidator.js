@@ -4,7 +4,10 @@ const queryValidation = (validations) => {
   return async (req, res, next) => {
     try {
       for (const validation of validations) {
-        const result = await validation.run(req);
+        await validation.run(req);
+        // if (result.errors.length) {
+        //   throw new Error("error")
+        // }
       }
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -14,12 +17,13 @@ const queryValidation = (validations) => {
       }
       next()
     } catch (e) {
-      res.status(500).json(({
+      return res.status(500).json(({
         error: e.toString()
       }))
     }
   };
 };
+
 
 module.exports = queryValidation;
 

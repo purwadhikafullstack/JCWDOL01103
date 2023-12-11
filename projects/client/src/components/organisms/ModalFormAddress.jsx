@@ -134,7 +134,7 @@ function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
                   formik.errors.province_id && formik.touched.province_id
                 }
               >
-                <FormLabel htmlFor="province_id">Product Category</FormLabel>
+                <FormLabel htmlFor="province_id">Province</FormLabel>
                 <Select
                   id="province_id"
                   placeholder="Select option"
@@ -155,7 +155,7 @@ function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
               <FormControl
                 isInvalid={formik.errors.city_id && formik.touched.city_id}
               >
-                <FormLabel htmlFor="city_id">Product Category</FormLabel>
+                <FormLabel htmlFor="city_id">City</FormLabel>
                 <Select
                   id="city_id"
                   placeholder="Select option"

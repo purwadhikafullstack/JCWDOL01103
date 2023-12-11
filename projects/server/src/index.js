@@ -4,12 +4,13 @@ const cors = require("cors")
 const { join } = require("path")
 const db = require("./../models")
 
+const apiValidator= require("../middlewares/apiValidatorMiddleware")
 const authRouter = require("../router/auth")
 const regionRouter = require("../router/region")
 const warehouseRouter = require("../router/warehouse")
 const admWarehouseRouter = require("../router/adminWarehouse")
 const addressRouter = require("../router/address")
-const apiValidator= require("../middlewares/apiValidatorMiddleware")
+const stockRouter = require("../router/stock")
 
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -31,6 +32,7 @@ app.use(regionRouter)
 app.use(warehouseRouter)
 app.use(admWarehouseRouter)
 app.use(addressRouter)
+app.use(stockRouter)
 
 //#region API ROUTES
 

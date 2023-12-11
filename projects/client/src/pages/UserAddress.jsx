@@ -55,10 +55,10 @@ const UserAddress = () => {
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
   };
-  const fetchAddress = async () => {
+  const fetchAddress = async (action) => {
     try {
       const filter = {
-        search: filterInput,
+        search: action ? "" : filterInput,
       };
       const response = await getAddresses(filter);
       setData(response.data);
@@ -68,7 +68,7 @@ const UserAddress = () => {
   };
   useEffect(() => {
     fetchAddress();
-  }, [filterInput]);
+  }, []);
   return (
     <Flex
       h="full"
@@ -95,6 +95,8 @@ const UserAddress = () => {
       <SearchInput
         placeholder="Search here"
         onChangeInput={(val) => setFilterInput(val)}
+        onPressEnter={fetchAddress}
+        onClickCross={()=> fetchAddress("refresh")}
       />
       <VStack w="full" gap="4">
         {data?.map((dt) => {
