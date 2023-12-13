@@ -9,12 +9,12 @@ export const theme = extendTheme({
     },
   },
   colors: {
-    // primaryColor: ,
-    // secondaryColor: ,
+    primaryColor: "#000000",
+    secondaryColor: "#ffffff",
     // thirdColor: ,
     // forthColor: ,
     // negativeColor: ,
-    // blackColor: ,
+    blackColor: "black",
   },
   fonts: {
     body: `'Plus Jakarta Sans', sans-serif`,

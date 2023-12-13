@@ -1,25 +1,27 @@
 "use strict";
 const { Model } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
   class Products extends Model {
-    // static associate(models) {
-    //   product.belongsTo(models.product_category, {
-    //     foreignKey: "product_category_id",
-    //   });
-    //   product.hasMany(models.stock, {
-    //     foreignKey: "product_id",
-    //   });
-    //   product.hasOne(models.stock, {
-    //     foreignKey: "warehouse_id",
-    //   });
-    // }
+    static associate(models) {
+      Products.hasMany(models.Stocks, {
+        foreignKey: "product_id",
+        as: "stock",
+      });
+      Products.belongsTo(models.Product_Category, {
+        foreignKey: "id",
+        as: "product_category",
+      });
+    }
   }
+
   Products.init(
     {
-      product_id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+      id: {
+        allowNull: false,
         autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
       },
       product_name: {
         type: DataTypes.STRING,
@@ -29,13 +31,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      stock: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       product_category_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+          model: "product_category",
+          key: "product_category_id",
+        },
       },
       price: {
         type: DataTypes.INTEGER,
@@ -49,15 +51,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      active: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
-      },
-      warehouse_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
     },
     {
       sequelize,
@@ -67,5 +60,6 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
     }
   );
+
   return Products;
 };

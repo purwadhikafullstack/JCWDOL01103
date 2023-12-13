@@ -167,7 +167,7 @@ const Profile = () => {
               <Avatar
                 size="2xl"
                 name={profileData.data?.name}
-                src={`http://localhost:5001/uploads/${profileData.data?.image}`}
+                src={`http://localhost:8000/uploads/${profileData.data?.image}`}
                 bg="black"
                 color="white"
                 boxShadow="lg"

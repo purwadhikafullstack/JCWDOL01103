@@ -3,12 +3,24 @@ const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
 const db = require("./../models");
-const PORT = process.env.PORT || 8000;
 const path = require("path");
-const app = express();
 
+const apiValidator = require("../middlewares/apiValidatorMiddleware");
+const authRouter = require("../router/auth");
+const regionRouter = require("../router/region");
+const warehouseRouter = require("../router/warehouse");
+const admWarehouseRouter = require("../router/adminWarehouse");
+const addressRouter = require("../router/address");
+const stockRouter = require("../router/stock");
 const profileRouter = require("./../router/profileRouter");
 const productRouter = require("./../router/productRouter");
+
+const PORT = process.env.PORT || 8000;
+const app = express();
+
+app.use(cors());
+app.use("/uploads", express.static(path.join(__dirname, "..", "public")));
+app.use(express.json());
 
 // app.use(
 //   cors({
@@ -19,24 +31,27 @@ const productRouter = require("./../router/productRouter");
 //   })
 // );
 
-app.use(cors());
-app.use("/uploads", express.static(path.join(__dirname, "..", "public")));
-app.use(express.json());
-
 //#region API ROUTES
 
+app.use(apiValidator.validateApi);
+app.use(authRouter);
+app.use(regionRouter);
+app.use(warehouseRouter);
+app.use(admWarehouseRouter);
+app.use(addressRouter);
+app.use(stockRouter);
 app.use(profileRouter);
 app.use(productRouter);
 
 // ===========================
 // NOTE : Add your routes here
 
-try {
-  db.sequelize.sync({ alter: true });
-  console.log("database connected");
-} catch (error) {
-  console.log(error);
-}
+// try {
+//   db.sequelize.sync({ alter: true });
+//   console.log("database connected");
+// } catch (error) {
+//   console.log(error);
+// }
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);
