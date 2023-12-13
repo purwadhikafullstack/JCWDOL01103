@@ -14,7 +14,6 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Button,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -49,7 +48,7 @@ const Navbar = () => {
       try {
         if (authState) {
           const userDecoded = jwtDecode(userState);
-          const userDetails = await getUser(userDecoded.id);
+          const userDetails = await getUser(encodeURIComponent(userDecoded.id));
           setUserInfo(userDetails.data);
         }
       } catch (error) {
@@ -59,6 +58,7 @@ const Navbar = () => {
   }, [authState, dispatch]);
   const onClickLogout = () => {
     dispatch(logoutAuthorized());
+    setUserInfo(null)
     navigate("/");
   };
   return (
@@ -104,7 +104,7 @@ const Navbar = () => {
                   borderColor={"blackAlpha.400"}
                   display={{ base: "none", lg: "block" }}
                 >
-                  <Link>Account</Link>
+                  <Link>{userInfo?.name || "Account"}</Link>
                 </Text>
               </Flex>
             </MenuButton>

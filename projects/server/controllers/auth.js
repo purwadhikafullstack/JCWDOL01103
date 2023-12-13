@@ -133,7 +133,7 @@ const login = async (req, res) => {
 
 const getUser = async (req, res) => {
   const {id} = req.params
-  const decryptedId = id
+  const decryptedId = decryptData(decodeURIComponent(id))
   try {
     const user = await db.Users.findOne({
       where: {

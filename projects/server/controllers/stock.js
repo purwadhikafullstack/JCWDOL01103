@@ -3,43 +3,55 @@ const db = require("../models");
 const { Op } = require("sequelize");
 
 const createStock = async (req, res) => {
-  const { journal_type, amount } = req.body;
+  const { journal_type } = req.body;
+  let results = [];
   try {
-    const lastJournal = await db.Stock_Journals.findOne({
-      order: [["createdAt", "DESC"]],
-      where: {
-        stock_id: req.stock.id,
-      },
-    });
-    req.differeces = journal_type === "reducing" ? amount * -1 : amount;
-    if (lastJournal) {
-      if (journal_type === "reducing" && lastJournal.quantity_after < amount) {
+    for (const item of req.stock) {
+      let stockId = item.stock.dataValues?.id;
+      let amount = item?.restock;
+      let qty = item.stock.dataValues?.quantity;
+      let differences = journal_type === "reducing" ? amount * -1 : amount
+      if (journal_type === "reducing") {
+        if (qty >= amount) {
+          await db.Stocks.decrement("quantity", {
+            by: amount,
+            where: {
+              id: stockId,
+            },
+          });
+        } else {
+          return res.status(400).json({
+            message: "Amount must be greater than quantity before",
+            error: "Amount must be greater than quantity before",
+          });
+        }
+      } else if (journal_type === "adding") {
+        await db.Stocks.increment("quantity", {
+          by: amount,
+          where: {
+            id: stockId,
+          },
+        });
+      } else {
         return res.status(400).json({
-          message: "Amount must be greater than before stock quantity",
+          message: "Wrong journal type",
         });
       }
-      req.afterQty = lastJournal.quantity_after + amount;
+      await db.Stock_Journals.create({
+        stock_id: stockId,
+        quantity_before: qty,
+        quantity_after: qty + differences,
+        amount: differences,
+      });
     }
-    let updatedQty = req.afterQty || amount;
-    let qtyBefore = lastJournal ? lastJournal.quantity_after : 0;
-    await db.Stock_Journals.create({
-      stock_id: req.stock.id,
-      quantity_before: qtyBefore,
-      quantity_after: updatedQty,
-      amount: req.differeces,
-    });
-    await db.Stocks.update(
-      {
-        quantity: updatedQty,
-      },
-      {
-        where: {
-          id: req.stock.id,
-        },
-      }
-    );
+    //   console.log(result);
+
+    // let updatedQty = req.afterQty || amount;
+    // let qtyBefore = lastJournal ? lastJournal.quantity_after : 0;
+
     return res.status(200).json({
       message: "Create journal successfully",
+      data: results,
     });
   } catch (error) {
     return res.status(500).json({
@@ -70,8 +82,8 @@ const getStock = async (req, res) => {
     const encryptedResult = stock.map((dt) => {
       const newStock = { ...dt.dataValues };
       newStock.id = encryptData(newStock.id);
-        newStock.warehouse_id = encryptData(newStock.warehouse_id);
-        newStock.product_id = encryptData(newStock.product_id);
+      newStock.warehouse_id = encryptData(newStock.warehouse_id);
+      newStock.product_id = encryptData(newStock.product_id);
       return newStock;
     });
     return res.status(200).json({
@@ -105,17 +117,17 @@ const getProducts = async (req, res) => {
       include: {
         model: db.Stocks,
         as: "stock",
-        attributes: ["quantity"]
+        attributes: ["quantity"],
       },
     });
-    let result = null
-    if(products && warehouse_id){
-        const resProducts = products.map(dt => {
-            const newProducts = { ...dt.dataValues };
-            newProducts.stock =  dt.stock[0].quantity;
-            return newProducts
-        })
-        result = resProducts
+    let result = null;
+    if (products && warehouse_id) {
+      const resProducts = products.map((dt) => {
+        const newProducts = { ...dt.dataValues };
+        newProducts.stock = dt.stock[0].quantity;
+        return newProducts;
+      });
+      result = resProducts;
     }
     return res.status(200).json({
       message: "Get products successfully",

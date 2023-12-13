@@ -8,7 +8,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { FiSearch, FiX } from "react-icons/fi";
-const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, categoriesName, defaultCategories }) => {
+const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, categoriesName, defaultCategories, onClickCross }) => {
   const [category, setCategory] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [sortValue, setSortValue] = useState("");
@@ -65,7 +65,7 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
               w="fit-content"
               bg="transparent"
               _hover={{ bg: "transparent", color: "negativeColor" }}
-              onClick={() => setSearchInput("")}
+              onClick={() => {setSearchInput(""); onClickCross && onClickCross()}}
             >
               <FiX />
             </Button>

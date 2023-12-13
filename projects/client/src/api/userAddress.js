@@ -1,12 +1,10 @@
 import { config, server } from ".";
 
 export const getAddresses = async (params) => {
-  console.log(params)
   const response = await server.get("/addresses", {
     params: params,
     headers: config.headers,
   });
-  console.log(response)
   return response.data;
 };
 

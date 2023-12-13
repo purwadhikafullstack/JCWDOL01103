@@ -101,6 +101,7 @@ const Journal = () => {
     });
     setUpdatedOpt([...updatedOptions]);
   }, [formik.values.listedProduct]);
+
   const onChangeProductHandler = async (opt, idx) => {
     try {
       formik.setFieldValue(`listedProduct[${idx}].product_id`, opt);
@@ -109,6 +110,7 @@ const Journal = () => {
         product_id: opt.id,
       };
       const getQuantityBefore = await getProducts(query);
+      console.log(getQuantityBefore)
       const quantityBefore = getQuantityBefore.data.length > 0 ? getQuantityBefore.data[0].stock : 0
       formik.setFieldValue(`listedProduct[${idx}].quantity_before`, quantityBefore);
     } catch (error) {
@@ -143,10 +145,9 @@ const Journal = () => {
   }
   // useEffect(()=>{
   //   (async()=>{
-  //     await onChangeProductHandler()
   //     onChangeAmountHandler()
   //   })()
-  // },[formik.values.journal_type, formik.values.warehouse_id])
+  // },[formik.values.warehouse_id])
   return (
     <Flex
       h="full"

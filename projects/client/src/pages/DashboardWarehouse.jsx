@@ -31,35 +31,31 @@ const DashboardWarehouse = () => {
   const [paramObj, setParamObj] = useState({
     search: "",
     sort: "",
+    province_id:""
   });
   const fetchData = async() => {
-    const response = await getWarehouses(paramObj);
     const result = await getProvinces();
-    setData(response.data);
     setCategories(result.data);
   }
   useEffect(() => {
-    fetchData()
-  }, []);
+    fetchData();
+    getWarehouseData();
+  }, [paramObj.sort, paramObj.province_id]);
 
-  const getWarehouseData = async (param = {}) => {
+  const getWarehouseData = async (param = {}, action) => {
     const params = {
       ...paramObj,
       ...param,
     };
     setTableLoading(true);
     try {
-      const resProduct = await getWarehouses(params);
+      const resProduct = await getWarehouses(action ? null : params);
       setData(resProduct.data);
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      toast(toastConfig("error", "Failed", error.message));
     }
     setTableLoading(false);
   };
-
-  useEffect(() => {
-    getWarehouseData();
-  }, [paramObj]);
 
   async function onChangePageHandler(value) {
     await getWarehouseData({ page: value });
@@ -75,6 +71,7 @@ const DashboardWarehouse = () => {
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
   };
+  
   return (
     <Flex
       h="full"
@@ -100,6 +97,7 @@ const DashboardWarehouse = () => {
           categoriesName="province_name"
           categoriesId="province_id"
           defaultCategories="Filter by Province"
+          onClickCross={()=> getWarehouseData(undefined, "refresher")}
         />
 
         <Button
@@ -148,7 +146,7 @@ const DashboardWarehouse = () => {
           setOpenCreateModal(false);
           dispatch(setSelectedWarehouse(null));
         }}
-        onCloseComplete={fetchData}
+        onCloseComplete={getWarehouseData}
       />
       <AlertConfirmation
         header="Are you sure ?"
