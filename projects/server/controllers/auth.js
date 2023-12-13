@@ -10,10 +10,10 @@ const register = async (req, res) => {
     const { email } = req.body;
     const newUser = await db.Users.create({
       email: email.toLowerCase(),
-      role: 'user'
+      role: "user",
     });
     let id = encryptData(newUser.id);
-    let role = newUser.role
+    let role = newUser.role;
     let token = createToken({ email, id, role });
     let mail = {
       from: `Admin <xordyzen@gmail.com>`,
@@ -37,7 +37,6 @@ const register = async (req, res) => {
       message: "Register success",
       data: newUser,
     });
-    
   } catch (err) {
     return res.status(500).json({
       message: "error",
@@ -75,7 +74,7 @@ const validatorVerification = async (req, res) => {
 const verification = async (req, res) => {
   const { id, name, email, password } = req.body;
   try {
-    const decryptedId = decryptData(id)
+    const decryptedId = decryptData(id);
     const user = await db.Users.findOne({
       where: {
         id: decryptedId,
@@ -114,9 +113,9 @@ const verification = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const {id, email, role} = req.userData
-    const encryptedId = encryptData(id)
-    const token = createToken({id:encryptedId, email, role});
+    const { id, email, role } = req.userData;
+    const encryptedId = encryptData(id);
+    const token = createToken({ id: encryptedId, email, role });
     return res.status(200).json({
       status: 200,
       message: "Login Success",
@@ -139,7 +138,7 @@ const getUser = async (req, res) => {
       where: {
         id: decryptedId,
       },
-      attributes:['id','name','email','role']
+      attributes: ["id", "name", "email", "role"],
     });
     return res.status(200).json({
       status: 200,
@@ -153,10 +152,10 @@ const getUser = async (req, res) => {
       error: e.toString(),
     });
   }
-}
+};
 
 const authValidator = async (req, res) => {
-  const token = req.params.id
+  const token = req.params.id;
   try {
     const verify = jwt.verify(token, process.env.JWT_TOKEN, (err, decode) => {
       if (err) {
@@ -167,7 +166,7 @@ const authValidator = async (req, res) => {
     return res.status(200).json({
       code: 403,
       message: "Authorized",
-      data: verify
+      data: verify,
     });
   } catch (error) {
     return res.status(403).json({
@@ -184,5 +183,5 @@ module.exports = {
   login,
   validatorVerification,
   getUser,
-  authValidator
+  authValidator,
 };

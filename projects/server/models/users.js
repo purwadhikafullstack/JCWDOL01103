@@ -1,6 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 module.exports = (sequelize, DataTypes) => {
   class Users extends Model {
     /**
@@ -9,10 +9,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Users.hasMany(models.Addresses,{
-        foreignKey: 'user_id',
-        as: 'addresses'
-      })
+      Users.hasMany(models.Addresses, {
+        foreignKey: "user_id",
+        as: "addresses",
+      });
     }
   }
   Users.init(
@@ -20,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
         allowNull: false,
         defaultValue: DataTypes.UUIDV4,
       },
@@ -34,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      img: DataTypes.TEXT,
+      image: DataTypes.TEXT,
     },
     {
       sequelize,

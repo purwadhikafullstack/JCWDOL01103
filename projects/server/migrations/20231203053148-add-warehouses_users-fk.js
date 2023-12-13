@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.addConstraint("warehouses_users", {
       fields: ["warehouse_id"],
       type: "foreign key",
@@ -25,11 +25,16 @@ module.exports = {
       onDelete: "cascade",
       onUpdate: "cascade",
     });
-    
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.removeConstraint('warehouses_users', "fk_warehouses_users_warehouseId");
-    await queryInterface.removeConstraint('warehouses_users', "fk_warehouses_users_userId");
-  }
+  async down(queryInterface, Sequelize) {
+    await queryInterface.removeConstraint(
+      "warehouses_users",
+      "fk_warehouses_users_warehouseId"
+    );
+    await queryInterface.removeConstraint(
+      "warehouses_users",
+      "fk_warehouses_users_userId"
+    );
+  },
 };

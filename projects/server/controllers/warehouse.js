@@ -37,9 +37,9 @@ const getWarehouses = async (req, res) => {
 
   let whereClause = {};
   let whereClause2 = {};
-  let sortType = [["updatedAt","DESC"]]
-  if(query.province_id){
-    whereClause2["$region.province.province_id$"] = query.province_id
+  let sortType = [["updatedAt", "DESC"]];
+  if (query.province_id) {
+    whereClause2["$region.province.province_id$"] = query.province_id;
   }
   if (query.search) {
     whereClause = {
@@ -57,17 +57,17 @@ const getWarehouses = async (req, res) => {
       ],
     };
   }
-  
+
   if (query.sort) {
-    const filter = query.sort.split("_")
-    sortType[0] = filter 
+    const filter = query.sort.split("_");
+    sortType[0] = filter;
   }
   try {
     const { count, rows } = await db.Warehouses.findAndCountAll({
       offset: (page - 1) * pageSize,
       limit: pageSize,
       order: sortType,
-      where: {[Op.and]: [whereClause2, whereClause]},
+      where: { [Op.and]: [whereClause2, whereClause] },
       attributes: {
         exclude: ["city_id"],
       },
@@ -124,7 +124,7 @@ const createWarehouse = async (req, res) => {
       city_id: city_id,
       street: street,
       latitude: latitude,
-      longitude: longitude
+      longitude: longitude,
     });
     return res.status(200).json({
       message: "Create Warehouse Successfully",

@@ -8,7 +8,11 @@ const { checkRole } = require("../middlewares/apiValidatorMiddleware");
 
 router.get("/warehouses/:id", warehouseController.getWarehouse);
 router.get("/warehouses", warehouseController.getWarehouses);
-router.delete("/warehouses/:id", checkRole(["master"]), warehouseController.deleteWarehouse);
+router.delete(
+  "/warehouses/:id",
+  checkRole(["master"]),
+  warehouseController.deleteWarehouse
+);
 router.post(
   "/warehouses",
   checkRole(["master"]),
