@@ -3,11 +3,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Navbar from "../components/organisms/Navbar";
-import Footer from "../components/organisms/Footer";
 import {
   Avatar,
-  Container,
   Heading,
   Grid,
   GridItem,
@@ -140,12 +137,7 @@ const Profile = () => {
 
   return (
     <>
-      <Navbar />
-      <Container
-        as="section"
-        mt={{ base: "45px", xl: "100px" }}
-        textAlign={"left"}
-      >
+      <Box ml={"230px"}>
         <Heading
           fontSize={{ base: "25px", xl: "3xl" }}
           fontWeight={"black"}
@@ -375,8 +367,7 @@ const Profile = () => {
             )}
           </form>
         </Box>
-      </Container>
-      <Footer />
+      </Box>
     </>
   );
 };

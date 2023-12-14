@@ -2,10 +2,7 @@ import { server } from "../api/index";
 import { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Navbar from "../components/organisms/Navbar";
-import Footer from "../components/organisms/Footer";
 import {
-  Container,
   Heading,
   TableContainer,
   Table,
@@ -24,6 +21,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Box,
 } from "@chakra-ui/react";
 import { BiEditAlt, BiTrashAlt } from "react-icons/bi";
 
@@ -170,13 +168,7 @@ const Product = () => {
 
   return (
     <>
-      <Navbar />
-      <Container
-        as="section"
-        maxW={{ xl: "7xl", "2xl": "8xl" }}
-        mt={{ base: "45px", xl: "100px" }}
-        textAlign={"left"}
-      >
+      <Box ml={"180px"}>
         <Heading
           fontSize={{ base: "25px", xl: "3xl" }}
           fontWeight={"black"}
@@ -250,7 +242,6 @@ const Product = () => {
                 <Th>No</Th>
                 <Th>Product Name</Th>
                 <Th>Description</Th>
-                <Th>Stock</Th>
                 <Th>Price</Th>
                 <Th>Image</Th>
               </Tr>
@@ -265,7 +256,6 @@ const Product = () => {
                   <Td maxW="200px" isTruncated>
                     {product.description}
                   </Td>
-                  <Td>{product.stock}</Td>
                   <Td>
                     {new Intl.NumberFormat("id-ID", {
                       style: "currency",
@@ -276,7 +266,7 @@ const Product = () => {
                     {" "}
                     <Avatar
                       name={product.product_name}
-                      src={`http://localhost:5001/uploads/${product?.image}`}
+                      src={`http://localhost:8000/uploads/${product?.image}`}
                     />
                   </Td>
                   <Td>
@@ -366,8 +356,7 @@ const Product = () => {
             </Tbody>
           </Table>
         </TableContainer>
-      </Container>
-      <Footer />
+      </Box>
     </>
   );
 };

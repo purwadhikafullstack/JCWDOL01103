@@ -26,8 +26,8 @@ import {
 } from "../../store/slicer/authSlice";
 const Navbar = () => {
   const navigate = useNavigate();
-  const authState = useSelector((state) => state.login.isAuthorized);
-  const userState = useSelector((state) => state.login.user);
+  const authState = useSelector(state => state.login.isAuthorized);
+  const userState = useSelector(state => state.login.user);
   const [userInfo, setUserInfo] = useState(null);
   const dispatch = useDispatch();
   useEffect(() => {

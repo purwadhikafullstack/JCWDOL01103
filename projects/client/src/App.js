@@ -6,24 +6,27 @@ import Verification from "./pages/Verification";
 import NotFound from "./pages/NotFound";
 import Test from "./pages/Test";
 import DashboardWarehouse from "./pages/DashboardWarehouse";
-import Dashboard from "./pages/Dashboard";
 import UserAddress from "./pages/UserAddress";
 import Journal from "./pages/Journal";
 import Product from "./pages/Product";
+import LayoutDashboard from "./pages/LayoutDashboard";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Homepage />} />
-      <Route path="/profile/:id" element={<Profile />} />
       <Route path="/login" element={<Authentication />} />
       <Route path="/verification/:token" element={<Verification />} />
+
+      <Route path="/dashboard" element={<LayoutDashboard />}>
+        <Route path="/dashboard/profile/:id" element={<Profile />} />
+        <Route path="/dashboard/products" element={<Product />} />
+      </Route>
+
       <Route path="/dashboard/warehouse" element={<DashboardWarehouse />} />
       <Route path="/test" element={<Test />} />
-      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/user-address" element={<UserAddress />} />
       <Route path="/journal" element={<Journal />} />
-      <Route path="/products" element={<Product />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

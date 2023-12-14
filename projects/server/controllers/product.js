@@ -6,7 +6,7 @@ const product = {
     try {
       const product = await products.findOne({
         where: {
-          product_id: req.params.id,
+          id: req.params.id,
         },
       });
 
