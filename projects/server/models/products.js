@@ -8,8 +8,8 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "product_id",
         as: "stock",
       });
-      Products.belongsTo(models.Product_Category, {
-        foreignKey: "id",
+      Products.belongsTo(models.Products_Category, {
+        foreignKey: "product_category_id",
         as: "product_category",
       });
     }
@@ -35,8 +35,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "product_category",
-          key: "product_category_id",
+          model: "products_category",
+          key: "id",
         },
       },
       price: {

@@ -1,15 +1,15 @@
 const express = require("express");
-const { profileController } = require("../controllers/profileController");
+const { profile } = require("../controllers/profile");
 const { multerUpload } = require("../middlewares/multer");
 const router = express.Router();
 
-router.get("/profile/:id", profileController.getProfile);
-router.put("/profile/:id/name", profileController.updateName);
+router.get("/profile/:id", profile.getProfile);
+router.put("/profile/:id/name", profile.updateName);
 router.put(
   "/profile/:id/image",
   multerUpload.single("image"),
-  profileController.updateImage
+  profile.updateImage
 );
-router.put("/profile/:id/password", profileController.updatePassword);
+router.put("/profile/:id/password", profile.updatePassword);
 
 module.exports = router;

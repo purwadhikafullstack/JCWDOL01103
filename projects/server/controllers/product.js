@@ -1,7 +1,7 @@
 const db = require("../models");
 const products = db.Products;
 
-const productController = {
+const product = {
   getSingleProduct: async (req, res) => {
     try {
       const product = await products.findOne({
@@ -198,4 +198,4 @@ const productController = {
   },
 };
 
-module.exports = { productController };
+module.exports = { product };

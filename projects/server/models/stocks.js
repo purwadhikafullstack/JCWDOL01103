@@ -4,13 +4,13 @@ module.exports = (sequelize, DataTypes) => {
   class Stocks extends Model {
     static associate(models) {
       Stocks.belongsTo(models.Products, {
-        foreignKey: 'product_id',
-        as: 'product',
+        foreignKey: "product_id",
+        as: "product",
       });
-      Stocks.hasMany(models.Stock_Journals,{
-        foreignKey: 'stock_id',
-        as: 'stock_journal'
-      })
+      Stocks.hasMany(models.Stock_Journals, {
+        foreignKey: "stock_id",
+        as: "stock_journal",
+      });
     }
   }
   Stocks.init(

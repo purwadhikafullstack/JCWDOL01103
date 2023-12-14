@@ -3,7 +3,7 @@ const user = db.user;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const profileController = {
+const profile = {
   getProfile: async (req, res) => {
     try {
       const profile = await user.findOne({
@@ -169,4 +169,4 @@ const profileController = {
   },
 };
 
-module.exports = { profileController };
+module.exports = { profile };
