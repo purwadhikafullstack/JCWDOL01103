@@ -8,13 +8,14 @@ export const getStock = async (param) => {
   return response.data;
 };
 
-export const createJournal = async (data) => {
+export const postStock = async (data) => {
+  console.log(data)
     const response = await server.post("/stock", data, config)
     return response.data
 }
 
-export const getProducts = async (params) => {
-  const response = await server.get("/products", {
+export const getProductStock = async (params) => {
+  const response = await server.get("/stock", {
     params: params
   });
   return response.data;

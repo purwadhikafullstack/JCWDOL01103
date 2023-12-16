@@ -12,7 +12,7 @@ router.post(
   queryValidation([
     check("warehouse_id").notEmpty(),
     check("products").notEmpty(),
-    check("journal_type").notEmpty(),
+    check("type").notEmpty(),
     body("products.*.product_id").notEmpty(),
     body("products.*.amount").notEmpty(),
   ]),
@@ -21,7 +21,7 @@ router.post(
 );
 
 router.get("/stock", stockController.getStock);
-router.get("/products", stockController.getProducts);
-router.get("/products/:id", stockController.getProduct);
+// router.get("/products", stockController.getProducts);
+// router.get("/products/:id", stockController.getProduct);
 
 module.exports = router;

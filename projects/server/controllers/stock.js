@@ -3,15 +3,15 @@ const db = require("../models");
 const { Op } = require("sequelize");
 
 const createStock = async (req, res) => {
-  const { journal_type } = req.body;
+  const { type } = req.body;
   let results = [];
   try {
     for (const item of req.stock) {
       let stockId = item.stock.dataValues?.id;
       let amount = item?.restock;
       let qty = item.stock.dataValues?.quantity;
-      let differences = journal_type === "reducing" ? amount * -1 : amount
-      if (journal_type === "reducing") {
+      let differences = type === "reducing" ? amount * -1 : amount
+      if (type === "reducing") {
         if (qty >= amount) {
           await db.Stocks.decrement("quantity", {
             by: amount,
@@ -25,7 +25,7 @@ const createStock = async (req, res) => {
             error: "Amount must be greater than quantity before",
           });
         }
-      } else if (journal_type === "adding") {
+      } else if (type === "adding") {
         await db.Stocks.increment("quantity", {
           by: amount,
           where: {
@@ -44,13 +44,8 @@ const createStock = async (req, res) => {
         amount: differences,
       });
     }
-    //   console.log(result);
-
-    // let updatedQty = req.afterQty || amount;
-    // let qtyBefore = lastJournal ? lastJournal.quantity_after : 0;
-
     return res.status(200).json({
-      message: "Create journal successfully",
+      message: "Restock product successfully",
       data: results,
     });
   } catch (error) {

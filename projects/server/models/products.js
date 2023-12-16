@@ -8,10 +8,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "product_id",
         as: "stock",
       });
-      Products.belongsTo(models.Product_Category, {
-        foreignKey: "id",
-        as: "product_category",
-      });
+      // Products.belongsTo(models.Product_Category, {
+      //   foreignKey: "id",
+      //   as: "product_category",
+      // });
     }
   }
 
@@ -34,10 +34,6 @@ module.exports = (sequelize, DataTypes) => {
       product_category_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: "product_category",
-          key: "product_category_id",
-        },
       },
       price: {
         type: DataTypes.INTEGER,
@@ -50,6 +46,10 @@ module.exports = (sequelize, DataTypes) => {
       image: {
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      deletedAt: {
+        type: DataTypes.DATE,
+        defaultValue: null
       },
     },
     {

@@ -12,8 +12,8 @@ const warehouseRouter = require("../router/warehouse");
 const admWarehouseRouter = require("../router/adminWarehouse");
 const addressRouter = require("../router/address");
 const stockRouter = require("../router/stock");
-const profileRouter = require("./../router/profileRouter");
-const productRouter = require("./../router/productRouter");
+const profileRouter = require("./../router/profile");
+const productRouter = require("./../router/product");
 
 const PORT = process.env.PORT || 8000;
 const app = express();

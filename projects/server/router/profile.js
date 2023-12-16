@@ -1,5 +1,5 @@
 const express = require("express");
-const { profileController } = require("../controllers/profileController");
+const { profileController } = require("../controllers/profile");
 const { multerUpload } = require("../middlewares/multer");
 const router = express.Router();
 

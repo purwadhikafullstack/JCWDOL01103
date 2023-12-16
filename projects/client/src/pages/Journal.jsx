@@ -24,13 +24,15 @@ import {
   Tr,
   useToast,
 } from "@chakra-ui/react";
-import ReactSelect from "react-select";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ModalSelectWarehouse } from "../components/organisms/ModalSelectWarehouse";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { getProducts } from "../api/stock";
+import { getProductStock, postStock } from "../api/stock";
 import { toastConfig } from "../utils/toastConfig";
+import { getProducts } from "../api/product";
+import CustomSelect from "../components/atoms/CustomSelect";
+import AlertConfirmation from "../components/organisms/AlertConfirmation";
 
 const Journal = () => {
   const [openAlert, setOpenAlert] = useState(false);
@@ -38,15 +40,19 @@ const Journal = () => {
   const [openModalWarehouse, setOpenModalWarehouse] = useState(false);
   const [products, setProducts] = useState([]);
   const [updatedOpt, setUpdatedOpt] = useState([]);
+  const [isLoading, setIsLoading] = useState(false)
   const toast = useToast();
   const formik = useFormik({
     initialValues: {
       warehouse_id: "",
-      journal_type: "",
+      type: "",
       listedProduct: [
         {
-          product_id: "",
-          name: "",
+          product: {
+            value: "",
+            label: "Select product...",
+            isDisabled: true,
+          },
           quantity_before: 0,
           quantity_after: 0,
           amount: 0,
@@ -55,10 +61,10 @@ const Journal = () => {
     },
     validationSchema: Yup.object({
       warehouse_id: Yup.string().required("Required"),
-      journal_type: Yup.string().required("Required"),
+      type: Yup.string().required("Required"),
       listedProduct: Yup.array().of(
         Yup.object({
-          product_id: Yup.string().required("Required"),
+          product: Yup.object({ value: Yup.string().required("Required") }),
           amount: Yup.number("must number")
             .min(1, "must > 0")
             .integer("must integer")
@@ -77,7 +83,6 @@ const Journal = () => {
         const response = await getProducts();
         const options = response.data.map((dt) => {
           return {
-            ...dt,
             value: dt.id,
             label: dt.product_name,
           };
@@ -95,89 +100,114 @@ const Journal = () => {
       return {
         ...dt,
         isDisabled: formik.values.listedProduct.some(
-          (selectedOption) => selectedOption.product_id.value == dt.value
+          (selectedOption) => selectedOption.product.value == dt.value
         ),
       };
     });
     setUpdatedOpt([...updatedOptions]);
   }, [formik.values.listedProduct]);
 
+  useEffect(() => {
+    formik.setFieldValue("listedProduct", formik.initialValues.listedProduct);
+  }, [formik.values.type, formik.values.warehouse_id]);
+
   const onChangeProductHandler = async (opt, idx) => {
     try {
-      formik.setFieldValue(`listedProduct[${idx}].product_id`, opt);
+      formik.setFieldValue(`listedProduct[${idx}].product`, opt);
       const query = {
         warehouse_id: formik.values.warehouse_id,
-        product_id: opt.id,
+        product_id: opt.value,
       };
-      const getQuantityBefore = await getProducts(query);
-      console.log(getQuantityBefore)
-      const quantityBefore = getQuantityBefore.data.length > 0 ? getQuantityBefore.data[0].stock : 0
-      formik.setFieldValue(`listedProduct[${idx}].quantity_before`, quantityBefore);
+      const response = await getProductStock(query);
+      const quantityBefore =
+        formik.values.warehouse_id && response.data.length > 0
+          ? response.data[0].quantity
+          : 0;
+      formik.setFieldValue(
+        `listedProduct[${idx}].quantity_before`,
+        quantityBefore
+      );
+      formik.setFieldValue(
+        `listedProduct[${idx}].quantity_after`,
+        parseInt(formik.values.listedProduct[idx].amount) + quantityBefore
+      );
     } catch (error) {
       toast(toastConfig("error", "Failed", error.message));
     }
   };
+
   const onAddHandler = () => {
-    const listed = {
-      product_id: "",
-      name: "",
-      quantity_before: 0,
-      quantity_after: 0,
-      amount: 0,
-    };
     formik.setFieldValue("listedProduct", [
       ...formik.values.listedProduct,
-      listed,
+      formik.initialValues.listedProduct[0],
     ]);
   };
+
   const onDeleteHandler = (idx) => {
     const newArr = formik.values.listedProduct;
     newArr.splice(idx, 1);
     formik.setFieldValue("listedProduct", [...newArr]);
   };
 
-  const onChangeAmountHandler = (value, idx) =>{
-    let valueBefore = parseInt(formik.values.listedProduct[idx]?.quantity_before)
-    let amount = formik.values.journal_type === "reducing" ? parseInt(value) * -1 : parseInt(value)
-    const result = valueBefore + amount
+  const onChangeAmountHandler = (value, idx) => {
+    let valueBefore = parseInt(
+      formik.values.listedProduct[idx]?.quantity_before
+    );
+    let amount =
+      formik.values.type === "reducing"
+        ? parseInt(value) * -1
+        : parseInt(value);
+    const result = valueBefore + amount;
     formik.setFieldValue(`listedProduct[${idx}].quantity_after`, result);
-    formik.setFieldValue(`listedProduct[${idx}].amount`, value);
-  }
-  // useEffect(()=>{
-  //   (async()=>{
-  //     onChangeAmountHandler()
-  //   })()
-  // },[formik.values.warehouse_id])
+    formik.setFieldValue(`listedProduct[${idx}].amount`, parseInt(value));
+  };
+  const onClickConfirmHandler = async () => {
+    setIsLoading(true)
+    try {
+      const value = formik.values;
+      const products = value.listedProduct.map((dt) => {
+        return {
+          product_id: dt.product.value,
+          amount: dt.amount,
+        };
+      });
+      const data = {
+        warehouse_id: value.warehouse_id,
+        type: value.type,
+        products: products,
+      };
+      const updateStock = await postStock(data);
+      console.log(updateStock)
+      toast(toastConfig("success", "Success", updateStock.message))
+      setTimeout(()=>{
+        setIsLoading(false)
+        setOpenAlert(false)
+        formik.handleReset()
+        setWarehouse(null)
+      },3000)
+    } catch (error) {
+      toast(toastConfig("error", "Failed", error.message));
+      setIsLoading(false)
+    }
+  };
   return (
-    <Flex
-      h="full"
-      minH="100vh"
-      maxH="100vh"
-      flexDir="column"
-      //   bg="gray.100"
-      gap="2"
-      p="5"
-    >
-      <Heading size="md">Journal Stock</Heading>
+    <Flex h="full" minH="100vh" maxH="100vh" flexDir="column" gap="2" p="5">
+      <Heading size="md">Manage Stock</Heading>
       <form onSubmit={formik.handleSubmit}>
         <Flex rowGap="5" flexDir="column">
-          <FormControl
-            isInvalid={
-              formik.errors.journal_type && formik.touched.journal_type
-            }
-          >
-            <FormLabel htmlFor="journal_type">Journal Type:</FormLabel>
+          <FormControl isInvalid={formik.errors.type && formik.touched.type}>
+            <FormLabel htmlFor="type">Type:</FormLabel>
             <Select
-              id="journal_type"
+              id="type"
               placeholder="Select option"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.journal_type}
+              value={formik.values.type}
             >
               <option value="adding">Addition Stock</option>
               <option value="reducing">Reduction Stock</option>
             </Select>
-            <FormErrorMessage>{formik.errors.journal_type}</FormErrorMessage>
+            <FormErrorMessage>{formik.errors.type}</FormErrorMessage>
           </FormControl>
 
           <ModalSelectWarehouse
@@ -244,28 +274,42 @@ const Journal = () => {
                       <Td minW="300px">
                         <FormControl
                           isInvalid={
-                            formik.errors.listedProduct?.[idx]?.product_id.id &&
-                            formik.touched.listedProduct?.[idx]?.product_id.id
+                            formik.errors.listedProduct?.[idx]?.product
+                              ?.value &&
+                            formik.touched.listedProduct?.[idx]?.product
                           }
                         >
-                          <ReactSelect
-                            id={`listedProduct[${idx}].product_id.id`}
+                          <CustomSelect
+                            id={`listedProduct[${idx}].product.value`}
+                            name={`listedProduct[${idx}].product.value`}
                             placeholder="Select Product"
                             onChange={(opt) => onChangeProductHandler(opt, idx)}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.listedProduct[idx].product_id}
+                            onBlur={() =>
+                              formik.setFieldTouched(
+                                `listedProduct[${idx}].product.value`,
+                                true
+                              )
+                            }
+                            value={formik.values.listedProduct[idx].product}
                             options={updatedOpt}
                             menuPortalTarget={document.querySelector("body")}
                             components={{
                               IndicatorSeparator: () => null,
                             }}
-                          ></ReactSelect>
+                            isInvalid={
+                              formik.errors.listedProduct?.[idx]?.product
+                                ?.value &&
+                              formik.touched.listedProduct?.[idx]?.product
+                            }
+                          />
                           <FormErrorMessage>
-                            {formik.errors.listedProduct?.[idx]?.product_id.id}
+                            {formik.errors.listedProduct?.[idx]?.product?.value}
                           </FormErrorMessage>
                         </FormControl>
                       </Td>
-                      <Td>{formik.values.listedProduct[idx].quantity_before}</Td>
+                      <Td>
+                        {formik.values.listedProduct[idx].quantity_before}
+                      </Td>
                       <Td>{formik.values.listedProduct[idx].quantity_after}</Td>
                       <Td maxWidth="50px">
                         <FormControl
@@ -277,9 +321,17 @@ const Journal = () => {
                           <NumberInput
                             defaultValue={0}
                             min={0}
+                            max={
+                              formik.values.type === "reducing"
+                                ? formik.values.listedProduct[idx]
+                                    .quantity_before
+                                : undefined
+                            }
                             id={`listedProduct[${idx}].amount`}
                             name={`listedProduct[${idx}].amount`}
-                            onChange={(value) => onChangeAmountHandler(value, idx)}
+                            onChange={(value) =>
+                              onChangeAmountHandler(value, idx)
+                            }
                             onBlur={formik.handleBlur}
                             value={formik.values.listedProduct?.[idx]?.amount}
                           >
@@ -311,19 +363,29 @@ const Journal = () => {
               </Tbody>
             </Table>
           </Flex>
+        </Flex>
+        <HStack mt="3" justify="space-between">
           <Button maxW="150px" alignSelf="flex-start" onClick={onAddHandler}>
             Add product
           </Button>
-        </Flex>
-        <HStack>
-          <Button mt="3" type="submit">
-            Back
-          </Button>
-          <Button mt="3" bg="black" color="white" type="submit">
-            Submit
-          </Button>
+          <HStack>
+            <Button bg="black" color="white" type="submit">
+              Submit
+            </Button>
+            <Button type="submit">Back</Button>
+          </HStack>
         </HStack>
       </form>
+      <AlertConfirmation
+        header="Are you sure ?"
+        description="This action will add stock and journal in database, You cannot undo this change"
+        buttonConfirm="Yes"
+        buttonCancel="Cancel"
+        isOpen={openAlert}
+        onClose={() => setOpenAlert(false)}
+        onClickConfirm={onClickConfirmHandler}
+        isLoading={isLoading}
+      />
     </Flex>
   );
 };
