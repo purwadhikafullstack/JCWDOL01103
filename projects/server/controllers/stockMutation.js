@@ -64,6 +64,7 @@ const changeMutationStatus = async (req, res) => {
 
 const createAutoMutation = async (req, res) => {
   const { from_warehouse_id, products } = req.body;
+  const transaction = await db.sequelize.transaction();
   try {
     const warehouse = await db.Warehouses.findByPk(from_warehouse_id);
     const warehouses = await db.Warehouses.findAll({
@@ -84,16 +85,6 @@ const createAutoMutation = async (req, res) => {
       nearestWarehouse,
       products
     );
-
-    // const mutations = results.map((dt) => {
-    //   return {
-    //     from_warehouse_id: warehouse.id,
-    //     to_warehouse_id: from_warehouse_id,
-    //     product_id: dt.product_id,
-    //     quantity: dt.quantity,
-    //     status: "auto",
-    //   };
-    // });
     const mutations = results.flatMap((product) =>
       product.warehouses.map((warehouse) => ({
         product_id: product.product_id,
@@ -103,23 +94,18 @@ const createAutoMutation = async (req, res) => {
         status: "auto",
       }))
     );
-
-    // const mutations = products.map((dt) => {
-    //   return {
-    //     from_warehouse_id: from_warehouse_id,
-    //     to_warehouse_id: to_warehouse_id,
-    //     product_id: dt.product_id,
-    //     quantity: dt.quantity,
-    //     status: "auto",
-    //   };
-    // });
+    const mutationList = await db.Stock_Mutations.bulkCreate(mutations, {transaction});
+    for(const data of mutationList){
+      await mutationHandler(data.id, "auto", transaction);
+    }
+    await transaction.commit();
     return res.status(200).json({
-      message: "Create mutations successfully",
-      data: mutations,
+      message: "Create auto mutations successfully",
     });
   } catch (error) {
+    await transaction.rollback();
     return res.status(500).json({
-      message: "Create mutations failed",
+      message: "Create auto mutations failed",
       error: error.toString(),
     });
   }

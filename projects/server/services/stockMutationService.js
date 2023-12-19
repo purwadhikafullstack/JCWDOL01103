@@ -4,11 +4,12 @@ const { distance } = require("../utils/distanceCalculation");
 const mutationHandler = async (mutationId, status, transaction) => {
   const mutation = await db.Stock_Mutations.findOne({
     where: { id: mutationId },
+    transaction
   });
   if (!mutation) {
     throw new Error("Mutation not found");
   }
-  if (status === "accepted") {
+  if (["accepted", "auto"].includes(status)) {
     const senderWarehouse = await db.Stocks.findOne({
       where: {
         product_id: mutation.product_id,
