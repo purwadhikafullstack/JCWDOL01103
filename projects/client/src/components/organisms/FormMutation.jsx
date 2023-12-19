@@ -5,7 +5,6 @@ import {
   Flex,
   FormControl,
   FormErrorMessage,
-  FormLabel,
   HStack,
   Heading,
   IconButton,
@@ -14,7 +13,6 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  Select,
   Table,
   Tbody,
   Td,
@@ -26,29 +24,31 @@ import {
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { ModalSelectWarehouse } from "../components/organisms/ModalSelectWarehouse";
+import { ModalSelectWarehouse } from "../organisms/ModalSelectWarehouse";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { getProductStock, postStock } from "../api/stock";
-import { toastConfig } from "../utils/toastConfig";
-import { getProducts } from "../api/product";
-import CustomSelect from "../components/atoms/CustomSelect";
-import AlertConfirmation from "../components/organisms/AlertConfirmation";
+import { getProductStock, postStock } from "../../api/stock";
+import { toastConfig } from "../../utils/toastConfig";
+import { getProducts } from "../../api/product";
+import CustomSelect from "../../components/atoms/CustomSelect";
+import AlertConfirmation from "../../components/organisms/AlertConfirmation";
 import { jwtDecode } from "jwt-decode";
-import { getAdminWarehouse } from "../api/adminWarehouse";
+import { getAdminWarehouse } from "../../api/adminWarehouse";
+import { postRequestMutation } from "../../api/stockMutation";
+import { useNavigate } from "react-router-dom";
 
-const Journal = () => {
+const FormMutation = () => {
   const [openAlert, setOpenAlert] = useState(false);
   const [warehouse, setWarehouse] = useState(null);
   const [openModalWarehouse, setOpenModalWarehouse] = useState(false);
   const [products, setProducts] = useState([]);
+  const [warehouseId, setWarehouseId] = useState(null)
   const [updatedOpt, setUpdatedOpt] = useState([]);
-  const [userInfo, setUserInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
+  const navigate = useNavigate()
   const formik = useFormik({
     initialValues: {
       warehouse_id: "",
-      type: "",
       listedProduct: [
         {
           product: {
@@ -56,15 +56,13 @@ const Journal = () => {
             label: "Select product...",
             isDisabled: true,
           },
-          quantity_before: 0,
-          quantity_after: 0,
+          originStock: 0,
           amount: 0,
         },
       ],
     },
     validationSchema: Yup.object({
       warehouse_id: Yup.string().required("Required"),
-      type: Yup.string().required("Required"),
       listedProduct: Yup.array().of(
         Yup.object({
           product: Yup.object({ value: Yup.string().required("Required") }),
@@ -84,26 +82,23 @@ const Journal = () => {
     (async () => {
       try {
         const response = await getProducts();
-        const userData = jwtDecode(localStorage.getItem("token"));
+        const userData = jwtDecode(localStorage.getItem("token"))
+        const response2 = await getAdminWarehouse(userData.id)
         const options = response.data.map((dt) => {
           return {
             value: dt.id,
             label: dt.product_name,
           };
         });
-        if(userData.role === "admin"){
-          const getAdmin = await getAdminWarehouse(userData.id)
-          console.log(getAdmin.data)
-          // formik.setFieldValue("listedProduct", formik.initialValues.listedProduct);
-        }
-        setUserInfo(userData);
         setProducts(options);
+        setWarehouseId(response2.data.warehouse_id)
         setUpdatedOpt(options);
       } catch (error) {
         toast(toastConfig("error", "Failed", error.message));
       }
     })();
   }, []);
+
   useEffect(() => {
     const updatedOptions = products?.map((dt) => {
       return {
@@ -118,7 +113,7 @@ const Journal = () => {
 
   useEffect(() => {
     formik.setFieldValue("listedProduct", formik.initialValues.listedProduct);
-  }, [formik.values.type, formik.values.warehouse_id]);
+  }, [formik.values.warehouse_id]);
 
   const onChangeProductHandler = async (opt, idx) => {
     try {
@@ -128,23 +123,15 @@ const Journal = () => {
         product_id: opt.value,
       };
       const response = await getProductStock(query);
-      const quantityBefore =
+      const originStock =
         formik.values.warehouse_id && response.data.length > 0
           ? response.data[0].quantity
           : 0;
-      formik.setFieldValue(
-        `listedProduct[${idx}].quantity_before`,
-        quantityBefore
-      );
-      formik.setFieldValue(
-        `listedProduct[${idx}].quantity_after`,
-        parseInt(formik.values.listedProduct[idx].amount) + quantityBefore
-      );
+      formik.setFieldValue(`listedProduct[${idx}].originStock`, originStock);
     } catch (error) {
       toast(toastConfig("error", "Failed", error.message));
     }
   };
-
   const onAddHandler = () => {
     formik.setFieldValue("listedProduct", [
       ...formik.values.listedProduct,
@@ -159,15 +146,6 @@ const Journal = () => {
   };
 
   const onChangeAmountHandler = (value, idx) => {
-    let valueBefore = parseInt(
-      formik.values.listedProduct[idx]?.quantity_before
-    );
-    let amount =
-      formik.values.type === "reducing"
-        ? parseInt(value) * -1
-        : parseInt(value);
-    const result = valueBefore + amount;
-    formik.setFieldValue(`listedProduct[${idx}].quantity_after`, result);
     formik.setFieldValue(`listedProduct[${idx}].amount`, parseInt(value));
   };
   const onClickConfirmHandler = async () => {
@@ -177,22 +155,23 @@ const Journal = () => {
       const products = value.listedProduct.map((dt) => {
         return {
           product_id: dt.product.value,
-          amount: dt.amount,
+          quantity: dt.amount,
         };
       });
       const data = {
-        warehouse_id: value.warehouse_id,
-        type: value.type,
+        from_warehouse_id: warehouseId,
+        to_warehouse_id: value.warehouse_id,
         products: products,
       };
-      const updateStock = await postStock(data);
-      toast(toastConfig("success", "Success", updateStock.message));
+      const requestMutation = postRequestMutation(data)
+      toast(toastConfig("success", "Success", requestMutation.message));
       setTimeout(() => {
         setIsLoading(false);
         setOpenAlert(false);
         formik.handleReset();
         setWarehouse(null);
-      }, 3000);
+        navigate(-1)
+      }, 1500);
     } catch (error) {
       toast(toastConfig("error", "Failed", error.message));
       setIsLoading(false);
@@ -200,24 +179,9 @@ const Journal = () => {
   };
   return (
     <Flex h="full" minH="100vh" maxH="100vh" flexDir="column" gap="2" p="5">
-      <Heading size="md">Manage Stock</Heading>
+      <Heading size="md">Mutation Request</Heading>
       <form onSubmit={formik.handleSubmit}>
         <Flex rowGap="5" flexDir="column">
-          <FormControl isInvalid={formik.errors.type && formik.touched.type}>
-            <FormLabel htmlFor="type">Type:</FormLabel>
-            <Select
-              id="type"
-              placeholder="Select option"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.type}
-            >
-              <option value="adding">Addition Stock</option>
-              <option value="reducing">Reduction Stock</option>
-            </Select>
-            <FormErrorMessage>{formik.errors.type}</FormErrorMessage>
-          </FormControl>
-
           <ModalSelectWarehouse
             isOpen={openModalWarehouse}
             onClose={() => setOpenModalWarehouse(false)}
@@ -226,40 +190,39 @@ const Journal = () => {
               formik.setFieldValue("warehouse_id", val.id);
               setOpenModalWarehouse(false);
             }}
+            except_id={warehouseId}
           />
-          {userInfo?.role === "master" && (
-            <FormControl isInvalid={formik.errors.warehouse_id}>
-              <Text>Warehouse:</Text>
-              <Box
-                justifyContent="flex-end"
-                border={formik.errors.warehouse_id ? "2px" : "1px"}
-                p="2"
-                borderRadius="md"
-                borderColor={formik.errors.warehouse_id ? "#e53e3e" : "inherit"}
-                id="warehouse_id"
+          <FormControl isInvalid={formik.errors.warehouse_id}>
+            <Text>To Warehouse:</Text>
+            <Box
+              justifyContent="flex-end"
+              border={formik.errors.warehouse_id ? "2px" : "1px"}
+              p="2"
+              borderRadius="md"
+              borderColor={formik.errors.warehouse_id ? "#e53e3e" : "inherit"}
+              id="warehouse_id"
+            >
+              {warehouse ? (
+                <>
+                  <Text fontWeight="bold">{warehouse?.name}</Text>
+                  <Text>{warehouse?.street}</Text>
+                  <Text>{`${warehouse?.region.city_name}, ${warehouse?.region.province.province_name}, ${warehouse?.region.postal_code}`}</Text>
+                </>
+              ) : (
+                <Text>Please select warehouse</Text>
+              )}
+              <Button
+                bg="black"
+                color="white"
+                size="sm"
+                mt="2"
+                onClick={() => setOpenModalWarehouse(true)}
               >
-                {warehouse ? (
-                  <>
-                    <Text fontWeight="bold">{warehouse?.name}</Text>
-                    <Text>{warehouse?.street}</Text>
-                    <Text>{`${warehouse?.region.city_name}, ${warehouse?.region.province.province_name}, ${warehouse?.region.postal_code}`}</Text>
-                  </>
-                ) : (
-                  <Text>Please select warehouse</Text>
-                )}
-                <Button
-                  bg="black"
-                  color="white"
-                  size="sm"
-                  mt="2"
-                  onClick={() => setOpenModalWarehouse(true)}
-                >
-                  {warehouse ? "Change" : "Select Warehouse"}
-                </Button>
-              </Box>
-              <FormErrorMessage>{formik.errors.warehouse_id}</FormErrorMessage>
-            </FormControl>
-          )}
+                {warehouse ? "Change" : "Select Warehouse"}
+              </Button>
+            </Box>
+            <FormErrorMessage>{formik.errors.warehouse_id}</FormErrorMessage>
+          </FormControl>
           <Flex
             overflowX="scroll"
             overflowY="hidden"
@@ -271,9 +234,8 @@ const Journal = () => {
               <Thead>
                 <Tr>
                   <Th>Product Name</Th>
-                  <Th>Before</Th>
-                  <Th>After</Th>
-                  <Th>Amount</Th>
+                  <Th>Origin Stock</Th>
+                  <Th>Request Amount</Th>
                   <Th>Actions</Th>
                 </Tr>
               </Thead>
@@ -317,10 +279,7 @@ const Journal = () => {
                           </FormErrorMessage>
                         </FormControl>
                       </Td>
-                      <Td>
-                        {formik.values.listedProduct[idx].quantity_before}
-                      </Td>
-                      <Td>{formik.values.listedProduct[idx].quantity_after}</Td>
+                      <Td>{formik.values.listedProduct[idx].originStock}</Td>
                       <Td maxWidth="50px">
                         <FormControl
                           isInvalid={
@@ -331,12 +290,7 @@ const Journal = () => {
                           <NumberInput
                             defaultValue={0}
                             min={0}
-                            max={
-                              formik.values.type === "reducing"
-                                ? formik.values.listedProduct[idx]
-                                    .quantity_before
-                                : undefined
-                            }
+                            max={formik.values.listedProduct?.[idx]?.originStock}
                             id={`listedProduct[${idx}].amount`}
                             name={`listedProduct[${idx}].amount`}
                             onChange={(value) =>
@@ -387,8 +341,8 @@ const Journal = () => {
         </HStack>
       </form>
       <AlertConfirmation
-        header="Are you sure ?"
-        description="This action will add stock and journal in database, You cannot undo this change"
+        header="Send this mutation request ?"
+        description="This action will request mutation to destination warehouse, You cannot undo this change."
         buttonConfirm="Yes"
         buttonCancel="Cancel"
         isOpen={openAlert}
@@ -400,4 +354,4 @@ const Journal = () => {
   );
 };
 
-export default Journal;
+export default FormMutation;

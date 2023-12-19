@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import UserAddress from "./pages/UserAddress";
 import Journal from "./pages/Journal";
 import Product from "./pages/Product";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
       <Route path="/test" element={<Test />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/user-address" element={<UserAddress />} />
-      <Route path="/journal" element={<Journal />} />
+      <Route path="/journal" element={<ProtectedRoute element={<Journal />} roles={["admin","master"]} />} />
       <Route path="/products" element={<Product />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

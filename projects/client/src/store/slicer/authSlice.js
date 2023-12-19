@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { postLogin } from "../../api/auth";
+import { jwtDecode } from "jwt-decode";
+import { getAdminWarehouse } from "../../api/adminWarehouse";
 
 export const userLogin = createAsyncThunk(
   "auth/postLogin",
@@ -12,6 +14,18 @@ export const userLogin = createAsyncThunk(
     }
   }
 );
+
+export const fetchUserInfo = createAsyncThunk(
+  "auth/getUserInfo",
+  async () => {
+    try {
+      const userData = jwtDecode(localStorage.getItem("token"));
+      const response = await getAdminWarehouse(userData.id);
+    } catch (error) {
+      
+    }
+  }
+)
 
 const initialState = {
   isAuthorized: false,
