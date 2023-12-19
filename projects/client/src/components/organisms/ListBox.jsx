@@ -5,11 +5,9 @@ import {
   IconButton,
   Menu,
   MenuButton,
-  MenuItem,
   MenuList,
   Skeleton,
   SkeletonText,
-  Tag,
   Text,
   useMediaQuery,
 } from "@chakra-ui/react";
@@ -18,7 +16,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { dateFormatter } from "../../utils/dateFormatter";
 import CustomTag from "../atoms/CustomTag";
 
-const ListBox = ({ data, children, isLoading }) => {
+const ListBox = ({ data, children, isLoading, requestType }) => {
   const [isLaptop, isMobile] = useMediaQuery([
     "(min-width: 505px)",
     "(max-width: 425px)",
@@ -85,7 +83,7 @@ const ListBox = ({ data, children, isLoading }) => {
               {data?.product.product_name}
             </Heading>
             <Text mb="10px">{`Amount: ${data?.quantity}`}</Text>
-            <Text>To: </Text>
+            <Text>{!requestType ? "To:" : "From:"} </Text>
             <Text fontWeight="bold" noOfLines={1}>
               {data?.to_warehouse.name}
             </Text>

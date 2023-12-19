@@ -43,6 +43,7 @@ const Journal = () => {
   const [products, setProducts] = useState([]);
   const [updatedOpt, setUpdatedOpt] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
+  const [adminInfo, setAdminInfo] = useState(null)
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
   const formik = useFormik({
@@ -93,8 +94,8 @@ const Journal = () => {
         });
         if(userData.role === "admin"){
           const getAdmin = await getAdminWarehouse(userData.id)
-          console.log(getAdmin.data)
-          // formik.setFieldValue("listedProduct", formik.initialValues.listedProduct);
+          setAdminInfo(getAdmin.data)
+          formik.setFieldValue("warehouse_id", getAdmin.data.warehouse_id);
         }
         setUserInfo(userData);
         setProducts(options);
@@ -187,10 +188,11 @@ const Journal = () => {
       };
       const updateStock = await postStock(data);
       toast(toastConfig("success", "Success", updateStock.message));
-      setTimeout(() => {
+      setTimeout(async () => {
         setIsLoading(false);
         setOpenAlert(false);
         formik.handleReset();
+        userInfo.role === "admin" && formik.setFieldValue("warehouse_id", adminInfo.warehouse_id);
         setWarehouse(null);
       }, 3000);
     } catch (error) {

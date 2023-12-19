@@ -15,7 +15,7 @@ import { getWarehouses } from "../../api/warehouses";
 import { toastConfig } from "../../utils/toastConfig";
 import Pagination from "../molecules/Pagination";
 
-export const ModalSelectWarehouse = ({ isOpen, onOpen, onClose, onClickRow}) => {
+export const ModalSelectWarehouse = ({ isOpen, except_id, onClose, onClickRow }) => {
   const [data, setData] = useState(null);
   const [filterValue, setFilterValue] = useState("");
   const [page, setPage] = useState();
@@ -23,13 +23,17 @@ export const ModalSelectWarehouse = ({ isOpen, onOpen, onClose, onClickRow}) => 
   useEffect(() => {
     (async () => {
       try {
-        const response = await getWarehouses({ search: filterValue, page: page });
-        setData(response.data);
+          const response = await getWarehouses({
+            search: filterValue,
+            page: page,
+            exclude_id: except_id
+          });
+          setData(response.data);
       } catch (error) {
-        toast(toastConfig("error", "Failed", error.data.message));
+        toast(toastConfig("error", "Failed", error.message));
       }
     })();
-  }, [filterValue, page]);
+  }, [filterValue, page, except_id]);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -53,7 +57,7 @@ export const ModalSelectWarehouse = ({ isOpen, onOpen, onClose, onClickRow}) => 
                   borderRadius="md"
                   py="2"
                   px="4"
-                  onClick={()=>onClickRow(dt)}
+                  onClick={() => onClickRow(dt)}
                 >
                   <Text fontWeight="semibold">{dt.name}</Text>
                   <Text>

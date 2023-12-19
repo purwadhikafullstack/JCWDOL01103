@@ -1,5 +1,10 @@
 const db = require("../models");
 const { Op } = require("sequelize");
+const {
+  mutationHandler,
+  findNearestWarehouse,
+  checkNearestWarehouseStock,
+} = require("../services/stockMutationService");
 
 const createMutation = async (req, res) => {
   const { from_warehouse_id, to_warehouse_id, products } = req.body;
@@ -29,6 +34,7 @@ const createMutation = async (req, res) => {
 const changeMutationStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
+  const transaction = await db.sequelize.transaction();
   try {
     const mutation = await db.Stock_Mutations.findOne({
       where: {
@@ -40,20 +46,80 @@ const changeMutationStatus = async (req, res) => {
         message: "Mutation not found",
       });
     }
-    await db.Stock_Mutations.update(
-      {
-        status: status,
+    if (status === "accepted") {
+      await mutationHandler(id, status, transaction);
+    }
+    await transaction.commit();
+    return res.status(200).json({
+      message: "Change mutation status successfully",
+    });
+  } catch (error) {
+    await transaction.rollback();
+    return res.status(500).json({
+      message: "Change mutation status failed",
+      error: error.toString(),
+    });
+  }
+};
+
+const createAutoMutation = async (req, res) => {
+  const { from_warehouse_id, products } = req.body;
+  try {
+    const warehouse = await db.Warehouses.findByPk(from_warehouse_id);
+    const warehouses = await db.Warehouses.findAll({
+      where: {
+        id: {
+          [Op.not]: from_warehouse_id,
+        },
       },
-      {
-        where: { id: mutation.id },
-      }
+      attributes: ["id", "longitude", "latitude"],
+    });
+    if (!warehouse) {
+      return res.status(400).json({
+        message: "Warehouse not found",
+      });
+    }
+    const nearestWarehouse = await findNearestWarehouse(warehouse, warehouses);
+    const results = await checkNearestWarehouseStock(
+      nearestWarehouse,
+      products
     );
+
+    // const mutations = results.map((dt) => {
+    //   return {
+    //     from_warehouse_id: warehouse.id,
+    //     to_warehouse_id: from_warehouse_id,
+    //     product_id: dt.product_id,
+    //     quantity: dt.quantity,
+    //     status: "auto",
+    //   };
+    // });
+    const mutations = results.flatMap((product) =>
+      product.warehouses.map((warehouse) => ({
+        product_id: product.product_id,
+        from_warehouse_id: warehouse.id,
+        to_warehouse_id: from_warehouse_id,
+        quantity: warehouse.stockAssist,
+        status: "auto",
+      }))
+    );
+
+    // const mutations = products.map((dt) => {
+    //   return {
+    //     from_warehouse_id: from_warehouse_id,
+    //     to_warehouse_id: to_warehouse_id,
+    //     product_id: dt.product_id,
+    //     quantity: dt.quantity,
+    //     status: "auto",
+    //   };
+    // });
     return res.status(200).json({
       message: "Create mutations successfully",
+      data: mutations,
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Change mutation status failed",
+      message: "Create mutations failed",
       error: error.toString(),
     });
   }
@@ -147,7 +213,7 @@ const getMutations = async (req, res) => {
 
   let whereClause = {};
   let whereClause2 = {};
-  let sortType = [["updatedAt", "DESC"]];
+  let sortType = [["createdAt", "DESC"]];
   if (search) {
     whereClause = {
       [Op.or]: [
@@ -282,4 +348,5 @@ module.exports = {
   getMutationById,
   changeMutationStatus,
   getMutations,
+  createAutoMutation,
 };

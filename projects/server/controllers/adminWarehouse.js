@@ -1,11 +1,13 @@
+const { decryptData, encryptData } = require("../helpers/encrypt");
 const db = require("../models");
 
 const assignAdminWarehouse = async (req, res) => {
   const { id, warehouse_id } = req.body;
+  const decryptedId = decryptData(id)
   try {
     const admin = await db.Users.findOne({
       where: {
-        id: id,
+        id: decryptedId,
         role: "admin",
       },
     });
@@ -16,10 +18,10 @@ const assignAdminWarehouse = async (req, res) => {
     }
     const [user, created] = await db.Warehouses_Users.findOrCreate({
       where: {
-        user_id: id,
+        user_id: decryptedId,
       },
       defaults: {
-        user_id: id,
+        user_id: decryptedId,
         warehouse_id: warehouse_id,
       },
     });
@@ -30,7 +32,7 @@ const assignAdminWarehouse = async (req, res) => {
         },
         {
           where: {
-            user_id: id,
+            user_id: decryptedId,
           },
         }
       );
@@ -50,4 +52,38 @@ const assignAdminWarehouse = async (req, res) => {
   }
 };
 
-module.exports = { assignAdminWarehouse };
+const getAdminWarehouse = async (req, res) => {
+  const {user_id} = req.params
+  try {
+    const whereClause = {}
+    if(user_id){
+      let dencodedId = decodeURIComponent(user_id)
+      let decryptedId = decryptData(dencodedId)
+      whereClause.user_id = decryptedId
+    }
+    const admin = await db.Warehouses_Users.findOne({
+      where: whereClause,
+      attributes:{
+        exclude: ["createdAt", "updatedAt"]
+      }
+    })
+    if(!admin){
+      return res.status(404).json({
+        message: "Admin not found",
+      });
+    }
+    const result = admin
+    result.user_id = user_id
+    return res.status(200).json({
+      message: "Get admin warehouse succesfully!",
+      data: result,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: "Failed to get Admin Warehouse",
+      error: error.toString(),
+    });
+  }
+}
+
+module.exports = { assignAdminWarehouse, getAdminWarehouse };

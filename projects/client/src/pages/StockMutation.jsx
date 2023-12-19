@@ -1,13 +1,9 @@
 import {
-  Box,
   Button,
   Flex,
   Heading,
   MenuItem,
   Select,
-  SkeletonCircle,
-  SkeletonText,
-  Spinner,
   Tab,
   TabList,
   TabPanel,
@@ -15,6 +11,7 @@ import {
   Tabs,
   VStack,
   useMediaQuery,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import ListBox from "../components/organisms/ListBox";
@@ -23,9 +20,10 @@ import { BsClipboard2X } from "react-icons/bs";
 import { MdCheck, MdOutlineCancel } from "react-icons/md";
 import Pagination from "../components/molecules/Pagination";
 import { useNavigate } from "react-router-dom";
-import { getMutations } from "../api/stockMutation";
+import { getMutations, patchMutationStatus } from "../api/stockMutation";
 import { jwtDecode } from "jwt-decode";
 import { getAdminWarehouse } from "../api/adminWarehouse";
+import { toastConfig } from "../utils/toastConfig";
 
 const Mutation = () => {
   const [selectedMenu, setSelectedMenu] = useState(0);
@@ -38,6 +36,8 @@ const Mutation = () => {
   });
   const [isTablet] = useMediaQuery("(min-width: 505px)");
   const navigate = useNavigate();
+  const toast = useToast();
+
   const fetchData = async (filterOpt) => {
     try {
       const response = await getMutations({ ...filterInput, ...filterOpt });
@@ -64,7 +64,18 @@ const Mutation = () => {
       await fetchData(filter);
     })();
   }, [selectedMenu, filterInput]);
-
+  const changeStatusHandler = async (id, status) => {
+    try {
+      const data = {
+        status: status,
+      };
+      const response = await patchMutationStatus(id, data);
+      await fetchData();
+      toast(toastConfig("success", "Success", response.message));
+    } catch (error) {
+      toast(toastConfig("error", "Failed", error.message));
+    }
+  };
   return (
     <Flex w="100vw" minH="100vh" bg="gray.100" flexDir="column">
       <Heading m="4">Stock Mutation</Heading>
@@ -102,8 +113,8 @@ const Mutation = () => {
               setFilterInput((prev) => ({ ...prev, sort: e.target.value }))
             }
           >
-            <option value="updatedAt_DESC">Newest</option>
-            <option value="updatedAt_ASC">Oldest</option>
+            <option value="createdAt_DESC">Newest</option>
+            <option value="createdAt_ASC">Oldest</option>
             <option value="sort_ASC">Name (A-Z)</option>
             <option value="sort_DESC">Name (Z-A)</option>
           </Select>
@@ -121,9 +132,14 @@ const Mutation = () => {
           <TabPanel>
             <VStack>
               {mutations?.map((dt, idx) => {
+                // console.log(dt);
                 return (
-                  <ListBox isLoading={isLoadingList} data={dt} key={idx}>
-                    <MenuItem icon={<BsClipboard2X size="20px" />}>
+                  <ListBox isLoading={isLoadingList} data={dt} key={idx} requestType={selectedMenu}>
+                    <MenuItem
+                      icon={<BsClipboard2X size="20px" />}
+                      isDisabled={dt.status !== "waiting"}
+                      onClick={() => changeStatusHandler(dt.id, "cancelled")}
+                    >
                       Cancel Request
                     </MenuItem>
                   </ListBox>
@@ -135,11 +151,19 @@ const Mutation = () => {
             <VStack>
               {mutations?.map((dt, idx) => {
                 return (
-                  <ListBox isLoading={isLoadingList} data={dt} key={idx}>
-                    <MenuItem icon={<MdCheck size="20px" />}>
+                  <ListBox isLoading={isLoadingList} data={dt} key={idx} requestType={selectedMenu}>
+                    <MenuItem
+                      icon={<MdCheck size="20px" />}
+                      isDisabled={dt.status !== "waiting"}
+                      onClick={() => changeStatusHandler(dt.id, "accepted")}
+                    >
                       Accept Request
                     </MenuItem>
-                    <MenuItem icon={<MdOutlineCancel size="20px" />}>
+                    <MenuItem
+                      icon={<MdOutlineCancel size="20px" />}
+                      isDisabled={dt.status !== "waiting"}
+                      onClick={() => changeStatusHandler(dt.id, "rejected")}
+                    >
                       Reject Request
                     </MenuItem>
                   </ListBox>

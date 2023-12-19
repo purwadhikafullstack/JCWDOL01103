@@ -38,5 +38,6 @@ router.patch(
   ]),
   stockMutationController.changeMutationStatus
 );
+router.post("/stock-mutation/auto", stockMutationController.createAutoMutation)
 
 module.exports = router;

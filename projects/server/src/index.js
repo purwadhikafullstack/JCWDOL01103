@@ -14,6 +14,7 @@ const addressRouter = require("../router/address");
 const stockRouter = require("../router/stock");
 const profileRouter = require("./../router/profile");
 const productRouter = require("./../router/product");
+const stockMutationRouter = require("./../router/stockMutation")
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -42,6 +43,7 @@ app.use(addressRouter);
 app.use(stockRouter);
 app.use(profileRouter);
 app.use(productRouter);
+app.use(stockMutationRouter);
 
 // ===========================
 // NOTE : Add your routes here
