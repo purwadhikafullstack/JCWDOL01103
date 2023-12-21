@@ -46,9 +46,7 @@ const changeMutationStatus = async (req, res) => {
         message: "Mutation not found",
       });
     }
-    if (status === "accepted") {
-      await mutationHandler(id, status, transaction);
-    }
+    await mutationHandler(id, status, transaction);
     await transaction.commit();
     return res.status(200).json({
       message: "Change mutation status successfully",
@@ -94,8 +92,10 @@ const createAutoMutation = async (req, res) => {
         status: "auto",
       }))
     );
-    const mutationList = await db.Stock_Mutations.bulkCreate(mutations, {transaction});
-    for(const data of mutationList){
+    const mutationList = await db.Stock_Mutations.bulkCreate(mutations, {
+      transaction,
+    });
+    for (const data of mutationList) {
       await mutationHandler(data.id, "auto", transaction);
     }
     await transaction.commit();

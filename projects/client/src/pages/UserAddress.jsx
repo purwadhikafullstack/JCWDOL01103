@@ -204,7 +204,7 @@ const UserAddress = () => {
       <ModalFormAddress
         data={selectedAddress}
         isOpen={openModalForm}
-        onClose={() => setOpenModalForm(false)}
+        onClose={() => {setOpenModalForm(false); setSelectedAddress(null)}}
         onCloseComplete={fetchAddress}
       />
     </Flex>

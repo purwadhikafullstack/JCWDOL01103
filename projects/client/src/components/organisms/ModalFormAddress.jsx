@@ -104,7 +104,7 @@ function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create new address</ModalHeader>
+        <ModalHeader>{data ? "Edit Address" : "Create new address"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody display="flex" flexDir="column" pb={6} gap="4">
           <form onSubmit={formik.handleSubmit}>

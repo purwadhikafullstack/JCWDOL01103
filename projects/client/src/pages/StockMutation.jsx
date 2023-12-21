@@ -69,9 +69,18 @@ const Mutation = () => {
       const data = {
         status: status,
       };
-      const response = await patchMutationStatus(id, data);
-      await fetchData();
-      toast(toastConfig("success", "Success", response.message));
+      const userData = jwtDecode(localStorage.getItem("token"));
+      const response = await getAdminWarehouse(userData.id);
+      const filter = {};
+      if (selectedMenu === 0) {
+        filter.from = response.data.warehouse_id;
+      }
+      if (selectedMenu === 1) {
+        filter.to = response.data.warehouse_id;
+      }
+      const response2 = await patchMutationStatus(id, data);
+      await fetchData(filter);
+      toast(toastConfig("success", "Success", response2.message));
     } catch (error) {
       toast(toastConfig("error", "Failed", error.message));
     }

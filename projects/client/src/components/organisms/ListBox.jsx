@@ -85,7 +85,7 @@ const ListBox = ({ data, children, isLoading, requestType }) => {
             <Text mb="10px">{`Amount: ${data?.quantity}`}</Text>
             <Text>{!requestType ? "To:" : "From:"} </Text>
             <Text fontWeight="bold" noOfLines={1}>
-              {data?.to_warehouse.name}
+              {!requestType ? data?.to_warehouse.name : data?.from_warehouse.name}
             </Text>
             <Text
               noOfLines={1}
