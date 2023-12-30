@@ -194,6 +194,7 @@ function FormSignIn({ isLogin, onClickLogin, isLaptop }) {
               fontSize="sm"
               alignSelf="flex-end"
               color="blue"
+              href="http://localhost:3000/reset"
             >
               Forgot your password ?
             </Link>

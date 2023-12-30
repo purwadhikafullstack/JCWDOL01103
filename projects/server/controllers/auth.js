@@ -2,6 +2,7 @@ const db = require("./../models");
 const bcrypt = require("bcrypt");
 const transporter = require("../helpers/nodemailer");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
 const { createToken, decodeToken } = require("../helpers/jwt");
 const { encryptData, decryptData } = require("../helpers/encrypt");
 
@@ -46,29 +47,36 @@ const register = async (req, res) => {
 
 const validatorVerification = async (req, res) => {
   const { token } = req.params;
-  const user = decodeToken(token);
-  if (!user.data) {
+  try {
+    const user = decodeToken(token)
+    if (!user.data) {
+      return res.status(200).json({
+        error: user,
+        verified: false,
+      });
+    }
+    const checkUser = await db.Users.findOne({
+      where: {
+        email: user.data.email,
+        password: null,
+      },
+    });
+    if (checkUser) {
+      return res.status(200).json({
+        message: "Email has not been verified",
+        verified: false,
+      });
+    }
     return res.status(200).json({
-      error: user,
-      verified: false,
+      message: "Email has been verified",
+      verified: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "error",
+      error: error
     });
   }
-  const checkUser = await db.Users.findOne({
-    where: {
-      email: user.data.email,
-      password: null,
-    },
-  });
-  if (checkUser) {
-    return res.status(200).json({
-      message: "Email has not been verified",
-      verified: false,
-    });
-  }
-  return res.status(200).json({
-    message: "Email has been verified",
-    verified: true,
-  });
 };
 
 const verification = async (req, res) => {
@@ -131,14 +139,14 @@ const login = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  const {id} = req.params
-  const decryptedId = decryptData(decodeURIComponent(id))
+  const { id } = req.params;
   try {
+    const decryptedId = decryptData(decodeURIComponent(id));
     const user = await db.Users.findOne({
       where: {
         id: decryptedId,
       },
-      attributes: ["id", "name", "email", "role"],
+      attributes: ["id", "name", "email", "role", "status"],
     });
     return res.status(200).json({
       status: 200,
@@ -164,15 +172,133 @@ const authValidator = async (req, res) => {
       return decode;
     });
     return res.status(200).json({
-      code: 403,
       message: "Authorized",
       data: verify,
     });
   } catch (error) {
     return res.status(403).json({
-      code: 403,
       message: "Unauthorized",
       error: err.toString(),
+    });
+  }
+};
+
+const checkTokenStatus = async(req, res, next) => {
+  const { token } = req.params;
+  try {
+    const decodedToken = decodeToken(decodeURIComponent(token));
+    return res.status(200).json({
+      status: 200,
+      message: "Authorized"
+    });
+  } catch (error) {
+    return res.status(401).json({
+      status: 401,
+      error: error
+    })
+  }
+}
+
+const resetPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await db.Users.findOne({
+      where: {
+        email: email.toLowerCase(),
+        role: "user",
+      },
+    });
+    if (!user) {
+      return res.status(400).json({
+        status: 400,
+        message: "Email is not registered!",
+      });
+    }
+    if (user.status === "reset") {
+      return res.status(400).json({
+        status: 400,
+        message: "Email has requested a password reset",
+      });
+    }
+    await user.update({
+      status: "reset",
+    });
+    let id = encryptData(user.id);
+    let token = createToken({ email, id });
+    const resetLink = `http://localhost:3000/reset/${token}`;
+    const templatePath = "./helpers/resetPassword.html";
+    const templateContent = fs.readFileSync(templatePath, "utf8");
+    const htmlContent = templateContent.replace(/__RESETLINK__/g, resetLink);
+    let mail = {
+      from: `Admin <xordyzen@gmail.com>`,
+      to: `${email}`,
+      subject: "Password Reset",
+      html: htmlContent,
+    };
+    transporter.sendMail(mail, (errMail) => {
+      if (errMail) {
+        return res.status(500).send({
+          message: "Send password reset failed!",
+          success: false,
+        });
+      }
+      return res.status(200).send({
+        message: "Check your email to reset the password!",
+        success: true,
+      });
+    });
+    return res.status(200).send({
+      message: "Check your email to reset the password!",
+      data: user,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "error",
+      error: err.toString(),
+    });
+  }
+};
+
+const setNewPassword = async (req, res) => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+  try {
+    const decodedToken = decodeToken(decodeURIComponent(token));
+    const decryptedId = decryptData(decodedToken.data.id);
+    const user = await db.Users.findOne({
+      where: {
+        id: decryptedId,
+        email: decodedToken.data.email,
+        status: "reset",
+      },
+    });
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found in reseting password list",
+      });
+    }
+    const salt = await bcrypt.genSalt(12);
+    const hashPassword = await bcrypt.hash(newPassword, salt);
+    await db.Users.update(
+      {
+        password: hashPassword,
+        status: "active",
+      },
+      {
+        where: {
+          id: decryptedId,
+          email: decodedToken.data.email,
+        },
+      }
+    );
+    return res.status(200).json({
+      message: "Set new password success",
+      data: decodedToken,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Set new password failed",
+      error: error,
     });
   }
 };
@@ -184,4 +310,7 @@ module.exports = {
   validatorVerification,
   getUser,
   authValidator,
+  checkTokenStatus,
+  resetPassword,
+  setNewPassword,
 };

@@ -28,6 +28,11 @@ module.exports = {
       image: {
         type: Sequelize.TEXT
       },
+      status: {
+        type: Sequelize.ENUM("active","inactive","reset"),
+        allowNull: false,
+        defaultValue: "active",
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

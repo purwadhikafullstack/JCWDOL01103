@@ -13,6 +13,8 @@ import Product from "./pages/Product";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import StockMutation from "./pages/StockMutation";
 import FormMutation from "./components/organisms/FormMutation";
+import ResetPassword from "./pages/ResetPassword";
+import InputNewPassword from "./pages/InputNewPassword";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
       <Route path="/profile/:id" element={<Profile />} />
       <Route path="/login" element={<Authentication />} />
       <Route path="/verification/:token" element={<Verification />} />
+      <Route path="/reset" element={<ResetPassword />} />
+      <Route path="/reset/:token" element={<InputNewPassword/>} />
       <Route path="/dashboard/warehouse" element={<ProtectedRoute element={<DashboardWarehouse />} roles={["master"]} />}  />
       <Route path="/test" element={<Test />} />
       <Route path="/dashboard" element={<Dashboard />} />
