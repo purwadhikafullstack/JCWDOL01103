@@ -59,7 +59,7 @@ const InputAddress = ({ isInvalid, onChange }) => {
             closeOnOverlayClick={false}
           >
             <ModalOverlay />
-            <ModalContent bg="gray.100" h="85vh" maxW="700px">
+            <ModalContent h="85vh" maxW="700px">
               <ModalHeader>Address List</ModalHeader>
               <ModalCloseButton />
               <ModalBody>

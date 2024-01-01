@@ -8,7 +8,7 @@ function LayoutRoot() {
   const location = useLocation();
 
   return (
-    <Flex justifyContent='center' alignItems='center' w='100vw' flexDir='column'>
+    <Flex justifyContent='center' alignItems='center' w='full' flexDir='column'>
       <Flex
         display="flex"
         pos="fixed"
@@ -22,7 +22,7 @@ function LayoutRoot() {
       >
         <Navbar />
       </Flex>
-      <Flex w="100%" maxW='1440px' h="100%" mt="120px" flexDir='column' justifyContent="center" alignItems='center'>
+      <Flex w="100%" maxW='1440px' minH="90vh" h="100%" mt="135px" flexDir='column' alignItems='center' mb="20">
         <Outlet />
       </Flex>
       <Footer />

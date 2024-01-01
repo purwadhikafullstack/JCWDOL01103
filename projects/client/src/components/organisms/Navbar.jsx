@@ -78,6 +78,8 @@ const Navbar = () => {
           alt="Soundsense Logo"
           h={{ base: "40px", lg: "60px" }}
           objectFit="cover"
+          onClick={()=>{navigate("/")}}
+          cursor="pointer"
         />
         <InputGroup mx={"150px"} display={{ base: "none", lg: "block" }}>
           <InputRightElement pointerEvents="none">
@@ -154,6 +156,19 @@ const Navbar = () => {
                       {userInfo?.role}
                     </Text>
                   </Flex>
+                  {
+                    <MenuItem
+                    bg="black"
+                    color="white"
+                    borderRadius="md"
+                    justifyContent="center"
+                    mb="2"
+                    _hover={{ opacity: "0.2" }}
+                    onClick={()=> navigate("/account")}
+                  >
+                    Edit Profile
+                  </MenuItem>
+                  }
                   <MenuItem
                     bg="black"
                     color="white"
