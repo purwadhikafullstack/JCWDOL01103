@@ -16,16 +16,20 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { HiOutlinePencil, HiOutlineTrash } from "react-icons/hi";
-import { changeAddress, deleteAddress, getAddresses } from "../api/userAddress";
-import { SearchInput } from "../components/molecules/SearchInput";
 import { BsPinAngle, BsThreeDots } from "react-icons/bs";
-import AlertConfirmation from "../components/organisms/AlertConfirmation";
-import { toastConfig } from "../utils/toastConfig";
 import { BiPlus } from "react-icons/bi";
-import ModalFormAddress from "../components/organisms/ModalFormAddress";
+import {
+  changeAddress,
+  deleteAddress,
+  getAddresses,
+} from "../../api/userAddress";
+import { toastConfig } from "../../utils/toastConfig";
+import { SearchInput } from "../../components/molecules/SearchInput";
+import AlertConfirmation from "../../components/organisms/AlertConfirmation";
+import ModalFormAddress from "../../components/organisms/ModalFormAddress";
 
-const UserAddress = ({ value, action }) => {
-  const [isLaptop] = useMediaQuery("(min-width: 768px)");
+const UserAddress = ({ onChange, action }) => {
+  const [isLaptop, isMobile] = useMediaQuery(["(min-width: 768px)", "(max-width: 450px)"]);
   const [data, setData] = useState(null);
   const [openAlert, setOpenAlert] = useState(false);
   const [openAlertDelete, setOpenAlertDelete] = useState(false);
@@ -89,37 +93,35 @@ const UserAddress = ({ value, action }) => {
   }, []);
 
   useEffect(() => {
-    value && value(selectedAddressOrder);
-  }, [selectedAddress]);
+    onChange && onChange(selectedAddressOrder);
+  }, [selectedAddressOrder]);
   return (
     <Flex
-      h="full"
-      minH="100vh"
+      h="max-content"
       maxH="100vh"
       alignItems="center"
       flexDir="column"
-      bg="gray.100"
       gap="3"
+      w="full"
     >
-      <HStack w="full" justify="space-between">
-        <Heading as="h4" size="md">
-          Address List
-        </Heading>
+      <HStack w="full" justify="center" alignItems='center' wrap={isMobile && "wrap"}>
+        <SearchInput
+          placeholder="Search here"
+          onChangeInput={(val) => setFilterInput(val)}
+          onPressEnter={fetchAddress}
+          onClickCross={() => fetchAddress("refresh")}
+        />
         <Button
           bg="primaryColor"
-          size="sm"
+          w={isMobile && "full"}
+          size="md"
           color="white"
           onClick={() => setOpenModalForm(true)}
+          leftIcon={<BiPlus/>}
         >
-          <BiPlus /> Add address
+          Add New
         </Button>
       </HStack>
-      <SearchInput
-        placeholder="Search here"
-        onChangeInput={(val) => setFilterInput(val)}
-        onPressEnter={fetchAddress}
-        onClickCross={() => fetchAddress("refresh")}
-      />
       <VStack w="full" gap="4">
         {data?.map((dt) => {
           return (
@@ -127,7 +129,7 @@ const UserAddress = ({ value, action }) => {
               key={dt.id}
               w="full"
               h="150px"
-              shadow="sm"
+              shadow="lg"
               gap="3"
               flexDir={isLaptop ? "row" : "column"}
               justifyContent="space-between"
@@ -145,6 +147,7 @@ const UserAddress = ({ value, action }) => {
                   ? "1px solid"
                   : "none"
               }
+              cursor={ action === "order" && "pointer"}
               onClick={() => {
                 action === "order" && setSelectedAddressOrder(dt);
               }}
@@ -207,11 +210,6 @@ const UserAddress = ({ value, action }) => {
           );
         })}
       </VStack>
-      {action === "order" && (
-        <Button bg="primaryColor" size="md" color="white">
-          Choose Address
-        </Button>
-      )}
       <AlertConfirmation
         isOpen={openAlert}
         onClose={() => setOpenAlert(false)}

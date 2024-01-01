@@ -7,12 +7,10 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   Button,
-  Spinner,
 } from "@chakra-ui/react";
 
 const AlertConfirmation = ({
   isOpen,
-  onOpen,
   onClose,
   header,
   description,
@@ -26,7 +24,6 @@ const AlertConfirmation = ({
     <AlertDialog
       isOpen={isOpen}
       leastDestructiveRef={cancelRef}
-      // onClose={onClose}
       isCentered
     >
       <AlertDialogOverlay>

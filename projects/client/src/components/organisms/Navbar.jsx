@@ -14,6 +14,8 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Button,
+  Box,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,7 +41,7 @@ const Navbar = () => {
         }
         dispatch(checkAuthorized());
       } catch (error) {
-        console.log(error);
+        dispatch(logoutAuthorized());
       }
     })();
   }, []);
@@ -58,7 +60,7 @@ const Navbar = () => {
   }, [authState, dispatch]);
   const onClickLogout = () => {
     dispatch(logoutAuthorized());
-    setUserInfo(null)
+    setUserInfo(null);
     navigate("/");
   };
   return (
@@ -90,27 +92,68 @@ const Navbar = () => {
         </InputGroup>
         <Flex>
           <Menu>
-            <MenuButton>
-              <Flex alignItems={"center"}>
-                <BiUser color="black" fontSize="30px" />
-                {/* <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" /> */}
-                <Text
-                  fontSize={"md"}
-                  fontWeight={"bold"}
+            {!userInfo ? (
+              <Button
+                bg="black"
+                size="sm"
+                color="white"
+                mr="2"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </Button>
+            ) : (
+              <MenuButton>
+                <Flex
+                  alignItems={"center"}
                   ml={2}
-                  mr={5}
-                  pr={5}
+                  mr={{ base: "1", lg: "5" }}
+                  pr={{ base: "1", lg: "5" }}
+                  boxSizing="content-box"
                   borderRight={"2px"}
                   borderColor={"blackAlpha.400"}
-                  display={{ base: "none", lg: "block" }}
                 >
-                  <Link>{userInfo?.name || "Account"}</Link>
-                </Text>
-              </Flex>
-            </MenuButton>
-            <MenuList p="4">
+                  <BiUser color="black" size="30px" />
+                  {/* <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" /> */}
+                  <Flex
+                    flexDir="column"
+                    alignItems="start"
+                    ml={2}
+                    maxW="130px"
+                    w="fit-content"
+                    display={{ base: "none", lg: "flex" }}
+                  >
+                    <Text
+                      w="full"
+                      fontSize={"md"}
+                      fontWeight={"bold"}
+                      overflow="hidden"
+                      whiteSpace="nowrap"
+                      textOverflow="ellipsis"
+                      textAlign="start"
+                    >
+                      {userInfo?.name}
+                    </Text>
+                    <Text fontSize={"sm"}>{userInfo?.role}</Text>
+                  </Flex>
+                </Flex>
+              </MenuButton>
+            )}
+            <MenuList p="4" maxW="250px">
               {authState ? (
                 <>
+                  <Flex
+                    mb="2"
+                    display={{ base: "flex", lg: "none" }}
+                    flexDir="column"
+                  >
+                    <Text noOfLines="1" fontWeight="bold">
+                      {userInfo?.name}
+                    </Text>
+                    <Text noOfLines="1" size="sm" fontStyle="italic">
+                      {userInfo?.role}
+                    </Text>
+                  </Flex>
                   <MenuItem
                     bg="black"
                     color="white"

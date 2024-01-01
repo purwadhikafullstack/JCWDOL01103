@@ -16,7 +16,7 @@ function Authentication() {
     (() => {
       dispatch(checkAuthorized());
       if (authState) {
-        return navigate("/");
+        return navigate(-1);
       }
     }
     )()

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { SearchInput } from "../components/molecules/SearchInput";
 import { ModalSelectWarehouse } from "../components/organisms/ModalSelectWarehouse";
+import InputAddress from "../components/organisms/InputAddress";
 
 function Test() {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ function Test() {
       <Button colorScheme="blue" onClick={() => setOpenSelectWarehouse(true)}>
         Edit Warehouse
       </Button>
+      <InputAddress/>
       <ModalSelectWarehouse
         isOpen={openSelectWarehouse}
         onClose={() => setOpenSelectWarehouse(false)}
