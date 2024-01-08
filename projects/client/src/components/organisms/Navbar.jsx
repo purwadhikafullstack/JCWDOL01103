@@ -157,6 +157,7 @@ const Navbar = () => {
                     </Text>
                   </Flex>
                   {
+                    userInfo?.role === "user" &&
                     <MenuItem
                     bg="black"
                     color="white"

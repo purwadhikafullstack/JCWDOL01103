@@ -18,9 +18,8 @@ const ResetPassword = () => {
     }),
     onSubmit: async (values) => {
       try {
-        const response = await postResetPassword({ email: values.email });
-        console.log(response)
-        toast(toastConfig("success", "Success", "Registration Success"));
+        await postResetPassword({ email: values.email });
+        toast(toastConfig("success", "Success", "Request reset password has been sent"));
         setResetSuccess(true);
       } catch (error) {
         if(error.response.data.status === 400){

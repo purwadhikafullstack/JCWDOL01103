@@ -140,7 +140,6 @@ const Profile = () => {
 
   return (
     <>
-      <Navbar />
       <Container
         as="section"
         mt={{ base: "45px", xl: "100px" }}
@@ -376,7 +375,6 @@ const Profile = () => {
           </form>
         </Box>
       </Container>
-      <Footer />
     </>
   );
 };

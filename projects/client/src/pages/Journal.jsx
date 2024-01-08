@@ -323,7 +323,7 @@ const Journal = () => {
                         {formik.values.listedProduct[idx].quantity_before}
                       </Td>
                       <Td>{formik.values.listedProduct[idx].quantity_after}</Td>
-                      <Td maxWidth="50px">
+                      <Td w="150px" minW="150px">
                         <FormControl
                           isInvalid={
                             formik.errors.listedProduct?.[idx]?.amount &&

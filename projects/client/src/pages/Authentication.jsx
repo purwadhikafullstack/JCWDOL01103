@@ -4,18 +4,21 @@ import FormRegister from "../components/organisms/FormRegister";
 import FormSignIn from "../components/organisms/FormSignIn";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuthorized } from "../store/slicer/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Authentication() {
   const authState = useSelector((state) => state.login.isAuthorized);
   const [isLogin, setIsLogin] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const location = useLocation();
   useEffect(() => {
     (() => {
       dispatch(checkAuthorized());
       if (authState) {
+        if(location.state?.redirect){
+          return navigate(location.state?.redirect)
+        }
         return navigate(-1);
       }
     }
