@@ -2,9 +2,9 @@ const jwt = require('jsonwebtoken')
 
 const tokenKey = process.env.JWT_TOKEN
 
-const createToken = (payload) => {
+const createToken = (payload, expireTime) => {
     return jwt.sign(payload, tokenKey,{
-        expiresIn:'12h'
+        expiresIn: expireTime || '12h'
     })
 }
 

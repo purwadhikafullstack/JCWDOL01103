@@ -13,12 +13,18 @@ import {
   useToast,
   FormControl,
   FormErrorMessage,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useDispatch, useSelector } from "react-redux";
-import { loginGoogle, userLogin } from "../../store/slicer/authSlice";
+import {
+  loginGoogle,
+  setLoadingState,
+  userLogin,
+} from "../../store/slicer/authSlice";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
@@ -42,19 +48,22 @@ function FormSignIn({ isLogin, onClickLogin, isLaptop }) {
   }, []);
   useEffect(() => {
     (async () => {
-      try{
+      try {
         if (googleToken) {
-          const encodedToken = encodeURIComponent(googleToken)
+          dispatch(setLoadingState(true));
+          const encodedToken = encodeURIComponent(googleToken);
           const response = await googleLogin(encodedToken);
           if (response.data.is_verified === false) {
-            return navigate(`/verification/${response.data.token}`,{state:{loginBy:'google', token:response.data.token}});
+            return navigate(`/verification/${response.data.token}`, {
+              state: { loginBy: "google", token: response.data.token },
+            });
           }
-          dispatch(loginGoogle(response.data.token));
-          return navigate("/");
+          setTimeout(()=>{
+            dispatch(loginGoogle(response.data.token));
+          },1300)
         }
-      }
-      catch (error){
-        throw error
+      } catch (error) {
+        throw error;
       }
     })();
   }, [googleToken]);
@@ -73,6 +82,7 @@ function FormSignIn({ isLogin, onClickLogin, isLaptop }) {
     }),
     onSubmit: async (values) => {
       try {
+        dispatch(setLoadingState(true));
         dispatch(
           userLogin({
             email: values.email,
@@ -102,7 +112,8 @@ function FormSignIn({ isLogin, onClickLogin, isLaptop }) {
           if (authResponse.status === 200) {
             setTimeout(() => {
               navigate("/");
-            }, 2000);
+              dispatch(setLoadingState(false));
+            }, 3000);
           }
         }
       }
@@ -202,7 +213,11 @@ function FormSignIn({ isLogin, onClickLogin, isLaptop }) {
             <Text fontSize="small" alignSelf="center">
               Or
             </Text>
-            <Button onClick={() => onClickGoogleSignIn()}>
+            <Button
+              onClick={() => {
+                onClickGoogleSignIn();
+              }}
+            >
               <FcGoogle /> <Text ml="1rem">Sign in with Google</Text>
             </Button>
             <Flex></Flex>

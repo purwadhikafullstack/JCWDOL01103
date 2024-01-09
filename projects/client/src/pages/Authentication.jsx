@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Center, Flex, useMediaQuery } from "@chakra-ui/react";
+import { Button, Center, Flex, Spinner, Text, useMediaQuery } from "@chakra-ui/react";
 import FormRegister from "../components/organisms/FormRegister";
 import FormSignIn from "../components/organisms/FormSignIn";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 function Authentication() {
   const authState = useSelector((state) => state.login.isAuthorized);
+  const loadingState = useSelector((state) => state.login.loading)
   const [isLogin, setIsLogin] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ function Authentication() {
       }
     }
     )()
-  }, [authState]);
+  }, [authState, dispatch]);
   const [isLaptop] = useMediaQuery("(min-width: 768px)");
   return (
     <Center h="100vh" bg="gray.100" flexDir="column" rowGap="1rem">
@@ -38,6 +39,10 @@ function Authentication() {
         shadow="lg"
         bg="white"
       >
+        {loadingState && <Center bg='rgba(255, 255, 255, 0.85)' w='full' h='full' position='absolute' zIndex="10" flexDir="column">
+          <Spinner color="black" size="xl" mb="3"/>
+          <Text fontSize="md">Loading</Text>
+        </Center>}
         <Flex
           bg="primaryColor"
           h="full"

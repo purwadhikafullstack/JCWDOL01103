@@ -45,11 +45,14 @@ const authSlice = createSlice({
         state.user = userData;
       }
     },
+    setLoadingState: (state, action) => {
+      state.loading = action.payload
+    },
     loginGoogle: (state, action) => {
       localStorage.setItem("token", action.payload);
-      state.loading = false;
       state.isAuthorized = true;
       state.response = {message: "Google login succesfully"};
+      state.loading = false;
     },
     logoutAuthorized: (state, action) => {
       localStorage.clear();
@@ -79,5 +82,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { checkAuthorized, loginGoogle, logoutAuthorized } = authSlice.actions;
+export const { checkAuthorized, loginGoogle, logoutAuthorized, setLoadingState } = authSlice.actions;
 export default authSlice.reducer;

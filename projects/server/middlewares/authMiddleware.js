@@ -74,12 +74,12 @@ const authGoogle = async (req, res, next) => {
       const newUser = await db.Users.create({
         name: userDecoded.name,
         email: userDecoded.email.toLowerCase(),
-        role: 'user'
+        role: "user",
       });
       let id = encryptData(newUser.id);
       let email = newUser.email;
       let name = newUser.name;
-      let role = 'user'
+      let role = "user";
       const token = createToken({ id, email, name, role });
       return res.status(200).json({
         status: 200,
@@ -92,7 +92,7 @@ const authGoogle = async (req, res, next) => {
       let id = encryptData(user.id);
       let email = user.email;
       let name = user.name;
-      let role = 'user';
+      let role = "user";
       const token = createToken({ id, email, name, role });
       return res.status(200).json({
         status: 200,
@@ -105,7 +105,7 @@ const authGoogle = async (req, res, next) => {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role
+      role: user.role,
     };
     next();
   } catch (err) {
@@ -116,8 +116,40 @@ const authGoogle = async (req, res, next) => {
   }
 };
 
+const checkResetToken = async (req, res, next) => {
+  const { token } = req.params;
+  try {
+    const resetToken = await db.Token_Resets.findOne({
+      where:{
+        token: decodeURI(token),
+      }
+    })
+    if(!resetToken){
+      return res.status(400).json({
+        status: 400,
+        message: "Invalid token",
+      });
+    }
+    if(!resetToken.active || resetToken.expiredAt < new Date()){
+      return res.status(401).json({
+        status: 401,
+        message: "Token has expired, please request a new password reset!",
+      });
+    }
+    req.isTokenValid = true
+    next()
+
+  } catch (error) {
+    return res.status(401).json({
+      status: 401,
+      error: error,
+    });
+  }
+};
+
 module.exports = {
   validatorRegister,
   validatorLogin,
   authGoogle,
+  checkResetToken,
 };

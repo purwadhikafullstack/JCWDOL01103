@@ -19,14 +19,14 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toastConfig } from "../utils/toastConfig";
-import { checkResetToken, getUser, patchNewPassword } from "../api/auth";
+import { checkResetToken, patchNewPassword } from "../api/auth";
 import { useNavigate, useParams } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import NotFound from "./NotFound";
 
 function InputNewPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
   const [isLaptop] = useMediaQuery("(min-width: 768px)");
   const [isLinkValid, setIsLinkValid] = useState(true);
   const toast = useToast();
@@ -48,6 +48,7 @@ function InputNewPassword() {
     }),
     onSubmit: async (values) => {
       try {
+        setBtnLoading(true);
         const data = {
           newPassword: values.newPassword,
           confirmNewPassword: values.confirmNewPassword,
@@ -56,7 +57,8 @@ function InputNewPassword() {
         const response = await patchNewPassword(encodedToken, data);
         toast(toastConfig("success", "Success", response.data.message));
         setTimeout(() => {
-          navigate("/login", { state: { redirect: "/" } })
+          setBtnLoading(false);
+          navigate("/login", { state: { redirect: "/" } });
         }, 2000);
       } catch (error) {
         toast(toastConfig("error", "Failed", error.response.data.message));
@@ -65,13 +67,9 @@ function InputNewPassword() {
   });
   useEffect(() => {
     (async () => {
-      const token = jwtDecode(param.token);
       try {
         const checkToken = await checkResetToken(param.token);
-        if (checkToken.status === 200) {
-          const response = await getUser(token.id);
-          response.data.status !== "reset" && setIsLinkValid(false)
-        } else {
+        if (checkToken.status !== 200) {
           return setIsLinkValid(false);
         }
       } catch (error) {
@@ -176,7 +174,14 @@ function InputNewPassword() {
                     </FormErrorMessage>
                   </FormControl>
                 </VStack>
-                <Button type="submit" mt="1rem" bg="primaryColor" color="white">
+                <Button
+                  isLoading={btnLoading}
+                  loadingText="Submitting"
+                  type="submit"
+                  mt="1rem"
+                  bg="primaryColor"
+                  color="white"
+                >
                   Submit
                 </Button>
               </Flex>

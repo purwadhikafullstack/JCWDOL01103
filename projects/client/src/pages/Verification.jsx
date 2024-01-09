@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Center, Flex, Heading, Text, useMediaQuery, useToast } from "@chakra-ui/react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import FormVerification from "../components/organisms/FormVerification";
 import { verificationValidator } from "../api/auth";
 import NotFound from "./NotFound";
-import { toastConfig } from "../utils/toastConfig";
 
 function Verification() {
   const [decodedToken, setDecodedToken] = useState(null);
@@ -23,7 +22,7 @@ function Verification() {
         }
         setDecodedToken(jwtDecode(param.token));
       } catch (err) {
-        toast(toastConfig("error", "Failed", err.toString()));
+        return navigate("/notfound");
       }
     })();
   }, []);

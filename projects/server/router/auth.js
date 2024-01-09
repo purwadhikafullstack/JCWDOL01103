@@ -35,11 +35,11 @@ router.post(
   authControllers.login
 );
 router.get("/users/:id", authControllers.getUser);
-router.get("/reset/:token", authControllers.checkTokenStatus)
+router.get("/reset/:token", authMiddlewares.checkResetToken, authControllers.checkTokenStatus)
 router.post("/reset", 
   queryValidation([
   body("email").notEmpty()]),
-  authControllers.resetPassword
+  authControllers.requestResetPassword
 );
 router.patch("/reset/:token",
 queryValidation([
@@ -52,6 +52,6 @@ queryValidation([
       }
       return true;
     }),
-]), authControllers.setNewPassword)
+]), authMiddlewares.checkResetToken, authControllers.setNewPassword)
 
 module.exports = router;

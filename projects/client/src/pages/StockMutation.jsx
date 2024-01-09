@@ -46,22 +46,26 @@ const Mutation = () => {
         setIsLoadingList(false);
       }, 1500);
     } catch (error) {
-      console.log(error);
+      toast(toastConfig("error", "Failed", error.message));
     }
   };
   useEffect(() => {
     (async () => {
       setIsLoadingList(true);
-      const userData = jwtDecode(localStorage.getItem("token"));
-      const response = await getAdminWarehouse(userData.id);
-      const filter = {};
-      if (selectedMenu === 0) {
-        filter.from = response.data.warehouse_id;
+      try {
+        const userData = jwtDecode(localStorage.getItem("token"));
+        const response = await getAdminWarehouse(userData.id);
+        const filter = {};
+        if (selectedMenu === 0) {
+          filter.from = response.data.warehouse_id;
+        }
+        if (selectedMenu === 1) {
+          filter.to = response.data.warehouse_id;
+        }
+        await fetchData(filter);
+      } catch (error) {
+        navigate("/forbidden")
       }
-      if (selectedMenu === 1) {
-        filter.to = response.data.warehouse_id;
-      }
-      await fetchData(filter);
     })();
   }, [selectedMenu, filterInput]);
   const changeStatusHandler = async (id, status) => {
