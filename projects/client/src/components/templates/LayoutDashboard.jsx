@@ -1,13 +1,10 @@
 import { Flex, Container } from "@chakra-ui/react";
-import SideMenu from "../components/organisms/SideMenu";
+import SideMenu from "../organisms/SideMenu";
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/organisms/Navbar";
-import Footer from "../components/organisms/Footer";
 
 function LayoutDashboard() {
   return (
     <>
-      <Navbar />
       <Container
         as="section"
         maxW={{ xl: "7xl", "2xl": "8xl" }}
@@ -15,15 +12,14 @@ function LayoutDashboard() {
         textAlign={"left"}
       >
         <Flex>
-          <Flex w={{ base: "100%", xl: "10%" }}>
+          <Flex>
             <SideMenu />
           </Flex>
-          <Flex w="90%">
+          <Flex>
             <Outlet />
           </Flex>
         </Flex>
       </Container>
-      <Footer />
     </>
   );
 }

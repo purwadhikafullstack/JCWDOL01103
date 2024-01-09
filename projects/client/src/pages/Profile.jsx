@@ -137,7 +137,7 @@ const Profile = () => {
 
   return (
     <>
-      <Box ml={"230px"}>
+      <Box ml={{ base: "0", xl: "50px" }} px={5} my={5}>
         <Heading
           fontSize={{ base: "25px", xl: "3xl" }}
           fontWeight={"black"}

@@ -1,8 +1,8 @@
 // import { config, server } from ".";
 
-// export const getProducts = async params => {
+// export const getCategories = async params => {
 //   console.log(params);
-//   const response = await server.get("/products", {
+//   const response = await server.get("/categories", {
 //     params: params,
 //     headers: config.headers,
 //   });

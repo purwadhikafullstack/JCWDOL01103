@@ -8,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "product_category_id",
         as: "product_category",
       });
+      Products_Sub_Category.hasMany(models.Products, {
+        foreignKey: "product_sub_category_id",
+        as: "product",
+      });
     }
   }
 
@@ -19,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       product_category_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -27,16 +35,11 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
       },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
     },
     {
       sequelize,
       modelName: "Products_Sub_Category",
       tableName: "products_sub_category",
-      paranoid: true,
       timestamps: true,
     }
   );

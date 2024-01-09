@@ -1,4 +1,5 @@
-import { Flex, Show } from "@chakra-ui/react";
+import { useState, useRef } from "react";
+import { Flex, Button } from "@chakra-ui/react";
 import MenuItem from "../molecules/MenuItem";
 import {
   BiMusic,
@@ -7,32 +8,56 @@ import {
   BiUser,
   BiBuildingHouse,
   BiBook,
+  BiX,
+  BiMenuAltLeft,
 } from "react-icons/bi";
-// import { useEffect, useState } from "react";
 
-function SideMenu() {
-  //   const [role, setRole] = useState("");
+const SideMenu = () => {
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const menuBoxRef = useRef();
 
-  //   useEffect(() => {
-  //     const user = parseToken(localStorage.getItem("token"));
-  //     setRole(user.role);
-  //   }, []);
+  const toggleMenuVisible = () => {
+    setIsMenuVisible(!isMenuVisible);
+  };
 
   return (
-    <Show above="md">
+    <>
+      <Button
+        onClick={toggleMenuVisible}
+        display={{ base: "block", xl: "none" }}
+        position="fixed"
+        top="20px"
+        right="20px"
+        shadow="xl"
+      >
+        <BiMenuAltLeft size={"20px"} />
+      </Button>
       <Flex
-        flexDir={{ base: "row", xl: "column" }}
-        w="100%"
-        maxW={{ base: "100%", xl: "280px" }}
+        flexDir={"column"}
+        maxW={{ base: "100%", xl: "600px" }}
         h="max-content"
-        padding="6"
+        padding={"60px"}
         borderRadius="lg"
         shadow={"xl"}
         bgColor="secondaryColor"
         gap="4"
-        pos={{ base: "sticky", xl: "fixed" }}
         justifyContent={{ base: "center" }}
+        ref={menuBoxRef}
+        position={{ base: "fixed", xl: "static" }}
+        top="20px"
+        right={isMenuVisible ? "0" : "-100%"}
+        zIndex={100}
       >
+        <Button
+          onClick={toggleMenuVisible}
+          position="absolute"
+          display={{ base: "block", xl: "none" }}
+          top="10px"
+          right="10px"
+          bg={"none"}
+        >
+          <BiX size={"30px"} />
+        </Button>
         <MenuItem
           icon={<BiUser fontSize={"20px"} />}
           name="Profile"
@@ -52,8 +77,8 @@ function SideMenu() {
         />
         <MenuItem icon={<BiBook />} name="Journal" to="/dashboard/journals" />
       </Flex>
-    </Show>
+    </>
   );
-}
+};
 
 export default SideMenu;
