@@ -1,20 +1,23 @@
 const db = require("../models");
 
 const checkStock = async (req, res, next) => {
-  const { warehouse_id, products } = req.body;
+  const { warehouse_id, from_warehouse_id, products } = req.body;
   try {
+    req.transaction = await db.sequelize.transaction();
+    let warehouseId = warehouse_id || from_warehouse_id
     const result = await Promise.all(
       products.map(async (data) => {
         const [stock, created] = await db.Stocks.findOrCreate({
           where: {
             product_id: data.product_id,
-            warehouse_id: warehouse_id,
+            warehouse_id: warehouseId,
           },
           defaults: {
             product_id: data.product_id,
-            warehouse_id: warehouse_id,
+            warehouse_id: warehouseId,
             quantity: 0,
           },
+          transaction: req.transaction
         });
         return { stock, created, restock: data.amount };
       })

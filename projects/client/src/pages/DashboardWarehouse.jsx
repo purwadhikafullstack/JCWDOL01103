@@ -1,7 +1,7 @@
 import {
-  AlertDialog,
   Button,
   Flex,
+  Heading,
   useMediaQuery,
   useToast,
 } from "@chakra-ui/react";
@@ -18,7 +18,6 @@ import { getProvinces } from "../api/region";
 import AlertConfirmation from "../components/organisms/AlertConfirmation";
 
 const DashboardWarehouse = () => {
-  // const [selectedData, setSelectedData] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
@@ -75,22 +74,24 @@ const DashboardWarehouse = () => {
   return (
     <Flex
       h="full"
+      w="100%"
       minH="100vh"
       maxH="100vh"
       alignItems="center"
       flexDir="column"
-      bg="gray.100"
       gap="5"
     >
+      <Heading size="lg" mb="5" alignSelf="start">Manage Warehouses</Heading>
       <Flex
         h="fit-content"
         flexDir={isLaptop ? "row" : "column"}
-        pt="10"
+        w="full"
         rowGap="10"
         columnGap="4"
         justifyContent="center"
       >
         <FilterBar
+          placeholderSearch="Search warehouse by name or city"
           filterValue={(value) => setParamObj(value)}
           onSearchPressEnter={getWarehouseData}
           categories={categories}
@@ -115,7 +116,6 @@ const DashboardWarehouse = () => {
         bg="white"
         w="full"
         h="50%"
-        p="10"
         borderRadius="lg"
         flexDir="column"
         rowGap="3"

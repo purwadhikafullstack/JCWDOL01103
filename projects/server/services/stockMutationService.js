@@ -13,14 +13,14 @@ const mutationHandler = async (mutationId, status, transaction) => {
     const senderWarehouse = await db.Stocks.findOne({
       where: {
         product_id: mutation.product_id,
-        warehouse_id: mutation.from_warehouse_id,
+        warehouse_id: mutation.to_warehouse_id,
       },
       transaction,
     });
     const destinationWarehouse = await db.Stocks.findOne({
       where: {
         product_id: mutation.product_id,
-        warehouse_id: mutation.to_warehouse_id,
+        warehouse_id: mutation.from_warehouse_id
       },
       transaction,
     });

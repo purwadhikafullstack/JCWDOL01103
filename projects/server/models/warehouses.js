@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "city_id",
         as: "region",
       });
+      Warehouses.hasMany(models.Warehouses_Users, {
+        foreignKey: "warehouse_id",
+        as:"warehouse_admin"
+      })
     }
   }
   Warehouses.init(

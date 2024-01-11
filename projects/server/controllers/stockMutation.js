@@ -8,22 +8,24 @@ const {
 
 const createMutation = async (req, res) => {
   const { from_warehouse_id, to_warehouse_id, products } = req.body;
-  const mutations = products.map((dt) => {
-    return {
-      from_warehouse_id: from_warehouse_id,
-      to_warehouse_id: to_warehouse_id,
-      product_id: dt.product_id,
-      quantity: dt.quantity,
-      status: "waiting",
-    };
-  });
   try {
-    const result = await db.Stock_Mutations.bulkCreate(mutations);
+    const mutations = products.map((dt) => {
+      return {
+        from_warehouse_id: from_warehouse_id,
+        to_warehouse_id: to_warehouse_id,
+        product_id: dt.product_id,
+        quantity: dt.quantity,
+        status: "waiting",
+      };
+    });
+    const result = await db.Stock_Mutations.bulkCreate(mutations, {transaction: req.transaction});
+    await req.transaction.commit();
     return res.status(200).json({
       message: "Create mutations successfully",
       data: result,
     });
   } catch (error) {
+    await req.transaction.rollback();
     return res.status(500).json({
       message: "Create mutations failed",
       error: error.toString(),
@@ -53,6 +55,7 @@ const changeMutationStatus = async (req, res) => {
     });
   } catch (error) {
     await transaction.rollback();
+    console.log(error)
     return res.status(500).json({
       message: "Change mutation status failed",
       error: error.toString(),

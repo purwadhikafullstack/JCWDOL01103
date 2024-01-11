@@ -3,6 +3,7 @@ import {
   Flex,
   Heading,
   MenuItem,
+  Modal,
   Select,
   Tab,
   TabList,
@@ -12,6 +13,12 @@ import {
   VStack,
   useMediaQuery,
   useToast,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import ListBox from "../components/organisms/ListBox";
@@ -24,11 +31,13 @@ import { getMutations, patchMutationStatus } from "../api/stockMutation";
 import { jwtDecode } from "jwt-decode";
 import { getAdminWarehouse } from "../api/adminWarehouse";
 import { toastConfig } from "../utils/toastConfig";
+import FormMutation from "../components/organisms/FormMutation";
 
 const Mutation = () => {
   const [selectedMenu, setSelectedMenu] = useState(0);
   const [mutations, setMutations] = useState([]);
   const [isLoadingList, setIsLoadingList] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const [filterInput, setFilterInput] = useState({
     search: "",
     status: "",
@@ -90,8 +99,8 @@ const Mutation = () => {
     }
   };
   return (
-    <Flex w="100vw" minH="100vh" bg="gray.100" flexDir="column">
-      <Heading m="4">Stock Mutation</Heading>
+    <Flex w="full" minH="80vh" flexDir="column">
+      <Heading size="lg" mb="4">Stock Mutation</Heading>
       <Tabs w="full" onChange={(val) => setSelectedMenu(val)}>
         <TabList overflowX="scroll">
           <Tab>Outgoing Request</Tab>
@@ -100,6 +109,7 @@ const Mutation = () => {
         <Flex w="full" gap="4" p="4" wrap={isTablet ? "unset" : "wrap"}>
           <Flex w="100%">
             <SearchInput
+              placeholder="Search"
               onChangeInput={(val) =>
                 setFilterInput((prev) => ({ ...prev, search: val }))
               }
@@ -135,7 +145,7 @@ const Mutation = () => {
             <Button
               bg="primaryColor"
               color="white"
-              onClick={() => navigate("form")}
+              onClick={() => onOpen()}
             >
               Request
             </Button>
@@ -145,7 +155,6 @@ const Mutation = () => {
           <TabPanel>
             <VStack>
               {mutations?.map((dt, idx) => {
-                // console.log(dt);
                 return (
                   <ListBox isLoading={isLoadingList} data={dt} key={idx} requestType={selectedMenu}>
                     <MenuItem
@@ -187,6 +196,16 @@ const Mutation = () => {
         </TabPanels>
       </Tabs>
       <Pagination />
+      <Modal isOpen={isOpen} onClose={onClose} size="6xl" closeOnOverlayClick={false}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Request Stock Mutation</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody display="flex" flexDir="column" pb={6} gap="4">
+          <FormMutation/>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
     </Flex>
   );
 };

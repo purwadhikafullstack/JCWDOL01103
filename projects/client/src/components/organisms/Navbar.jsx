@@ -16,7 +16,7 @@ import {
   Button,
   useToast,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { getUser, verificationValidator } from "../../api/auth";
@@ -27,6 +27,7 @@ import {
 import { toastConfig } from "../../utils/toastConfig";
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const authState = useSelector((state) => state.login.isAuthorized);
   const userState = useSelector((state) => state.login.user);
   const [btnLoading, setBtnLoading] = useState(false);
@@ -87,17 +88,19 @@ const Navbar = () => {
           }}
           cursor="pointer"
         />
-        <InputGroup mx={"150px"} display={{ base: "none", lg: "block" }}>
-          <InputRightElement pointerEvents="none">
-            <BiSearch color="black" fontSize="20px" />
-          </InputRightElement>
-          <Input
-            placeholder="Search for Sense Gear"
-            focusBorderColor="black"
-            borderRadius={"xl"}
-            border={"1px"}
-          />
-        </InputGroup>
+        {location.pathname.split("/")[1] !== "dashboard" && (
+          <InputGroup mx={"150px"} display={{ base: "none", lg: "block" }}>
+            <InputRightElement pointerEvents="none">
+              <BiSearch color="black" fontSize="20px" />
+            </InputRightElement>
+            <Input
+              placeholder="Search for Sense Gear"
+              focusBorderColor="black"
+              borderRadius={"xl"}
+              border={"1px"}
+            />
+          </InputGroup>
+        )}
         <Flex>
           <Menu>
             {!userInfo ? (
@@ -116,9 +119,16 @@ const Navbar = () => {
                   alignItems={"center"}
                   ml={2}
                   mr={{ base: "1", lg: "5" }}
-                  pr={{ base: "1", lg: "5" }}
+                  pr={
+                    userInfo?.role !== "admin" &&
+                    userInfo?.role !== "master" && { base: "1", lg: "5" }
+                  }
                   boxSizing="content-box"
-                  borderRight={"2px"}
+                  borderRight={
+                    userInfo?.role !== "admin" &&
+                    userInfo?.role !== "master" &&
+                    "2px"
+                  }
                   borderColor={"blackAlpha.400"}
                 >
                   <BiUser color="black" size="30px" />
@@ -175,6 +185,19 @@ const Navbar = () => {
                       Edit Profile
                     </MenuItem>
                   )}
+                  {(userInfo?.role === "admin" || userInfo?.role === "master") && (
+                    <MenuItem
+                      mb="2"
+                      bg="black"
+                      color="white"
+                      borderRadius="md"
+                      justifyContent="center"
+                      _hover={{ opacity: "0.2" }}
+                      onClick={()=> location.pathname.split("/")[1] !== "dashboard" && navigate("/dashboard")}
+                    >
+                      Dashboard
+                    </MenuItem>
+                  )}
                   <MenuItem
                     bg="black"
                     color="white"
@@ -186,17 +209,6 @@ const Navbar = () => {
                   >
                     Logout
                   </MenuItem>
-                  {userInfo?.role === "admin" && (
-                    <MenuItem
-                      bg="black"
-                      color="white"
-                      borderRadius="md"
-                      justifyContent="center"
-                      _hover={{ opacity: "0.2" }}
-                    >
-                      Dashboard
-                    </MenuItem>
-                  )}
                 </>
               ) : (
                 <>
@@ -225,18 +237,20 @@ const Navbar = () => {
               )}
             </MenuList>
           </Menu>
-          <Menu>
-            <MenuButton>
-              <Flex alignItems={"center"}>
-                <BiCartAlt color="black" fontSize="30px" />
-              </Flex>
-            </MenuButton>
-            <MenuList>
-              <Text mx={"auto"} fontWeight={"bold"} textAlign="center" my={3}>
-                Your Cart Is Empty
-              </Text>
-            </MenuList>
-          </Menu>
+          {userInfo?.role !== "admin" && userInfo?.role !== "master" && (
+            <Menu>
+              <MenuButton>
+                <Flex alignItems={"center"}>
+                  <BiCartAlt color="black" fontSize="30px" />
+                </Flex>
+              </MenuButton>
+              <MenuList>
+                <Text mx={"auto"} fontWeight={"bold"} textAlign="center" my={3}>
+                  Your Cart Is Empty
+                </Text>
+              </MenuList>
+            </Menu>
+          )}
         </Flex>
       </Flex>
     </Container>

@@ -13,5 +13,13 @@ router.get(
   checkRole(["admin", "master"]),
   adminWarehouseController.getAdminWarehouse
 );
+router.get(
+  "/admin",
+  checkRole(["admin", "master"]),
+  adminWarehouseController.getAllAdmin
+);
+// router.get(
+//   "/admin-warehouse"
+// )
 
 module.exports = router;

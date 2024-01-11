@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -16,6 +16,7 @@ import {
   NumberInputStepper,
   Select,
   Table,
+  TableContainer,
   Tbody,
   Td,
   Text,
@@ -43,9 +44,10 @@ const Journal = () => {
   const [products, setProducts] = useState([]);
   const [updatedOpt, setUpdatedOpt] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
-  const [adminInfo, setAdminInfo] = useState(null)
+  const [adminInfo, setAdminInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
+  const tableRef = useRef(null);
   const formik = useFormik({
     initialValues: {
       warehouse_id: "",
@@ -92,9 +94,9 @@ const Journal = () => {
             label: dt.product_name,
           };
         });
-        if(userData.role === "admin"){
-          const getAdmin = await getAdminWarehouse(userData.id)
-          setAdminInfo(getAdmin.data)
+        if (userData.role === "admin") {
+          const getAdmin = await getAdminWarehouse(userData.id);
+          setAdminInfo(getAdmin.data);
           formik.setFieldValue("warehouse_id", getAdmin.data.warehouse_id);
         }
         setUserInfo(userData);
@@ -167,9 +169,9 @@ const Journal = () => {
       formik.values.type === "reducing"
         ? parseInt(value) * -1
         : parseInt(value);
-    const result = valueBefore + amount;
-    formik.setFieldValue(`listedProduct[${idx}].quantity_after`, result);
-    formik.setFieldValue(`listedProduct[${idx}].amount`, parseInt(value));
+    let result = valueBefore + amount;
+    formik.setFieldValue(`listedProduct[${idx}].quantity_after`, isNaN(result) ? 0 : result);
+    formik.setFieldValue(`listedProduct[${idx}].amount`, isNaN(result) ? 0 : parseInt(value));
   };
   const onClickConfirmHandler = async () => {
     setIsLoading(true);
@@ -192,7 +194,8 @@ const Journal = () => {
         setIsLoading(false);
         setOpenAlert(false);
         formik.handleReset();
-        userInfo.role === "admin" && formik.setFieldValue("warehouse_id", adminInfo.warehouse_id);
+        userInfo.role === "admin" &&
+          formik.setFieldValue("warehouse_id", adminInfo.warehouse_id);
         setWarehouse(null);
       }, 3000);
     } catch (error) {
@@ -200,9 +203,10 @@ const Journal = () => {
       setIsLoading(false);
     }
   };
+
   return (
-    <Flex h="full" minH="100vh" maxH="100vh" flexDir="column" gap="2" p="5">
-      <Heading size="md">Manage Stock</Heading>
+    <Flex w="full" flexDir="column" mb="40px" gap="2">
+      <Heading size="lg">Manage Stock</Heading>
       <form onSubmit={formik.handleSubmit}>
         <Flex rowGap="5" flexDir="column">
           <FormControl isInvalid={formik.errors.type && formik.touched.type}>
@@ -262,14 +266,13 @@ const Journal = () => {
               <FormErrorMessage>{formik.errors.warehouse_id}</FormErrorMessage>
             </FormControl>
           )}
-          <Flex
-            overflowX="scroll"
-            overflowY="hidden"
+          <TableContainer
+            pos="relative"
             border="1px"
             borderRadius="md"
             borderColor="inherit"
           >
-            <Table>
+            <Table >
               <Thead>
                 <Tr>
                   <Th>Product Name</Th>
@@ -300,14 +303,13 @@ const Journal = () => {
                               formik.setFieldTouched(
                                 `listedProduct[${idx}].product.value`,
                                 true
-                              )
-                            }
+                                )
+                              }
+                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                            menuPosition="fixed"
+                            menuPortalTarget={document.querySelector("body")}
                             value={formik.values.listedProduct[idx].product}
                             options={updatedOpt}
-                            menuPortalTarget={document.querySelector("body")}
-                            components={{
-                              IndicatorSeparator: () => null,
-                            }}
                             isInvalid={
                               formik.errors.listedProduct?.[idx]?.product
                                 ?.value &&
@@ -374,7 +376,7 @@ const Journal = () => {
                 })}
               </Tbody>
             </Table>
-          </Flex>
+          </TableContainer>
         </Flex>
         <HStack mt="3" justify="space-between">
           <Button maxW="150px" alignSelf="flex-start" onClick={onAddHandler}>

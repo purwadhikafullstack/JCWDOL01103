@@ -3,7 +3,6 @@ import { Navigate, useLocation } from "react-router-dom";
 
 const ProtectedRoute = ({ roles, element }) => {
   const location = useLocation()
-  console.log(location)
   const token = localStorage.getItem("token");
   const checkAutorization = (requiredRoles) => {
     const userData = token && jwtDecode(token);

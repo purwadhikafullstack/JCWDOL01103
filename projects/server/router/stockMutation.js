@@ -4,6 +4,7 @@ const stockMutationController = require("../controllers/stockMutation");
 const queryValidation = require("../helpers/expressValidator");
 const { body } = require("express-validator");
 const { checkRole } = require("../middlewares/apiValidatorMiddleware");
+const stockMiddleware = require("../middlewares/stockMiddleware");
 
 router.post(
   "/stock-mutation",
@@ -14,6 +15,7 @@ router.post(
     body("products.*.product_id").notEmpty(),
     body("products.*.quantity").notEmpty(),
   ]),
+  stockMiddleware.checkStock,
   stockMutationController.createMutation
 );
 

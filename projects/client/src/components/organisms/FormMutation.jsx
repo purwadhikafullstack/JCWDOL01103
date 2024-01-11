@@ -26,7 +26,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ModalSelectWarehouse } from "../organisms/ModalSelectWarehouse";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { getProductStock, postStock } from "../../api/stock";
+import { getProductStock } from "../../api/stock";
 import { toastConfig } from "../../utils/toastConfig";
 import { getProducts } from "../../api/product";
 import CustomSelect from "../../components/atoms/CustomSelect";
@@ -178,7 +178,7 @@ const FormMutation = () => {
     }
   };
   return (
-    <Flex h="full" minH="100vh" maxH="100vh" flexDir="column" gap="2" p="5">
+    <Flex flexDir="column" gap="2" p="5">
       <Heading size="md">Mutation Request</Heading>
       <form onSubmit={formik.handleSubmit}>
         <Flex rowGap="5" flexDir="column">
@@ -264,7 +264,8 @@ const FormMutation = () => {
                             }
                             value={formik.values.listedProduct[idx].product}
                             options={updatedOpt}
-                            menuPortalTarget={document.querySelector("body")}
+                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                            menuPosition="fixed"
                             components={{
                               IndicatorSeparator: () => null,
                             }}

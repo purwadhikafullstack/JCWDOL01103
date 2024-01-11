@@ -27,6 +27,9 @@ const ListBox = ({ data, children, isLoading, requestType }) => {
       h={isLaptop ? "170px" : "max-content"}
       maxH="250px"
       bg="white"
+      shadow="md"
+      border="1px solid"
+      borderColor="inherit"
       borderRadius="lg"
       p="5"
       justify="space-between"
