@@ -24,7 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { ModalSelectWarehouse } from "../organisms/ModalSelectWarehouse";
+import { SelectWarehouse } from "./SelectWarehouse";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { getProductStock } from "../../api/stock";
 import { toastConfig } from "../../utils/toastConfig";
@@ -182,7 +182,7 @@ const FormMutation = () => {
       <Heading size="md">Mutation Request</Heading>
       <form onSubmit={formik.handleSubmit}>
         <Flex rowGap="5" flexDir="column">
-          <ModalSelectWarehouse
+          <SelectWarehouse
             isOpen={openModalWarehouse}
             onClose={() => setOpenModalWarehouse(false)}
             onClickRow={(val) => {

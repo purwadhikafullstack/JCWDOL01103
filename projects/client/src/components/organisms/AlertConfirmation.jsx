@@ -17,7 +17,8 @@ const AlertConfirmation = ({
   buttonCancel,
   buttonConfirm,
   onClickConfirm,
-  isLoading
+  isLoading,
+  onCloseComplete
 }) => {
   const cancelRef = useRef();
   return (
@@ -25,6 +26,7 @@ const AlertConfirmation = ({
       isOpen={isOpen}
       leastDestructiveRef={cancelRef}
       isCentered
+      onCloseComplete={onCloseComplete}
     >
       <AlertDialogOverlay>
         <AlertDialogContent>

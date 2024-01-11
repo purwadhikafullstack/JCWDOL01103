@@ -13,8 +13,6 @@ import {
   useToast,
   FormControl,
   FormErrorMessage,
-  Spinner,
-  Center,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -77,7 +75,7 @@ function FormSignIn({ isLogin, onClickLogin, isLaptop }) {
       password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().required("Required"),
+      email: Yup.string().email('Invalid email format').required("Required"),
       password: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {

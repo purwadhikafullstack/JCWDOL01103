@@ -73,7 +73,7 @@ const getWarehouses = async (req, res) => {
       order: sortType,
       where: { [Op.and]: [whereClause2, whereClause] },
       attributes: {
-        exclude: ["city_id"],
+        exclude: ["city_id","createdAt","updatedAt","deletedAt"],
       },
       include: {
         model: db.Cities,

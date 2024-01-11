@@ -21,7 +21,5 @@ router.post(
 );
 
 router.get("/stock", stockController.getStock);
-// router.get("/products", stockController.getProducts);
-// router.get("/products/:id", stockController.getProduct);
 
 module.exports = router;

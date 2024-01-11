@@ -10,7 +10,7 @@ const createStock = async (req, res) => {
       let stockId = item.stock.dataValues?.id;
       let amount = item?.restock;
       let qty = item.stock.dataValues?.quantity;
-      let differences = type === "reducing" ? amount * -1 : amount
+      let differences = type === "reducing" ? amount * -1 : amount;
       if (type === "reducing") {
         if (qty >= amount) {
           await db.Stocks.decrement("quantity", {
@@ -18,6 +18,7 @@ const createStock = async (req, res) => {
             where: {
               id: stockId,
             },
+            transaction: req.transaction,
           });
         } else {
           return res.status(400).json({
@@ -31,24 +32,30 @@ const createStock = async (req, res) => {
           where: {
             id: stockId,
           },
+          transaction: req.transaction,
         });
       } else {
         return res.status(400).json({
           message: "Wrong journal type",
         });
       }
-      await db.Stock_Journals.create({
-        stock_id: stockId,
-        quantity_before: qty,
-        quantity_after: qty + differences,
-        amount: differences,
-      });
+      await db.Stock_Journals.create(
+        {
+          stock_id: stockId,
+          quantity_before: qty,
+          quantity_after: qty + differences,
+          amount: differences,
+        },
+        { transaction: req.transaction }
+      );
     }
+    await req.transaction.commit()
     return res.status(200).json({
       message: "Restock product successfully",
       data: results,
     });
   } catch (error) {
+    await req.transaction.rollback();
     return res.status(500).json({
       message: "Create journal failed",
       error: error.toString(),

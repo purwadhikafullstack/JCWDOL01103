@@ -62,6 +62,7 @@ const getAllAdmin = async (req, res) => {
   try {
     let sortType = [["updatedAt", "DESC"]];
     let whereClause = {};
+    let whereClause2 = {};
     if (search) {
       whereClause = {
         [Op.or]: [
@@ -83,22 +84,26 @@ const getAllAdmin = async (req, res) => {
         ],
       };
     }
+    if (query.province_id) {
+      whereClause2["$warehouse.region.province.province_id$"] =
+        query.province_id;
+    }
     if (query.sort) {
       const filter = query.sort.split("_");
       sortType[0] = filter;
     }
-    const {count, rows} = await db.Warehouses_Users.findAndCountAll({
+    const { count, rows } = await db.Warehouses_Users.findAndCountAll({
       offset: (page - 1) * pageSize,
       limit: pageSize,
       order: sortType,
-      where: whereClause,
+      where: { [Op.and]: [whereClause2, whereClause] },
       order: sortType,
       include: [
         {
           model: db.Users,
           as: "user",
           attributes: {
-            exclude: ["createdAt", "updatedAt", "password", "role"],
+            exclude: ["createdAt", "updatedAt", "role"],
           },
         },
         {
@@ -121,15 +126,17 @@ const getAllAdmin = async (req, res) => {
     });
     const flattenedResults = rows.map((result) => {
       const { id, user, warehouse } = result;
-      const { id: warehouseId, name: warehouseName, street, region} = warehouse;
+      const {
+        id: warehouseId,
+        name: warehouseName,
+        street,
+        region,
+      } = warehouse;
       const { city_id, city_name, postal_code, province } = region;
       const { province_id, province_name } = province;
       return {
         id,
-        user:{
-          ...user.get(),
-          id: encryptData(id),
-        },
+        user,
         warehouse: {
           id: warehouseId,
           province_id,
@@ -204,4 +211,127 @@ const getAdminWarehouse = async (req, res) => {
   }
 };
 
-module.exports = { assignAdminWarehouse, getAdminWarehouse, getAllAdmin };
+const createAdmin = async (req, res) => {
+  const { name, email, password, warehouse_id } = req.body;
+  const t = await db.sequelize.transaction();
+  try {
+    const [admin, created] = await db.Users.findOrCreate({
+      where: {
+        email: email,
+      },
+      defaults: {
+        name: name,
+        email: email,
+        password: password,
+        role: "admin",
+      },
+      transaction: t,
+    });
+    if (!created) {
+      return res.status(400).json({
+        status: 400,
+        message: `Email ${email} has been used`,
+      });
+    }
+    await db.Warehouses_Users.create(
+      {
+        warehouse_id: warehouse_id,
+        user_id: admin.id,
+      },
+      { transaction: t }
+    );
+    await t.commit();
+    return res.status(200).json({
+      message: "Get admin warehouse successfully!",
+    });
+  } catch (error) {
+    await t.rollback();
+    return res.status(400).json({
+      message: "Failed to Create Admin Warehouse",
+      error: error.message,
+    });
+  }
+};
+
+const updateAdmin = async (req, res) => {
+  const { id, name, email, password, warehouse_id } = req.body;
+  const t = await db.sequelize.transaction();
+  try {
+    const admin = await db.Users.findByPk(id);
+    const warehouseAdmin = await db.Warehouses_Users.findOne({
+      where: { user_id: id },
+    });
+    await admin.update(
+      {
+        name: name,
+        email: email,
+        password: password,
+      },
+      { transaction: t }
+    );
+    await warehouseAdmin.update(
+      {
+        warehouse_id: warehouse_id,
+      },
+      { transaction: t }
+    );
+    await t.commit();
+    return res.status(200).json({
+      message: "Update admin warehouse successfully!",
+    });
+  } catch (error) {
+    await t.rollback();
+    return res.status(400).json({
+      message: "Failed to Update Admin Warehouse",
+      error: error.message,
+    });
+  }
+};
+
+const deleteAdmin = async (req, res) => {
+  const { user_id } = req.params;
+  const t = await db.sequelize.transaction();
+  try {
+    const admin = await db.Users.findByPk(user_id);
+    const warehouse = await db.Warehouses_Users.findOne({
+      where: {
+        user_id: user_id,
+      },
+    });
+    if (!admin) {
+      await t.rollback();
+      return res.status(404).json({
+        status: 404,
+        message: `Admin with ID ${user_id} not found`,
+      });
+    }
+    if (!warehouse) {
+      await t.rollback();
+      return res.status(404).json({
+        status: 404,
+        message: `Warehouse for Admin with ID ${user_id} not found`,
+      });
+    }
+    await admin.destroy({ transaction: t });
+    await warehouse.destroy({ transaction: t });
+    await t.commit();
+    return res.status(200).json({
+      message: "Delete admin warehouse successfully!",
+    });
+  } catch (error) {
+    await t.rollback();
+    return res.status(400).json({
+      message: "Failed to Delete Admin Warehouse",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = {
+  assignAdminWarehouse,
+  getAdminWarehouse,
+  getAllAdmin,
+  createAdmin,
+  deleteAdmin,
+  updateAdmin,
+};

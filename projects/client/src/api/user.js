@@ -1,7 +1,7 @@
 import { server, config } from "./index";
 
-export const getAddresses = async (params) => {
-  const response = await server.get("/user", {
+export const getUsers = async (params) => {
+  const response = await server.get("/users", {
     params: params,
     headers: config.headers,
   });

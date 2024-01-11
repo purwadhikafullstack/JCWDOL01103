@@ -20,6 +20,7 @@ import AlertConfirmation from "../components/organisms/AlertConfirmation";
 const DashboardWarehouse = () => {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [isBtnLoading, setBtnLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [categories, setCategories] = useState();
   const [data, setData] = useState(null);
@@ -30,12 +31,12 @@ const DashboardWarehouse = () => {
   const [paramObj, setParamObj] = useState({
     search: "",
     sort: "",
-    province_id:""
+    province_id: "",
   });
-  const fetchData = async() => {
+  const fetchData = async () => {
     const result = await getProvinces();
     setCategories(result.data);
-  }
+  };
   useEffect(() => {
     fetchData();
     getWarehouseData();
@@ -61,16 +62,20 @@ const DashboardWarehouse = () => {
   }
   const onClickDelete = async (id) => {
     try {
+      setBtnLoading(true);
       const response = await deleteWarehouse(id);
       toast(toastConfig("success", "Success", response.message));
-      setDeleteDataId(null);
-      setOpenDeleteDialog(false);
-      fetchData();
+      setTimeout(() => {
+        setDeleteDataId(null);
+        setOpenDeleteDialog(false);
+        fetchData();
+        setBtnLoading(false);
+      }, 1500);
     } catch (error) {
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
   };
-  
+
   return (
     <Flex
       h="full"
@@ -81,7 +86,9 @@ const DashboardWarehouse = () => {
       flexDir="column"
       gap="5"
     >
-      <Heading size="lg" mb="5" alignSelf="start">Manage Warehouses</Heading>
+      <Heading size="lg" mb="5" alignSelf="start">
+        Manage Warehouses
+      </Heading>
       <Flex
         h="fit-content"
         flexDir={isLaptop ? "row" : "column"}
@@ -98,11 +105,11 @@ const DashboardWarehouse = () => {
           categoriesName="province_name"
           categoriesId="province_id"
           defaultCategories="Filter by Province"
-          onClickCross={()=> getWarehouseData(undefined, "refresher")}
+          onClickCross={() => getWarehouseData(undefined, "refresher")}
         />
 
         <Button
-          alignSelf={isLaptop ? "unset" :"flex-end"}
+          alignSelf={isLaptop ? "unset" : "flex-end"}
           maxW="fit-content"
           bg="primaryColor"
           color="secondaryColor"
@@ -160,6 +167,8 @@ const DashboardWarehouse = () => {
         }}
         onOpen={() => setOpenDeleteDialog(true)}
         onClickConfirm={() => onClickDelete(deleteDataId)}
+        onCloseComplete={getWarehouseData}
+        isLoading={isBtnLoading}
       />
     </Flex>
   );

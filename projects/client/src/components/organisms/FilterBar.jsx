@@ -73,6 +73,7 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
         </InputRightElement>
       </InputGroup>
       <Flex gap="4">
+        {categories &&
         <Select
           fontSize="sm"
           bg="secondaryColor"
@@ -91,6 +92,7 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
             );
           })}
         </Select>
+        }
         <Select
           fontSize="sm"
           bg="secondaryColor"

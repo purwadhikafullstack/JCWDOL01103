@@ -33,7 +33,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Token_Resets',
-    tableName: 'token_resets'
+    tableName: 'token_resets',
+    timestamps: true,
   });
   return Token_Resets;
 };

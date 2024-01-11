@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -27,7 +27,7 @@ import {
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { ModalSelectWarehouse } from "../components/organisms/ModalSelectWarehouse";
+import { SelectWarehouse } from "../components/organisms/SelectWarehouse";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { getProductStock, postStock } from "../api/stock";
 import { toastConfig } from "../utils/toastConfig";
@@ -47,7 +47,6 @@ const Journal = () => {
   const [adminInfo, setAdminInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
-  const tableRef = useRef(null);
   const formik = useFormik({
     initialValues: {
       warehouse_id: "",
@@ -223,8 +222,7 @@ const Journal = () => {
             </Select>
             <FormErrorMessage>{formik.errors.type}</FormErrorMessage>
           </FormControl>
-
-          <ModalSelectWarehouse
+          <SelectWarehouse
             isOpen={openModalWarehouse}
             onClose={() => setOpenModalWarehouse(false)}
             onClickRow={(val) => {
@@ -232,40 +230,10 @@ const Journal = () => {
               formik.setFieldValue("warehouse_id", val.id);
               setOpenModalWarehouse(false);
             }}
+            selectedWarehouse={formik.values.warehouse_id}
+            isInvalid={formik.errors.warehouse_id && formik.touched.warehouse_id}
+            onChange={(val)=>formik.setFieldValue("warehouse_id", val.id)}
           />
-          {userInfo?.role === "master" && (
-            <FormControl isInvalid={formik.errors.warehouse_id}>
-              <Text>Warehouse:</Text>
-              <Box
-                justifyContent="flex-end"
-                border={formik.errors.warehouse_id ? "2px" : "1px"}
-                p="2"
-                borderRadius="md"
-                borderColor={formik.errors.warehouse_id ? "#e53e3e" : "inherit"}
-                id="warehouse_id"
-              >
-                {warehouse ? (
-                  <>
-                    <Text fontWeight="bold">{warehouse?.name}</Text>
-                    <Text>{warehouse?.street}</Text>
-                    <Text>{`${warehouse?.region.city_name}, ${warehouse?.region.province.province_name}, ${warehouse?.region.postal_code}`}</Text>
-                  </>
-                ) : (
-                  <Text>Please select warehouse</Text>
-                )}
-                <Button
-                  bg="black"
-                  color="white"
-                  size="sm"
-                  mt="2"
-                  onClick={() => setOpenModalWarehouse(true)}
-                >
-                  {warehouse ? "Change" : "Select Warehouse"}
-                </Button>
-              </Box>
-              <FormErrorMessage>{formik.errors.warehouse_id}</FormErrorMessage>
-            </FormControl>
-          )}
           <TableContainer
             pos="relative"
             border="1px"

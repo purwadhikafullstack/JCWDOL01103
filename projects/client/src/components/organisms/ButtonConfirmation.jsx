@@ -1,4 +1,4 @@
-import React, { Children } from "react";
+import React from "react";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -8,7 +8,6 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
-  useDisclosure,
 } from "@chakra-ui/react";
 
 function ButtonConfirmation({
@@ -42,6 +41,7 @@ function ButtonConfirmation({
       ) : (
         <Button bg="primaryColor" color="white" onClick={onClickHandler}>
           {children}
+          asdasaksjdnk
         </Button>
       )}
       <AlertDialog
