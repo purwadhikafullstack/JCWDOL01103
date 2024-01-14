@@ -1,26 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { Center, Flex, Heading, Text, useMediaQuery, useToast } from "@chakra-ui/react";
+import { Center, Flex, Heading, Text, useMediaQuery } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import FormVerification from "../components/organisms/FormVerification";
 import { verificationValidator } from "../api/auth";
 import NotFound from "./NotFound";
+import { checkAuthorized, fetchUserInfo, loginGoogle } from "../store/slicer/authSlice";
+import { useDispatch } from "react-redux";
 
 function Verification() {
   const [decodedToken, setDecodedToken] = useState(null);
   const param = useParams();
   const navigate = useNavigate();
   const [isLaptop] = useMediaQuery("(min-width: 768px)");
-  const toast = useToast()
-
+  const dispatch = useDispatch()
   useEffect(() => {
     (async () => {
+      console.log("trigereed")
       try {
         const response = await verificationValidator(param.token);
         if (response.data.verified === true) {
           return navigate("/");
         }
         setDecodedToken(jwtDecode(param.token));
+        dispatch(loginGoogle(param.token))
+        dispatch(checkAuthorized())
+        // dispatch(fetchUserInfo())
       } catch (err) {
         return navigate("/notfound");
       }

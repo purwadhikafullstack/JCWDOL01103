@@ -21,6 +21,7 @@ function ButtonConfirmation({
   children,
   isOpen,
   onClose,
+  isLoading
 }) {
   const cancelRef = React.useRef();
   const onClickHandler = () => {
@@ -41,20 +42,20 @@ function ButtonConfirmation({
       ) : (
         <Button bg="primaryColor" color="white" onClick={onClickHandler}>
           {children}
-          asdasaksjdnk
         </Button>
       )}
       <AlertDialog
         motionPreset="slideInBottom"
         leastDestructiveRef={cancelRef}
-        onClose={onClose}
+        onClose={()=> !isLoading && onClose()}
         isOpen={isOpen}
+        closeOnOverlayClick={false}
         isCentered
       >
         <AlertDialogOverlay />
         <AlertDialogContent>
           <AlertDialogHeader>{title}</AlertDialogHeader>
-          <AlertDialogCloseButton />
+          <AlertDialogCloseButton isDisabled={isLoading} />
           <AlertDialogBody>{desc}</AlertDialogBody>
           <AlertDialogFooter>
             <Button
@@ -62,6 +63,7 @@ function ButtonConfirmation({
               cursor="pointer"
               _hover={{ bg: "primaryColor", color: "secondaryColor" }}
               onClick={onClickConfirm}
+              isLoading={isLoading}
             >
               {buttonConfirm}
             </Button>
@@ -71,6 +73,7 @@ function ButtonConfirmation({
               color="white"
               ref={cancelRef}
               onClick={onClose}
+              isDisabled={isLoading}
             >
               {buttonDiscard}
             </Button>

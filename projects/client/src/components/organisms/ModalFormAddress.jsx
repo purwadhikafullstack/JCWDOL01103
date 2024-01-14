@@ -25,6 +25,7 @@ import ButtonConfirmation from "./ButtonConfirmation";
 import { createAddress, updateAddress } from "../../api/userAddress";
 function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
   const [openAlert, setOpenAlert] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [provinces, setProvinces] = useState(null);
   const [cities, setCities] = useState(null);
   const toast = useToast();
@@ -46,6 +47,7 @@ function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
   });
   const onConfirmHandler = async () => {
     try {
+      setLoading(true)
       const query = {
         name: formik.values.name,
         city_id: formik.values.city_id,
@@ -56,9 +58,11 @@ function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
         : await createAddress(query);
       toast(toastConfig("success", "Success", response.message));
       setOpenAlert(false);
+      setLoading(false)
       formik.resetForm();
       onClose();
     } catch (error) {
+      setLoading(false)
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
   };
@@ -89,6 +93,9 @@ function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
           city_id: data.region.city_id,
           street: data.street,
         });
+      }
+      if(!data){
+        formik.resetForm()
       }
     }
     fetchData();
@@ -204,6 +211,7 @@ function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
                   onClick={formik.handleSubmit}
                   isOpen={openAlert}
                   onClose={() => setOpenAlert(false)}
+                  isLoading={loading}
                 >
                   {data ? "Update" : "Create"}
                 </ButtonConfirmation>

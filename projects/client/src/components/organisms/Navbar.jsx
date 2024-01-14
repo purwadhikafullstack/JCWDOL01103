@@ -38,11 +38,14 @@ const Navbar = () => {
     (async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await verificationValidator(token);
-        if (!response.data.verified) {
-          dispatch(logoutAuthorized());
+        if(token){
+          const response = await verificationValidator(token);
+          console.log(response)
+          if (!response.data.verified) {
+            dispatch(logoutAuthorized());
+          }
+          dispatch(checkAuthorized());
         }
-        dispatch(checkAuthorized());
       } catch (error) {
         dispatch(logoutAuthorized());
       }
@@ -51,7 +54,7 @@ const Navbar = () => {
   useEffect(() => {
     (async () => {
       try {
-        if (authState) {
+        if (userState) {
           const userDecoded = jwtDecode(userState);
           const userDetails = await getUser(encodeURIComponent(userDecoded.id));
           setUserInfo(userDetails.data);
@@ -66,7 +69,7 @@ const Navbar = () => {
     dispatch(logoutAuthorized());
     setUserInfo(null);
     setBtnLoading(false);
-    navigate("/");
+    navigate("/login");
   };
   return (
     <Container

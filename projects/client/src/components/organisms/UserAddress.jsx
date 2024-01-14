@@ -3,12 +3,12 @@ import {
   Button,
   Flex,
   HStack,
-  Heading,
   IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
+  Spinner,
   Text,
   VStack,
   useMediaQuery,
@@ -39,11 +39,14 @@ const UserAddress = ({ onChange, action }) => {
   const [openModalForm, setOpenModalForm] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [selectedAddressOrder, setSelectedAddressOrder] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [loadState, setLoadState] = useState(true);
   const [filterInput, setFilterInput] = useState("");
   const toast = useToast();
 
   const handleChangeAddress = async (actionType) => {
     try {
+      setLoading(true);
       const response =
         actionType === "delete"
           ? await deleteAddress(selectedAddress.id)
@@ -55,11 +58,15 @@ const UserAddress = ({ onChange, action }) => {
           actionType === "delete" ? response.message : response.data.message
         )
       );
-      setOpenAlert(false);
-      setOpenAlertDelete(false);
-      fetchAddress();
-      setSelectedAddress(null);
+      setTimeout(() => {
+        setLoading(false);
+        setOpenAlert(false);
+        setOpenAlertDelete(false);
+        fetchAddress();
+        setSelectedAddress(null);
+      }, 1300);
     } catch (error) {
+      setLoading(false);
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
   };
@@ -92,6 +99,9 @@ const UserAddress = ({ onChange, action }) => {
   useEffect(() => {
     (async () => {
       await fetchAddress();
+      setTimeout(() => {
+        setLoadState(false);
+      }, 1000);
     })();
   }, []);
 
@@ -99,19 +109,18 @@ const UserAddress = ({ onChange, action }) => {
     onChange && onChange(selectedAddressOrder);
   }, [selectedAddressOrder]);
   return (
-    <Flex
-      h="max-content"
-      maxH="100vh"
-      alignItems="center"
-      flexDir="column"
-      gap="3"
-      w="full"
-    >
+    <Flex w="full" flexDir='column'>
       <HStack
         w="full"
+        h="max-content"
         justify="center"
         alignItems="center"
         wrap={isMobile && "wrap"}
+        position="sticky"
+        bg="white"
+        zIndex="2"
+        top="0"
+        pt="1"
       >
         <SearchInput
           placeholder="Search here"
@@ -130,130 +139,144 @@ const UserAddress = ({ onChange, action }) => {
           Add New
         </Button>
       </HStack>
-      <VStack w="full" gap="4">
-        {data?.length === 0 ? (
-          <Text alignSelf="self-start">No Address Found</Text>
+      <Flex alignItems="center" flexDir="column" gap="3" w="100%" pt="3" >
+        {loadState ? (
+          <Spinner />
         ) : (
-          data?.map((dt) => {
-            return (
-              <Flex
-                key={dt.id}
-                w="full"
-                h="150px"
-                shadow="md"
-                gap="3"
-                flexDir={isLaptop ? "row" : "column"}
-                justifyContent="space-between"
-                alignItems={isLaptop ? "center" : "unset"}
-                py="5"
-                px="3"
-                bg="white"
-                borderRadius="md"
-                border="1px solid"
-                borderColor={
-                  action === "order"
-                    ? dt.id === selectedAddressOrder?.id
-                      ? "black"
-                      : "inherit"
-                    : dt.is_primary
-                    ? "black"
-                    : "inherit"
-                }
-                cursor={action === "order" && "pointer"}
-                onClick={() => {
-                  action === "order" && setSelectedAddressOrder(dt);
-                }}
-              >
-                <Box pr="40px" position="relative">
-                  <Text fontSize="sm" fontWeight="bold">
-                    {dt.is_primary && (
-                      <Text
-                        as="span"
-                        bg="primaryColor"
-                        color="secondaryColor"
-                        py="0.5"
-                        px="1"
-                        borderRadius="md"
-                        fontSize="small"
-                        mr="2"
-                      >
-                        Main
-                      </Text>
-                    )}
-                    {dt.name}
-                  </Text>
-                  <Text fontSize="sm" noOfLines="1">
-                    {dt.street}
-                  </Text>
-                  <Text fontSize="sm" noOfLines="1">
-                    {`${dt.region.city_name}, ${dt.region.province.province_name}`}
-                  </Text>
-                </Box>
-                <Flex gap="3" justifyContent="flex-end">
-                  <IconButton
-                    icon={<HiOutlinePencil />}
-                    onClick={() => selectedAddressHandler(dt, "edit")}
-                  />
-                  {!dt.is_primary && (
-                    <Menu>
-                      <MenuButton
-                        as={IconButton}
-                        aria-label="Options"
-                        icon={<BsThreeDots />}
-                      />
-                      <MenuList>
-                        <MenuItem
-                          icon={<HiOutlineTrash />}
-                          onClick={() => selectedAddressHandler(dt, "delete")}
-                        >
-                          Delete
-                        </MenuItem>
-                        <MenuItem
-                          icon={<BsPinAngle />}
-                          onClick={() => selectedAddressHandler(dt, "select")}
-                        >
-                          Set as main address
-                        </MenuItem>
-                      </MenuList>
-                    </Menu>
-                  )}
-                </Flex>
-              </Flex>
-            );
-          })
+            <VStack w="100%" gap="4">
+              {data?.length === 0 ? (
+                <Text alignSelf="self-start">No Address Found</Text>
+              ) : (
+                data?.map((dt) => {
+                  return (
+                    <Flex
+                      key={dt.id}
+                      w="full"
+                      h="150px"
+                      shadow="md"
+                      gap="3"
+                      flexDir={isLaptop ? "row" : "column"}
+                      justifyContent="space-between"
+                      alignItems={isLaptop ? "center" : "unset"}
+                      py="5"
+                      px="3"
+                      bg="white"
+                      borderRadius="md"
+                      border="1px solid"
+                      borderColor={
+                        action === "order"
+                          ? dt.id === selectedAddressOrder?.id
+                            ? "black"
+                            : "inherit"
+                          : dt.is_primary
+                          ? "black"
+                          : "inherit"
+                      }
+                      cursor={action === "order" && "pointer"}
+                      onClick={() => {
+                        action === "order" && setSelectedAddressOrder(dt);
+                      }}
+                    >
+                      <Box pr="40px" position="relative">
+                        <Text fontSize="sm" fontWeight="bold">
+                          {dt.is_primary && (
+                            <Text
+                              as="span"
+                              bg="primaryColor"
+                              color="secondaryColor"
+                              py="0.5"
+                              px="1"
+                              borderRadius="md"
+                              fontSize="small"
+                              mr="2"
+                            >
+                              Main
+                            </Text>
+                          )}
+                          {dt.name}
+                        </Text>
+                        <Text fontSize="sm" noOfLines="1">
+                          {dt.street}
+                        </Text>
+                        <Text fontSize="sm" noOfLines="1">
+                          {`${dt.region.city_name}, ${dt.region.province.province_name}`}
+                        </Text>
+                      </Box>
+                      <Flex gap="3" justifyContent="flex-end">
+                        <IconButton
+                          icon={<HiOutlinePencil />}
+                          onClick={() => selectedAddressHandler(dt, "edit")}
+                        />
+                        {!dt.is_primary && (
+                          <Menu>
+                            <MenuButton
+                              as={IconButton}
+                              aria-label="Options"
+                              icon={<BsThreeDots />}
+                            />
+                            <MenuList>
+                              <MenuItem
+                                icon={<HiOutlineTrash />}
+                                onClick={() =>
+                                  selectedAddressHandler(dt, "delete")
+                                }
+                              >
+                                Delete
+                              </MenuItem>
+                              <MenuItem
+                                icon={<BsPinAngle />}
+                                onClick={() =>
+                                  selectedAddressHandler(dt, "select")
+                                }
+                              >
+                                Set as main address
+                              </MenuItem>
+                            </MenuList>
+                          </Menu>
+                        )}
+                      </Flex>
+                    </Flex>
+                  );
+                })
+              )}
+            </VStack>
         )}
-      </VStack>
-      <AlertConfirmation
-        isOpen={openAlert}
-        onClose={() => setOpenAlert(false)}
-        header="Do you want to change it ?"
-        description="This action will change main address and you can change it again if you want"
-        buttonConfirm="Yes"
-        buttonCancel="Cancel"
-        onClickConfirm={() => {
-          handleChangeAddress();
-        }}
-      />
-      <AlertConfirmation
-        isOpen={openAlertDelete}
-        onClose={() => setOpenAlertDelete(false)}
-        header="Do you want to delete it ?"
-        description="This action will delete this address permanently. You cannot undo this action."
-        buttonConfirm="Delete"
-        buttonCancel="Cancel"
-        onClickConfirm={() => {
-          handleChangeAddress("delete");
-        }}
-      />
-      <ModalFormAddress
-        data={selectedAddress}
-        isOpen={openModalForm}
-        onClose={() => {
-          setOpenModalForm(false);
-          setSelectedAddress(null);
-        }}
-        onCloseComplete={fetchAddress}
-      />
+        <AlertConfirmation
+          isOpen={openAlert}
+          onClose={() => setOpenAlert(false)}
+          header="Do you want to change it ?"
+          description="This action will change main address and you can change it again if you want"
+          buttonConfirm="Yes"
+          buttonCancel="Cancel"
+          isLoading={loading}
+          onClickConfirm={() => {
+            handleChangeAddress();
+          }}
+          onCloseComplete={() => setSelectedAddress(null)}
+        />
+        <AlertConfirmation
+          isOpen={openAlertDelete}
+          onClose={() => setOpenAlertDelete(false)}
+          header="Do you want to delete it ?"
+          description="This action will delete this address permanently. You cannot undo this action."
+          buttonConfirm="Delete"
+          buttonCancel="Cancel"
+          isLoading={loading}
+          onClickConfirm={() => {
+            handleChangeAddress("delete");
+          }}
+          onCloseComplete={() => setSelectedAddress(null)}
+        />
+        <ModalFormAddress
+          data={selectedAddress}
+          isOpen={openModalForm}
+          onClose={() => {
+            setOpenModalForm(false);
+            setSelectedAddress(null);
+          }}
+          onCloseComplete={fetchAddress}
+        />
+      </Flex>
     </Flex>
   );
 };

@@ -39,10 +39,10 @@ function Authentication() {
         shadow="lg"
         bg="white"
       >
-        {loadingState && <Center bg='rgba(255, 255, 255, 0.85)' w='full' h='full' position='absolute' zIndex="10" flexDir="column">
+        {/* {loadingState && <Center bg='rgba(255, 255, 255, 0.85)' w='full' h='full' position='absolute' zIndex="10" flexDir="column">
           <Spinner color="black" size="xl" mb="3"/>
           <Text fontSize="md">Loading</Text>
-        </Center>}
+        </Center>} */}
         <Flex
           bg="primaryColor"
           h="full"
@@ -82,6 +82,7 @@ function Authentication() {
             variant="outline"
             colorScheme="blue"
             onClick={() => setIsLogin(!isLogin)}
+            isDisabled={loadingState}
           >
             {isLogin ? "Don't have account ?" : "Already have an account ?"}
           </Button>

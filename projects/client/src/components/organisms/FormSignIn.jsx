@@ -36,6 +36,7 @@ import { googleLogin } from "../../api/auth";
 function FormSignIn({ isLogin, onClickLogin, isLaptop }) {
   const [showPassword, setShowPassword] = useState(false);
   const authResponse = useSelector((state) => state.login.response);
+  const loadingState = useSelector((state) => state.login.loading)
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [googleToken, setGoogleToken] = useState(null);
@@ -146,6 +147,8 @@ function FormSignIn({ isLogin, onClickLogin, isLaptop }) {
         }}
         display={isLogin ? "none" : "block"}
         _hover={{ color: "primaryColor", bg: "white" }}
+        isDisabled={!isLogin && loadingState} 
+        isLoading={isLogin && loadingState}
       >
         Sign In
       </Button>
@@ -207,11 +210,12 @@ function FormSignIn({ isLogin, onClickLogin, isLaptop }) {
             >
               Forgot your password ?
             </Link>
-            <Button type="submit">Sign in</Button>
+            <Button type="submit" isDisabled={!isLogin && loadingState} isLoading={isLogin && loadingState}>Sign in</Button>
             <Text fontSize="small" alignSelf="center">
               Or
             </Text>
             <Button
+              isDisabled={loadingState}
               onClick={() => {
                 onClickGoogleSignIn();
               }}

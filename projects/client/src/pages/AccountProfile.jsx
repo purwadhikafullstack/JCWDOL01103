@@ -11,8 +11,8 @@ import UserAddress from "../components/organisms/UserAddress";
 
 const AccountProfile = () => {
   return (
-    <Tabs variant="soft-rounded" w="100%" px="5" pt="2" >
-      <TabList>
+    <Tabs isLazy variant="soft-rounded" w="100%" pt="2" pos='relative'>
+      <TabList position="sticky" top={{base:'100px',lg:"120px", xl:"128px"}} pb='1' bg="white" zIndex="4">
         <Tab _selected={{ color: "white", bg: "black" }}>Profile</Tab>
         <Tab _selected={{ color: "white", bg: "black" }}>Address</Tab>
       </TabList>
@@ -20,7 +20,7 @@ const AccountProfile = () => {
         <TabPanel>
           <Profile />
         </TabPanel>
-        <TabPanel w="100%">
+        <TabPanel w="100%" overflow="scroll" position='relative'>
           <UserAddress />
         </TabPanel>
       </TabPanels>

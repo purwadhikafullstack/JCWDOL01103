@@ -65,7 +65,7 @@ const InputAddress = ({ isInvalid, onChange }) => {
             <ModalContent h="85vh" maxW="700px">
               <ModalHeader>Address List</ModalHeader>
               <ModalCloseButton />
-              <ModalBody>
+              <ModalBody pt='0' pos="relative">
                 <UserAddress
                   action="order"
                   onChange={(val) => {

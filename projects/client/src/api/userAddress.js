@@ -26,6 +26,6 @@ export const updateAddress = async (id, data) => {
 
 export const deleteAddress = async (id) => {
     const idEncoded = encodeURIComponent(id);
-    const response = await server.delete(`/addresses/${idEncoded}`)
+    const response = await server.delete(`/addresses/${idEncoded}`, config)
     return response.data;
 }

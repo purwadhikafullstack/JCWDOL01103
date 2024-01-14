@@ -1,12 +1,10 @@
 import { Flex, Box } from "@chakra-ui/react";
 import React from "react";
 import Navbar from "../organisms/Navbar";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Footer from "../organisms/Footer";
 
 function LayoutRoot() {
-  const location = useLocation();
-
   return (
     <Flex justifyContent="center" alignItems="center" w="full" flexDir="column">
       <Flex
