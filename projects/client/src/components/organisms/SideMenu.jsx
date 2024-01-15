@@ -11,6 +11,7 @@ import {
   BiX,
   BiMenuAltLeft,
 } from "react-icons/bi";
+import { FaBoxes } from "react-icons/fa";
 
 const SideMenu = () => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -75,9 +76,8 @@ const SideMenu = () => {
           name="Warehouse"
           to="/dashboard/warehouses"
         />
-        <MenuItem icon={<BiBook />} name="Stock" to="/dashboard/product-stock" />
+        <MenuItem icon={<FaBoxes />} name="Stock" to="/dashboard/product-stock" />
         <MenuItem icon={<BiBook />} name="Mutation" to="/dashboard/stock-mutation" />
-        {/* <MenuItem icon={<BiBook />} name="Journal" to="/dashboard/stock-mutation" /> */}
       </Flex>
     </>
   );

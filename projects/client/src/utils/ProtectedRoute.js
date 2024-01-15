@@ -13,6 +13,7 @@ const ProtectedRoute = ({ roles, element }) => {
     return requiredRoles.some((role) => userRoles.includes(role));
   };
   const hasPermission = checkAutorization(roles);
+  // console.log(hasPermission)
   if (hasPermission) {
     return element;
   } else {

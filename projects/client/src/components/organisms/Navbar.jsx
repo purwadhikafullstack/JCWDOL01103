@@ -30,7 +30,6 @@ const Navbar = () => {
   const location = useLocation();
   const authState = useSelector((state) => state.login.isAuthorized);
   const userState = useSelector((state) => state.login.user);
-  const [btnLoading, setBtnLoading] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const dispatch = useDispatch();
   const toast = useToast();
@@ -40,7 +39,6 @@ const Navbar = () => {
         const token = localStorage.getItem("token");
         if(token){
           const response = await verificationValidator(token);
-          console.log(response)
           if (!response.data.verified) {
             dispatch(logoutAuthorized());
           }
@@ -65,10 +63,8 @@ const Navbar = () => {
     })();
   }, [authState, dispatch]);
   const onClickLogout = () => {
-    setBtnLoading(true);
     dispatch(logoutAuthorized());
     setUserInfo(null);
-    setBtnLoading(false);
     navigate("/login");
   };
   return (

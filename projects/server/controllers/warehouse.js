@@ -30,6 +30,7 @@ const getWarehouse = async (req, res) => {
 };
 
 const getWarehouses = async (req, res) => {
+  console.log(req.user, "=========================")
   const query = req.query;
   const page = parseInt(query.page) || 1;
   const pageSize = parseInt(query.pageSize) || 10;

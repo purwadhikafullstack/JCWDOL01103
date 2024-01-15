@@ -34,8 +34,8 @@ function NotFound({ type }) {
           ? "You do not have permission to access this page"
           : "The page you are looking for does not exist or the session has expired."}
       </Text>
-      <Button bg="black" color="white" onClick={() => navigate("/")}>
-        Go Home
+      <Button bg="black" color="white" onClick={() => type === "forbidden" ? navigate(-1) : navigate("/")}>
+        {type === "forbidden" ? "Go Back" : "Go Home"}
       </Button>
     </Center>
   );

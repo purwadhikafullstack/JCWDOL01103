@@ -6,7 +6,7 @@ import Navbar from "../organisms/Navbar";
 function LayoutDashboard() {
   return (
     <Container
-      // as="section"
+      as="section"
       maxW={{ xl: "7xl", "2xl": "8xl" }}
       mt={{ base: "110px", xl: "150px" }}
       textAlign={"left"}
