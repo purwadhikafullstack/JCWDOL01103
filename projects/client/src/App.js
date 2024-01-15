@@ -32,14 +32,13 @@ function App() {
         <Route path="/user-address" element={<ProtectedRoute element={<UserAddress />} roles={["user"]} />}  />
         <Route path="/test" element={<Test />} />
       </Route>
-      <Route path="/dashboard" element={<ProtectedRoute element={<LayoutDashboard />} roles={["admin","master"]}/>} >
+      <Route path="/dashboard" element={<LayoutDashboard />} >
         <Route index element={<Navigate to="product-stock" replace={true} />} />
         <Route path="warehouses" element={<ProtectedRoute element={<DashboardWarehouse />} roles={["master"]} />}/>
         <Route path="product-stock" element={<ProtectedRoute element={<Journal />} roles={["admin","master"]} />} />
         <Route path="stock-mutation" element={<ProtectedRoute element={<StockMutation />} roles={["admin"]} />} />
-        <Route path="users" element={<DashboardUser/>} />
+        <Route path="users" element={<ProtectedRoute element={<DashboardUser />} roles={["master"]} />} />
       </Route>
-        <Route path="/product-stock" element={<ProtectedRoute element={<Journal />} roles={["admin","master"]} />} />
       <Route path="/products" element={<Product />} />
       <Route path="/not-found" element={<NotFound/>} />
       <Route path="/forbidden" element={<NotFound type="forbidden" />} />

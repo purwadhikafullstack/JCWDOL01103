@@ -28,7 +28,7 @@ import { createAdmin, updateAdmin } from "../../api/adminWarehouse";
 
 const FormAdmin = ({ data, isOpen, onClose, onCloseComplete }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [btnloading, setBtnLoading] = useState(false)
+  const [btnloading, setBtnLoading] = useState(false);
   const toast = useToast();
   const formik = useFormik({
     initialValues: {
@@ -45,30 +45,37 @@ const FormAdmin = ({ data, isOpen, onClose, onCloseComplete }) => {
         .min(8, "Password is too short - should be 8 chars minimum."),
       warehouse: Yup.string().required("Required"),
     }),
-    onSubmit: async(values) => {
+    onSubmit: async (values) => {
       try {
-        setBtnLoading(true)
+        setBtnLoading(true);
         const { warehouse, ...rest } = values;
         const dataValues = {
           ...rest,
-          warehouse_id: values.warehouse
+          warehouse_id: values.warehouse,
+        };
+        if (data) {
+          dataValues.id = data.user.id;
+          dataValues.password =
+            data.user.password === dataValues.password
+              ? data.user.password
+              : dataValues.password;
         }
-        if(data){
-          dataValues.id = data.user.id
-        }
-        const response = data ? await updateAdmin(dataValues) : await createAdmin(dataValues) 
-        toast(toastConfig("success", "Success", response.message))
-        setTimeout(()=>{
-          onClose()
-          setBtnLoading(false)
-        },2000)
+        const response = data
+          ? await updateAdmin(dataValues)
+          : await createAdmin(dataValues);
+        toast(toastConfig("success", "Success", response.message));
+        setTimeout(() => {
+          onClose();
+          setBtnLoading(false);
+        }, 2000);
       } catch (error) {
-        console.log(error)
-        setBtnLoading(false)
-        toast(toastConfig("error", "Failed", error.message))
+        console.log(error);
+        setBtnLoading(false);
+        toast(toastConfig("error", "Failed", error.message));
       }
     },
   });
+
   useEffect(() => {
     function fetchData() {
       if (data && !formik.dirty) {
@@ -85,8 +92,12 @@ const FormAdmin = ({ data, isOpen, onClose, onCloseComplete }) => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={()=> btnloading ? null : onClose()}
-      onCloseComplete={()=>{formik.resetForm(); setShowPassword(false); onCloseComplete()}}
+      onClose={() => (btnloading ? null : onClose())}
+      onCloseComplete={() => {
+        formik.resetForm();
+        setShowPassword(false);
+        onCloseComplete();
+      }}
       closeOnOverlayClick={false}
     >
       <ModalOverlay />
@@ -167,8 +178,12 @@ const FormAdmin = ({ data, isOpen, onClose, onCloseComplete }) => {
             </VStack>
           </ModalBody>
           <ModalFooter>
-            <Button bg="black" mr="2" color="white" isDisabled={btnloading}>Cancel</Button>
-            <Button isLoading={btnloading} type="submit">{data ? "Update" : "Create"}</Button>
+            <Button bg="black" mr="2" color="white" isDisabled={btnloading}>
+              Cancel
+            </Button>
+            <Button isLoading={btnloading} type="submit">
+              {data ? "Update" : "Create"}
+            </Button>
           </ModalFooter>
         </ModalContent>
       </form>

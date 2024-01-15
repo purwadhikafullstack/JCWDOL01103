@@ -1,6 +1,7 @@
 const db = require("../models");
 const { Op } = require("sequelize");
 const { decryptData, encryptData } = require("../helpers/encrypt");
+const bcrypt = require("bcrypt");
 
 const assignAdminWarehouse = async (req, res) => {
   const { id, warehouse_id } = req.body;
@@ -215,6 +216,8 @@ const createAdmin = async (req, res) => {
   const { name, email, password, warehouse_id } = req.body;
   const t = await db.sequelize.transaction();
   try {
+    const salt = await bcrypt.genSalt(12);
+    const hashPassword = await bcrypt.hash(password, salt);
     const [admin, created] = await db.Users.findOrCreate({
       where: {
         email: email,
@@ -222,7 +225,7 @@ const createAdmin = async (req, res) => {
       defaults: {
         name: name,
         email: email,
-        password: password,
+        password: hashPassword,
         role: "admin",
       },
       transaction: t,
@@ -261,12 +264,17 @@ const updateAdmin = async (req, res) => {
     const warehouseAdmin = await db.Warehouses_Users.findOne({
       where: { user_id: id },
     });
+    const updateData =  {
+      name: name,
+      email: email,
+    }
+    if(password){
+      const salt = await bcrypt.genSalt(12);
+      const hashPassword = await bcrypt.hash(password, salt);
+      updateData.password = hashPassword
+    }
     await admin.update(
-      {
-        name: name,
-        email: email,
-        password: password,
-      },
+      updateData,
       { transaction: t }
     );
     await warehouseAdmin.update(

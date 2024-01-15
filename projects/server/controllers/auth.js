@@ -19,24 +19,6 @@ const register = async (req, res) => {
     let role = newUser.role;
     let token = createToken({ email, id, role });
     await sendEmailVerification(encodeURI(token), email);
-    // let mail = {
-    //   from: `Admin <xordyzen@gmail.com>`,
-    //   to: `${email}`,
-    //   subject: "Account verification",
-    //   html: `<a href='http://localhost:3000/verification/${token}'>Click here for verify</a>`,
-    // };
-    // transporter.sendMail(mail, (errMail, resMail) => {
-    //   if (errMail) {
-    //     return res.status(500).send({
-    //       message: "Email registration failed!",
-    //       success: false,
-    //     });
-    //   }
-    //   return res.status(200).send({
-    //     message: "Check your email to verification!",
-    //     success: true,
-    //   });
-    // });
     return res.status(200).json({
       message: "Register success, Check your email to verify!",
       data: newUser,

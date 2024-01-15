@@ -76,7 +76,7 @@ const Users = () => {
   const fetchDataUsers = async (action) => {
     try {
       const response = await getUsers(action ? null : paramUser);
-      setUserList(response.data);
+      return setUserList(response.data);
     } catch (error) {
       throw error;
     }
@@ -84,7 +84,7 @@ const Users = () => {
   const fetchProvinces = async () => {
     try {
       const result = await getProvinces();
-      setFilterCategories(result.data);
+      return setFilterCategories(result.data);
     } catch (error) {
       throw error;
     }
