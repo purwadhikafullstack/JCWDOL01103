@@ -73,12 +73,12 @@ const getAllAdmin = async (req, res) => {
             },
           },
           {
-            "$warehouse.region.city_name$": {
+            "$user.email$": {
               [Op.like]: `%${search}%`,
             },
           },
           {
-            "$warehouse.region.province.province_name$": {
+            "$warehouse.region.city_name$": {
               [Op.like]: `%${search}%`,
             },
           },
@@ -90,15 +90,16 @@ const getAllAdmin = async (req, res) => {
         query.province_id;
     }
     if (query.sort) {
-      const filter = query.sort.split("_");
-      sortType[0] = filter;
+      const [sortBy, sortOrder] = query.sort.split("_");
+      if(sortBy === "name"){
+        sortType = [[{ model: db.Users, as:"user" }, sortBy, sortOrder]]
+      }
     }
     const { count, rows } = await db.Warehouses_Users.findAndCountAll({
       offset: (page - 1) * pageSize,
       limit: pageSize,
       order: sortType,
       where: { [Op.and]: [whereClause2, whereClause] },
-      order: sortType,
       include: [
         {
           model: db.Users,
@@ -169,7 +170,7 @@ const getAllAdmin = async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return res.status(400).json({
       status: 400,
       message: "Get Admin Failed",

@@ -25,6 +25,7 @@ import {
   logoutAuthorized,
 } from "../../store/slicer/authSlice";
 import { toastConfig } from "../../utils/toastConfig";
+import SideMenu from "./SideMenu";
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -113,6 +114,7 @@ const Navbar = () => {
                 Login
               </Button>
             ) : (
+              <>
               <MenuButton>
                 <Flex
                   alignItems={"center"}
@@ -155,6 +157,8 @@ const Navbar = () => {
                   </Flex>
                 </Flex>
               </MenuButton>
+              {/* <SideMenu type="navbar"/> */}
+              </>
             )}
             <MenuList p="4" maxW="250px">
               {authState ? (

@@ -167,7 +167,7 @@ const Users = () => {
               justifyContent="center"
             >
               <FilterBar
-                placeholderSearch="Search admin id or name"
+                placeholderSearch="Search admin by email or name or city"
                 filterValue={(value) => setParamObj(value)}
                 onSearchPressEnter={fetchData}
                 categories={filterCategories}
@@ -192,6 +192,7 @@ const Users = () => {
                 <Thead>
                   <Tr>
                     <Th>No</Th>
+                    <Th>Name</Th>
                     <Th>Email</Th>
                     <Th>Warehouse</Th>
                     <Th>Location</Th>
@@ -208,8 +209,9 @@ const Users = () => {
                         onClick={() => onClickRow({ ...dt, type: "view" })}
                       >
                         <Td>{dt.indexNumber}</Td>
+                        <Td maxW="50px" isTruncated>{dt.user.name}</Td>
                         <Td>{dt.user.email}</Td>
-                        <Td>{dt.warehouse.name}</Td>
+                        <Td isTruncated>{dt.warehouse.name}</Td>
                         <Td>{dt.warehouse.city_name}</Td>
                         <Td
                           borderTopRightRadius="lg"

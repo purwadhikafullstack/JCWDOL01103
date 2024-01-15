@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
         as: "addresses",
       });
       Users.hasOne(models.Warehouses_Users, {
-        foreignKey: "id",
-        as: "warehouse_admin",
+        foreignKey: "user_id",
+        as: "warehouse",
       });
     }
   }

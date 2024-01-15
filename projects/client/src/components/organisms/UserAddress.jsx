@@ -109,7 +109,7 @@ const UserAddress = ({ onChange, action }) => {
     onChange && onChange(selectedAddressOrder);
   }, [selectedAddressOrder]);
   return (
-    <Flex w="full" flexDir='column'>
+    <Flex pb='20' w="full" flexDir='column'>
       <HStack
         w="full"
         h="max-content"

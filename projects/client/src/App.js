@@ -17,6 +17,7 @@ import AccountProfile from "./pages/AccountProfile";
 import LayoutRoot from "./components/templates/LayoutRoot";
 import LayoutDashboard from "./components/templates/LayoutDashboard";
 import DashboardUser from "./pages/DashboardUser"
+import Checkout from "./pages/Checkout";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
       <Route element={<LayoutRoot/>}>
         <Route path="/account" element={<ProtectedRoute element={<AccountProfile />} roles={["user"]} />}/>
         <Route path="/user-address" element={<ProtectedRoute element={<UserAddress />} roles={["user"]} />}  />
+        <Route path="/checkout" element={<Checkout />}/>
         <Route path="/test" element={<Test />} />
       </Route>
       <Route path="/dashboard" element={<LayoutDashboard />} >
