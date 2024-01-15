@@ -9,9 +9,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUID,
       },
-      user_id: {
-        type: Sequelize.INTEGER,
-      },
       name: {
         type: Sequelize.STRING,
       },
@@ -27,6 +24,11 @@ module.exports = {
       },
       image: {
         type: Sequelize.TEXT,
+      },
+      status: {
+        type: Sequelize.ENUM("active", "inactive", "reset"),
+        allowNull: false,
+        defaultValue: "active",
       },
       createdAt: {
         allowNull: false,

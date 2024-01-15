@@ -38,11 +38,17 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       image: DataTypes.TEXT,
+      status: {
+        type: DataTypes.ENUM("active", "inactive", "reset"),
+        allowNull: false,
+        defaultValue: "active",
+      },
     },
     {
       sequelize,
       modelName: "Users",
       tableName: "users",
+      timestamps: true,
     }
   );
   return Users;

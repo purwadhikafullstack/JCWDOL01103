@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import soundsenseLogo from "../../assets/img/soundsense-dark.png";
+import { server, config } from "../../api/index";
 import { BiUser, BiCartAlt, BiSearch } from "react-icons/bi";
 import {
   Container,
@@ -29,6 +30,8 @@ const Navbar = () => {
   const authState = useSelector(state => state.login.isAuthorized);
   const userState = useSelector(state => state.login.user);
   const [userInfo, setUserInfo] = useState(null);
+  const [cartItemCount, setCartItemCount] = useState(0);
+
   const dispatch = useDispatch();
   useEffect(() => {
     (async () => {
@@ -44,6 +47,7 @@ const Navbar = () => {
       }
     })();
   }, []);
+
   useEffect(() => {
     (async () => {
       try {
@@ -61,6 +65,26 @@ const Navbar = () => {
     dispatch(logoutAuthorized());
     navigate("/");
   };
+
+  useEffect(() => {
+    const loadCartData = async () => {
+      try {
+        const response = await server.get("/cart", config);
+        const cartItems = response.data;
+        const itemCount = cartItems.reduce((total, item) => {
+          return total + (item.quantity || 0);
+        }, 0);
+        setCartItemCount(itemCount);
+      } catch (error) {
+        console.error("Error fetching cart data:", error);
+      }
+    };
+
+    if (authState) {
+      loadCartData();
+    }
+  }, [authState]);
+
   return (
     <Container
       as="nav"
@@ -165,13 +189,11 @@ const Navbar = () => {
             <MenuButton>
               <Flex alignItems={"center"}>
                 <BiCartAlt color="black" fontSize="30px" />
+                <Text ml={2} color="red.500">
+                  {cartItemCount}
+                </Text>
               </Flex>
             </MenuButton>
-            <MenuList>
-              <Text mx={"auto"} fontWeight={"bold"} textAlign="center" my={3}>
-                Your Cart Is Empty
-              </Text>
-            </MenuList>
           </Menu>
         </Flex>
       </Flex>

@@ -13,6 +13,7 @@ import Category from "./pages/Category";
 import LayoutDashboard from "./components/templates/LayoutDashboard";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
       <Route path="/journal" element={<Journal />} />
       <Route path="/shop" element={<Shop />} />
       <Route path="/shop/product/:id" element={<ProductDetail />} />
+      <Route path="/cart" element={<Cart />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

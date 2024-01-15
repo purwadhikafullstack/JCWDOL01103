@@ -18,6 +18,30 @@ module.exports = {
         createdAt: currentDate,
         updatedAt: currentDate,
       },
+      {
+        id: 3,
+        name: "keyboards",
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      },
+      {
+        id: 4,
+        name: "bass",
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      },
+      {
+        id: 5,
+        name: "studio recording",
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      },
+      {
+        id: 6,
+        name: "microphones",
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      },
     ]);
   },
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { server } from "../api/index";
+import { server, config } from "../api/index";
 import Navbar from "../components/organisms/Navbar";
 import Footer from "../components/organisms/Footer";
 import {
@@ -14,9 +14,12 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { BiCartAdd, BiShoppingBag } from "react-icons/bi";
+import { useToast } from "@chakra-ui/toast";
+
+import { toastConfig } from "../utils/toastConfig";
 
 const ProductDetail = () => {
-  //   const { productName } = useParams();
+  const toast = useToast();
   const params = useParams();
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
@@ -48,8 +51,20 @@ const ProductDetail = () => {
     }
   };
 
-  const addToCart = () => {
-    console.log("Add to Cart", product.product_name, quantity);
+  const addToCart = async () => {
+    try {
+      const response = await server.post(
+        "/cart",
+        {
+          product_id: product.id,
+          quantity: quantity,
+        },
+        config
+      );
+      toast(toastConfig("success", "Success", response.data.message));
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
   };
 
   const orderNow = () => {
@@ -120,7 +135,7 @@ const ProductDetail = () => {
                 type="number"
                 value={quantity}
                 onChange={handleQuantityChange}
-                w="40px"
+                w="60px"
                 mr={1}
               />
               <Button onClick={incrementQuantity} mr={8}>
@@ -138,7 +153,7 @@ const ProductDetail = () => {
                 px={8}
                 mr={5}
               >
-                <BiShoppingBag pr={2} />
+                <BiShoppingBag mr={2} />
                 Buy Now
               </Button>
               <Button bg="black" color={"white"} onClick={addToCart} px={8}>

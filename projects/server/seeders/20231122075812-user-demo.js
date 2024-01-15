@@ -7,8 +7,7 @@ module.exports = {
 
     await queryInterface.bulkInsert("users", [
       {
-        id: uuidv4(),
-        user_id: 101,
+        id: "20deacfe-cf47-4c9f-ba6f-778a2629e826",
         name: "user tes",
         email: "usertes@gmail.com",
         password:
@@ -19,8 +18,7 @@ module.exports = {
         updatedAt: currentDate,
       },
       {
-        id: uuidv4(),
-        user_id: 102,
+        id: "92deacfe-cf47-4c9f-ba6f-778a2629e826",
         name: "admin tes",
         email: "admintes@gmail.com",
         password:
@@ -31,8 +29,7 @@ module.exports = {
         updatedAt: currentDate,
       },
       {
-        id: uuidv4(),
-        user_id: 103,
+        id: "22deacfe-cf47-4c9f-ba6f-778a2629e826",
         name: "master tes",
         email: "mastertes@gmail.com",
         password:

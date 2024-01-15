@@ -309,7 +309,6 @@ const Category = () => {
           <Button
             bg="black"
             color="white"
-            w={"10%"}
             _hover={{ bg: "blackAlpha.600" }}
             onClick={() => setIsAddModalOpen(true)}
           >
