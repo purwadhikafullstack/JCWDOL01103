@@ -19,6 +19,7 @@ import { getAddresses } from "../../api/userAddress";
 import ModalFormAddress from "./ModalFormAddress";
 import { useDispatch } from "react-redux";
 import { setAddressCheckout } from "../../store/slicer/checkoutSlice";
+import { toastConfig } from "../../utils/toastConfig";
 
 const InputAddress = ({ isInvalid, onChange }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -26,14 +27,19 @@ const InputAddress = ({ isInvalid, onChange }) => {
   const [selected, setSelected] = useState(null);
   const [address, setAddress] = useState(null);
   const dispatch = useDispatch()
-  useEffect(() => {
-    (async () => {
+  const fetchData = async() => {
+    try {
       const response = await getAddresses();
       const primaryAddress = response.data.find((dt) => dt.is_primary === true);
       setAddress(primaryAddress);
       setSelected(primaryAddress);
       dispatch(setAddressCheckout(primaryAddress))
-    })();
+    } catch (error) {
+      return null
+    }
+  }
+  useEffect(() => {
+    fetchData()
   }, []);
   return (
     <Flex w="full">
@@ -98,6 +104,7 @@ const InputAddress = ({ isInvalid, onChange }) => {
         </Box>
       </FormControl>
       <ModalFormAddress
+        onCloseComplete={()=> fetchData()}
         isOpen={isOpenForm}
         onClose={onCloseForm}
       />
