@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Navbar from "../components/organisms/Navbar";
 import Footer from "../components/organisms/Footer";
 import { server } from "../api/index";
@@ -18,6 +18,7 @@ import {
 import { BiSortZA, BiTime, BiCategory, BiX } from "react-icons/bi";
 
 const Shop = () => {
+  const location = useLocation();
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("ascending");
@@ -34,10 +35,14 @@ const Shop = () => {
   const getProducts = useCallback(async () => {
     try {
       const sortParam = sortOrder === "ascending" ? "asc" : "desc";
+      const categoryQuery = new URLSearchParams(location.search).get(
+        "category"
+      );
+
       const response = await server.get("/products", {
         params: {
           search: searchQuery,
-          categories: selectedCategories.join(","),
+          categories: categoryQuery || selectedCategories.join(","),
           sort: sortField,
           order: sortParam,
           page: currentPage,
@@ -70,6 +75,17 @@ const Shop = () => {
   useEffect(() => {
     getProducts();
   }, [getProducts]);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const selectedCategory = queryParams.get("category");
+
+    if (selectedCategory) {
+      setSelectedCategories([selectedCategory]);
+    }
+
+    getProducts();
+  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
