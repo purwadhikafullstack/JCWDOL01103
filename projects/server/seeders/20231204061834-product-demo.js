@@ -4,7 +4,6 @@
 module.exports = {
   async up(queryInterface) {
     const currentDate = new Date();
-
     await queryInterface.bulkInsert("products", [
       {
         id: 1,
@@ -21,11 +20,10 @@ module.exports = {
       {
         id: 2,
         product_name: "Ibanez Drum",
-        description:
-          "Blink-182 guitarist Tom DeLonge has teamed up with Fender once again to release The Tom DeLonge Stratocaster®. This iconic Strat® makes a comeback just in time for Blink's reunion tour and the much-anticipated release of their latest album.",
+        description: "New model for newbie drummer, its good for increase your skill",
         product_category_id: 2,
         price: 5000000,
-        weight: 10,
+        weight: 20,
         image: null,
         createdAt: currentDate,
         updatedAt: currentDate,
@@ -33,8 +31,7 @@ module.exports = {
       {
         id: 3,
         product_name: "Yamaha Piano",
-        description:
-          "Blink-182 guitarist Tom DeLonge has teamed up with Fender once again to release The Tom DeLonge Stratocaster®. This iconic Strat® makes a comeback just in time for Blink's reunion tour and the much-anticipated release of their latest album.",
+        description:"Good design and new material, best seller for this year",
         product_category_id: 3,
         price: 3200000,
         weight: 3,
