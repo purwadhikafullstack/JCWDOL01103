@@ -8,10 +8,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "product_id",
         as: "stock",
       });
-      // Products.belongsTo(models.Product_Category, {
-      //   foreignKey: "id",
-      //   as: "product_category",
-      // });
     }
   }
 

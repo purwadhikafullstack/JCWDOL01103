@@ -3,7 +3,7 @@ const router = express.Router();
 const adminWarehouseController = require("../controllers/adminWarehouse");
 const { checkRole } = require("../middlewares/apiValidatorMiddleware");
 const queryValidation = require("../helpers/expressValidator");
-const { body, param } = require("express-validator");
+const { body } = require("express-validator");
 
 router.post(
   "/admin-warehouse",

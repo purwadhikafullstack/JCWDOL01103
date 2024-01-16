@@ -2,7 +2,6 @@ require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
-const db = require("./../models");
 const path = require("path");
 
 const apiValidator = require("../middlewares/apiValidatorMiddleware");

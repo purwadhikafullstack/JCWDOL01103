@@ -13,7 +13,6 @@ export const getMutations = async (params) => {
 };
 
 export const patchMutationStatus = async (id, data) => {
-  console.log(id, data)
   const response = await server.patch(`/stock-mutation/${id}`, data);
   return response.data;
 };

@@ -30,7 +30,6 @@ const getWarehouse = async (req, res) => {
 };
 
 const getWarehouses = async (req, res) => {
-  console.log(req.user, "=========================")
   const query = req.query;
   const page = parseInt(query.page) || 1;
   const pageSize = parseInt(query.pageSize) || 10;
@@ -112,7 +111,6 @@ const getWarehouses = async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.log(error)
     return res.status(500).json({
       message: "Get Warehouse Failed",
       error: error.toString(),

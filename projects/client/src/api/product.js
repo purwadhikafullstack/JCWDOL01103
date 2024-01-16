@@ -1,7 +1,6 @@
 import {  server } from ".";
 
 export const getProducts = async params => {
-  console.log(params);
   const response = await server.get("/products", {
     params: params,
   });

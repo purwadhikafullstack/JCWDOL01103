@@ -170,7 +170,6 @@ const getAllAdmin = async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.log(error)
     return res.status(400).json({
       status: 400,
       message: "Get Admin Failed",

@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import FormVerification from "../components/organisms/FormVerification";
 import { verificationValidator } from "../api/auth";
 import NotFound from "./NotFound";
-import { checkAuthorized, fetchUserInfo, loginGoogle } from "../store/slicer/authSlice";
+import { checkAuthorized, loginGoogle } from "../store/slicer/authSlice";
 import { useDispatch } from "react-redux";
 
 function Verification() {
@@ -16,7 +16,6 @@ function Verification() {
   const dispatch = useDispatch()
   useEffect(() => {
     (async () => {
-      console.log("trigereed")
       try {
         const response = await verificationValidator(param.token);
         if (response.data.verified === true) {

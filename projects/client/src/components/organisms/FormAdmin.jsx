@@ -69,7 +69,6 @@ const FormAdmin = ({ data, isOpen, onClose, onCloseComplete }) => {
           setBtnLoading(false);
         }, 2000);
       } catch (error) {
-        console.log(error);
         setBtnLoading(false);
         toast(toastConfig("error", "Failed", error.message));
       }

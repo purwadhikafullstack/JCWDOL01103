@@ -55,7 +55,6 @@ const changeMutationStatus = async (req, res) => {
     });
   } catch (error) {
     await transaction.rollback();
-    console.log(error)
     return res.status(500).json({
       message: "Change mutation status failed",
       error: error.toString(),
