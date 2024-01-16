@@ -1,11 +1,10 @@
-import { config, server } from ".";
+import {  server } from ".";
 
 export const getProducts = async params => {
   console.log(params);
   const response = await server.get("/products", {
     params: params,
   });
-  console.log(response);
   return response.data;
 };
 

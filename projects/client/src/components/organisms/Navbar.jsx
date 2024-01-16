@@ -157,7 +157,7 @@ const Navbar = () => {
                   </Flex>
                 </Flex>
               </MenuButton>
-              {/* <SideMenu type="navbar"/> */}
+              <SideMenu type="navbar"/>
               </>
             )}
             <MenuList p="4" maxW="250px">

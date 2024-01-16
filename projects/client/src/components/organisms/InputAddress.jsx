@@ -17,22 +17,26 @@ import React, { useEffect, useState } from "react";
 import UserAddress from "./UserAddress";
 import { getAddresses } from "../../api/userAddress";
 import ModalFormAddress from "./ModalFormAddress";
+import { useDispatch } from "react-redux";
+import { setAddressCheckout } from "../../store/slicer/checkoutSlice";
 
 const InputAddress = ({ isInvalid, onChange }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenForm, onOpen: onOpenForm, onClose:onCloseForm} = useDisclosure()
   const [selected, setSelected] = useState(null);
   const [address, setAddress] = useState(null);
+  const dispatch = useDispatch()
   useEffect(() => {
     (async () => {
       const response = await getAddresses();
       const primaryAddress = response.data.find((dt) => dt.is_primary === true);
       setAddress(primaryAddress);
       setSelected(primaryAddress);
+      dispatch(setAddressCheckout(primaryAddress))
     })();
   }, []);
   return (
-    <Flex>
+    <Flex w="full">
       <FormControl isInvalid={isInvalid}>
         <Text>Address :</Text>
         <Box
@@ -69,6 +73,7 @@ const InputAddress = ({ isInvalid, onChange }) => {
                 <UserAddress
                   action="order"
                   onChange={(val) => {
+                    dispatch(setAddressCheckout(val))
                     onChange && onChange(val);
                     setSelected(val);
                   }}
@@ -80,6 +85,7 @@ const InputAddress = ({ isInvalid, onChange }) => {
                   size="md"
                   color="white"
                   onClick={() => {
+                    dispatch(setAddressCheckout(selected))
                     setAddress(selected);
                     onClose();
                   }}

@@ -4,7 +4,6 @@ import Profile from "./pages/Profile";
 import Authentication from "./pages/Authentication";
 import Verification from "./pages/Verification";
 import NotFound from "./pages/NotFound";
-import Test from "./pages/Test";
 import DashboardWarehouse from "./pages/DashboardWarehouse";
 import UserAddress from "./components/organisms/UserAddress";
 import Journal from "./pages/Journal";
@@ -32,7 +31,6 @@ function App() {
         <Route path="/account" element={<ProtectedRoute element={<AccountProfile />} roles={["user"]} />}/>
         <Route path="/user-address" element={<ProtectedRoute element={<UserAddress />} roles={["user"]} />}  />
         <Route path="/checkout" element={<Checkout />}/>
-        <Route path="/test" element={<Test />} />
       </Route>
       <Route path="/dashboard" element={<LayoutDashboard />} >
         <Route index element={<Navigate to="product-stock" replace={true} />} />

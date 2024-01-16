@@ -102,7 +102,7 @@ const Mutation = () => {
     <Flex w="full" minH="80vh" flexDir="column">
       <Heading size="lg" mb="4">Stock Mutation</Heading>
       <Tabs w="full" onChange={(val) => setSelectedMenu(val)}>
-        <TabList overflowX="scroll">
+        <TabList overflowX="scroll" h="max-content">
           <Tab>Outgoing Request</Tab>
           <Tab>Incoming Request</Tab>
         </TabList>
