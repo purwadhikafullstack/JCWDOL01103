@@ -122,7 +122,8 @@ const DashboardWarehouse = () => {
       <Flex
         bg="white"
         w="full"
-        h="50%"
+        minH="50%"
+        pb='5'
         borderRadius="lg"
         flexDir="column"
         rowGap="3"

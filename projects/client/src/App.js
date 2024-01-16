@@ -30,7 +30,7 @@ function App() {
       <Route element={<LayoutRoot/>}>
         <Route path="/account" element={<ProtectedRoute element={<AccountProfile />} roles={["user"]} />}/>
         <Route path="/user-address" element={<ProtectedRoute element={<UserAddress />} roles={["user"]} />}  />
-        <Route path="/checkout" element={<Checkout />}/>
+        <Route path="/checkout" element={<ProtectedRoute element={<Checkout />} roles={["user"]} />}/>
       </Route>
       <Route path="/dashboard" element={<LayoutDashboard />} >
         <Route index element={<Navigate to="product-stock" replace={true} />} />

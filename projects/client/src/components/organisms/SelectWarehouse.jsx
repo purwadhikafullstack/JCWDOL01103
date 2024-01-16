@@ -112,7 +112,7 @@ export const SelectWarehouse = ({
                     borderRadius="md"
                     py="2"
                     px="4"
-                    onClick={async() => {onClose(); setFilterValue(""); fetchWarehouse("refresher") ; onChange(dt)}}
+                    onClick={async() => {onClose(); setFilterValue(""); fetchWarehouse("refresher") ; onChange && onChange(dt)}}
                   >
                     <Text fontWeight="semibold">{dt.name}</Text>
                     <Text>
