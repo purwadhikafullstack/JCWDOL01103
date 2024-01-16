@@ -24,7 +24,6 @@ function Verification() {
         setDecodedToken(jwtDecode(param.token));
         dispatch(loginGoogle(param.token))
         dispatch(checkAuthorized())
-        // dispatch(fetchUserInfo())
       } catch (err) {
         return navigate("/notfound");
       }

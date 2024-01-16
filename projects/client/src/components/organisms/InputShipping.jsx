@@ -15,7 +15,6 @@ import { BiChevronDown } from "react-icons/bi";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { useDispatch, useSelector } from "react-redux";
 import { setShippingCheckout } from "../../store/slicer/checkoutSlice";
-import { toastConfig } from "../../utils/toastConfig";
 
 const InputShipping = ({ isInvalid }) => {
   const selectedShipping = useSelector((state) => state.formCheckout.shipping);
@@ -28,7 +27,7 @@ const InputShipping = ({ isInvalid }) => {
       const response = await checkShippingCost(data);
       setServiceList(response.data.rajaongkir.results[0]);
     } catch (error) {
-      // toast(toastConfig("error", "Failed", error.message))
+      return null
     }
   };
   useEffect(()=>{

@@ -34,7 +34,6 @@ import AlertConfirmation from "../../components/organisms/AlertConfirmation";
 import { jwtDecode } from "jwt-decode";
 import { getAdminWarehouse } from "../../api/adminWarehouse";
 import { postRequestMutation } from "../../api/stockMutation";
-import { useNavigate } from "react-router-dom";
 import { getUser } from "../../api/auth";
 
 const FormMutation = ({onClose}) => {
