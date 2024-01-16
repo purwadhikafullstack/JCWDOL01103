@@ -67,11 +67,9 @@ const getStock = async (req, res) => {
   const { warehouse_id, product_id } = req.query;
   let whereClause = {};
   if (warehouse_id) {
-    // whereClause.warehouse_id = decryptData(warehouse_id);
     whereClause.warehouse_id = warehouse_id;
   }
   if (product_id) {
-    // whereClause.product_id = decryptData(product_id);
     whereClause.product_id = product_id;
   }
   try {
@@ -81,8 +79,10 @@ const getStock = async (req, res) => {
         exclude: ["createdAt", "updatedAt", "deletedAt"],
       },
     });
+    let total = 0
     const encryptedResult = stock.map((dt) => {
       const newStock = { ...dt.dataValues };
+      total += newStock.quantity
       newStock.id = encryptData(newStock.id);
       newStock.warehouse_id = encryptData(newStock.warehouse_id);
       newStock.product_id = encryptData(newStock.product_id);
@@ -90,7 +90,10 @@ const getStock = async (req, res) => {
     });
     return res.status(200).json({
       message: "Get Stock successfully",
-      data: encryptedResult,
+      data: {
+        total: total,
+        warehouse: encryptedResult
+      },
     });
   } catch (error) {
     return res.status(500).json({
