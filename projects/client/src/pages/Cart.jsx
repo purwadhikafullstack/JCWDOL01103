@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { server, config } from "../api/index";
+import { server } from "../api/index";
 import Navbar from "../components/organisms/Navbar";
 import Footer from "../components/organisms/Footer";
 import {
@@ -28,10 +28,11 @@ import { toastConfig } from "../utils/toastConfig";
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const toast = useToast();
+  const imageURL = "http://localhost:8000/uploads/";
 
   const getCart = async () => {
     try {
-      const response = await server.get("/cart", config);
+      const response = await server.get("/cart");
       const data = response.data;
       setCartItems(data);
     } catch (error) {
@@ -75,7 +76,7 @@ const Cart = () => {
 
   const removeItemFromCart = async cartItemId => {
     try {
-      const response = await server.delete(`/cart/${cartItemId}`, config);
+      const response = await server.delete(`/cart/${cartItemId}`);
 
       if (response.status === 200) {
         setCartItems(cartItems.filter(item => item.id !== cartItemId));
@@ -130,7 +131,7 @@ const Cart = () => {
                     >
                       <Image
                         name={detailItem.name}
-                        src={`http://localhost:8000/uploads/${detailItem.product.image}`}
+                        src={`${imageURL}${detailItem.product.image}`}
                         alt={detailItem.name}
                         title={detailItem.name}
                         w={{ base: "100px", xl: "150px" }}

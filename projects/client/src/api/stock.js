@@ -1,21 +1,20 @@
-import { config, server } from "./index";
+import { server } from "./index";
 
-export const getStock = async (param) => {
+export const getStock = async param => {
   const response = await server.get("/stock", {
     params: param,
-    headers: config.headers
   });
   return response.data;
 };
 
-export const createJournal = async (data) => {
-    const response = await server.post("/stock", data, config)
-    return response.data
-}
+export const postStock = async data => {
+  const response = await server.post("/stock", data);
+  return response.data;
+};
 
-export const getProducts = async (params) => {
-  const response = await server.get("/products", {
-    params: params
+export const getProductStock = async params => {
+  const response = await server.get("/stock", {
+    params: params,
   });
   return response.data;
 };

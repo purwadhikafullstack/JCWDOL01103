@@ -1,12 +1,29 @@
 const express = require("express");
 const { categories } = require("./../controllers/category");
 const router = express.Router();
-// const { check } = require("express-validator");
-const { checkRole } = require("../middlewares/apiValidatorMiddleware");
+const {
+  validateApi,
+  checkRole,
+} = require("../middlewares/apiValidatorMiddleware");
 
 router.get("/categories", categories.getAllCategories);
-router.post("/category", categories.createCategory);
-router.patch("/category/:id", categories.updateCategory);
-router.delete("/category/:id", categories.deleteCategory);
+router.post(
+  "/category",
+  validateApi,
+  checkRole(["master"]),
+  categories.createCategory
+);
+router.patch(
+  "/category/:id",
+  validateApi,
+  checkRole(["master"]),
+  categories.updateCategory
+);
+router.delete(
+  "/category/:id",
+  validateApi,
+  checkRole(["master"]),
+  categories.deleteCategory
+);
 
 module.exports = router;

@@ -29,6 +29,7 @@ const Shop = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [isCategoryVisible, setIsCategoryVisible] = useState(false);
   const categoryBoxRef = useRef();
+  const imageURL = "http://localhost:8000/uploads/";
 
   const getProducts = useCallback(async () => {
     try {
@@ -224,10 +225,7 @@ const Shop = () => {
                           transition: "all 0.2s ease-in-out",
                         }}
                       >
-                        <Image
-                          w="350px"
-                          src={`http://localhost:8000/uploads/${product?.image}`}
-                        />
+                        <Image w="350px" src={`${imageURL}${product?.image}`} />
                         <Text fontSize={"sm"} mt={5}>
                           {product?.product_category?.name || "No Category"}
                         </Text>

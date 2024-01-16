@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Homepage from "./pages/Homepage";
 import Profile from "./pages/Profile";
 import Authentication from "./pages/Authentication";
@@ -14,6 +14,7 @@ import LayoutDashboard from "./components/templates/LayoutDashboard";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 function App() {
   return (
@@ -23,9 +24,19 @@ function App() {
       <Route path="/verification/:token" element={<Verification />} />
 
       <Route path="/dashboard" element={<LayoutDashboard />}>
-        <Route path="/dashboard/profile/:id" element={<Profile />} />
-        <Route path="/dashboard/products" element={<Product />} />
-        <Route path="/dashboard/categories" element={<Category />} />
+        <Route index element={<Navigate to="products" replace={true} />} />
+        <Route
+          path="/dashboard/products"
+          element={
+            <ProtectedRoute element={<Product />} roles={["admin", "master"]} />
+          }
+        />
+        <Route
+          path="/dashboard/categories"
+          element={
+            <Category element={<Product />} roles={["admin", "master"]} />
+          }
+        />
       </Route>
 
       <Route path="/dashboard/warehouse" element={<DashboardWarehouse />} />
@@ -34,7 +45,12 @@ function App() {
       <Route path="/journal" element={<Journal />} />
       <Route path="/shop" element={<Shop />} />
       <Route path="/shop/product/:id" element={<ProductDetail />} />
-      <Route path="/cart" element={<Cart />} />
+      <Route
+        path="/cart"
+        element={<ProtectedRoute element={<Cart />} roles={["user"]} />}
+      />
+      <Route path="/profile" element={<Profile />} />
+
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

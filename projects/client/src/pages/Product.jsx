@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toastConfig } from "../utils/toastConfig";
+import { jwtDecode } from "jwt-decode";
 
 import {
   Heading,
@@ -46,6 +47,8 @@ const Category = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(0);
+  const [userRole, setUserRole] = useState(null);
+  const imageURL = "http://localhost:8000/uploads/";
 
   const toast = useToast();
 
@@ -148,6 +151,7 @@ const Category = () => {
         const config = {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         };
 
@@ -258,7 +262,10 @@ const Category = () => {
             `/product/${editingProductId}`,
             formData,
             {
-              headers: { "Content-Type": "multipart/form-data" },
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
             }
           );
 
@@ -293,6 +300,22 @@ const Category = () => {
     getProducts();
   };
 
+  const getUserRoleFromToken = token => {
+    try {
+      const decodedToken = jwtDecode(token);
+      return decodedToken.role;
+    } catch (error) {
+      console.error("Error decoding token", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = getUserRoleFromToken(token);
+    setUserRole(role);
+  }, []);
+
   return (
     <>
       <Box ml={{ base: "0", xl: "50px" }} px={5} my={5}>
@@ -311,6 +334,7 @@ const Category = () => {
             color="white"
             _hover={{ bg: "blackAlpha.600" }}
             onClick={() => setIsAddModalOpen(true)}
+            isDisabled={userRole !== "master"}
           >
             Add Product
           </Button>
@@ -541,7 +565,7 @@ const Category = () => {
                       <Td maxW="400px" isTruncated>
                         <Avatar
                           name={product.product_name}
-                          src={`http://localhost:8000/uploads/${product?.image}`}
+                          src={`${imageURL}${product?.image}`}
                         />
                       </Td>
                       <Td>
@@ -552,6 +576,7 @@ const Category = () => {
                           mr={4}
                           _hover={{ bg: "blackAlpha.600" }}
                           onClick={() => handleOpenEditModal(product.id)}
+                          isDisabled={userRole !== "master"}
                         >
                           {/* Modal Edit Product */}
                           <Modal
@@ -763,6 +788,7 @@ const Category = () => {
                             setDeletingProductId(product.id);
                             setIsConfModalOpen(true);
                           }}
+                          isDisabled={userRole !== "master"}
                         >
                           <BiTrashAlt />
                         </Button>

@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toastConfig } from "../utils/toastConfig";
+import { jwtDecode } from "jwt-decode";
 
 import {
   Heading,
@@ -42,6 +43,7 @@ const Category = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("ascending");
   const [sortField, setSortField] = useState("name");
+  const [userRole, setUserRole] = useState(null);
 
   const toast = useToast();
 
@@ -56,10 +58,12 @@ const Category = () => {
           order: sortParam,
         },
       });
+      console.log(response.data.data); // Tambahkan baris ini
       setCategories(response.data.data);
-      setIsLoading(false);
     } catch (e) {
       console.error(e + "gagal memuat data");
+    } finally {
+      setIsLoading(false);
     }
   }, [searchQuery, sortOrder, sortField]);
 
@@ -169,6 +173,22 @@ const Category = () => {
     getCategories();
   };
 
+  const getUserRoleFromToken = token => {
+    try {
+      const decodedToken = jwtDecode(token);
+      return decodedToken.role;
+    } catch (error) {
+      console.error("Error decoding token", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = getUserRoleFromToken(token);
+    setUserRole(role);
+  }, []);
+
   return (
     <>
       <Box ml={{ base: "0", xl: "50px" }} my={5}>
@@ -188,6 +208,7 @@ const Category = () => {
             w={"70%"}
             _hover={{ bg: "blackAlpha.600" }}
             onClick={() => setIsAddModalOpen(true)}
+            isDisabled={userRole !== "master"}
           >
             Add Category
           </Button>
@@ -285,6 +306,7 @@ const Category = () => {
                           mr={4}
                           _hover={{ bg: "blackAlpha.600" }}
                           onClick={() => handleOpenEditModal(categories.id)}
+                          isDisabled={userRole !== "master"}
                         >
                           <Modal
                             isOpen={isEditModalOpen}
@@ -346,6 +368,7 @@ const Category = () => {
                             setDeletingCategoryId(categories.id);
                             setIsConfModalOpen(true);
                           }}
+                          isDisabled={userRole !== "master"}
                         >
                           <BiTrashAlt />
                         </Button>

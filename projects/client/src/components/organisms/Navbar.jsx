@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import soundsenseLogo from "../../assets/img/soundsense-dark.png";
-import { server, config } from "../../api/index";
+import { server } from "../../api/index";
 import { BiUser, BiCartAlt, BiSearch } from "react-icons/bi";
 import {
   Container,
@@ -69,7 +69,7 @@ const Navbar = () => {
   useEffect(() => {
     const loadCartData = async () => {
       try {
-        const response = await server.get("/cart", config);
+        const response = await server.get("/cart");
         const cartItems = response.data;
         const itemCount = cartItems.reduce((total, item) => {
           return total + (item.quantity || 0);

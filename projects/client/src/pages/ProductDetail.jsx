@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { server, config } from "../api/index";
+import { server } from "../api/index";
 import Navbar from "../components/organisms/Navbar";
 import Footer from "../components/organisms/Footer";
 import {
@@ -23,6 +23,7 @@ const ProductDetail = () => {
   const params = useParams();
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
+  const imageURL = "http://localhost:8000/uploads/";
 
   useEffect(() => {
     const getProduct = async () => {
@@ -53,14 +54,10 @@ const ProductDetail = () => {
 
   const addToCart = async () => {
     try {
-      const response = await server.post(
-        "/cart",
-        {
-          product_id: product.id,
-          quantity: quantity,
-        },
-        config
-      );
+      const response = await server.post("/cart", {
+        product_id: product.id,
+        quantity: quantity,
+      });
       toast(toastConfig("success", "Success", response.data.message));
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -84,7 +81,7 @@ const ProductDetail = () => {
           <Box w={{ base: "100%", xl: "50%" }}>
             <Image
               w="600px"
-              src={`http://localhost:8000/uploads/${product?.image}`}
+              src={`${imageURL}${product?.image}`}
               alt={product?.product_name}
               title={product?.product_name}
               _hover={{
