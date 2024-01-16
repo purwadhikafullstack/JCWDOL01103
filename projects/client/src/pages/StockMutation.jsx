@@ -202,7 +202,7 @@ const Mutation = () => {
         <ModalHeader>Request Stock Mutation</ModalHeader>
         <ModalCloseButton />
         <ModalBody display="flex" flexDir="column" pb={6} gap="4">
-          <FormMutation/>
+          <FormMutation onClose={ ()=> {onClose(); fetchData()}} />
         </ModalBody>
       </ModalContent>
     </Modal>

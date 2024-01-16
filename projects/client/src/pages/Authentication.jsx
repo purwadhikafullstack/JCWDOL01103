@@ -20,7 +20,7 @@ function Authentication() {
         if(location.state?.redirect){
           return navigate(location.state?.redirect)
         }
-        return navigate(-1);
+        return navigate("/");
       }
     }
     )()

@@ -37,7 +37,7 @@ import { postRequestMutation } from "../../api/stockMutation";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../../api/auth";
 
-const FormMutation = () => {
+const FormMutation = ({onClose}) => {
   const [openAlert, setOpenAlert] = useState(false);
   const [warehouse, setWarehouse] = useState(null);
   const [openModalWarehouse, setOpenModalWarehouse] = useState(false);
@@ -47,7 +47,6 @@ const FormMutation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const toast = useToast();
-  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       warehouse_id: "",
@@ -174,7 +173,7 @@ const FormMutation = () => {
         setOpenAlert(false);
         formik.handleReset();
         setWarehouse(null);
-        navigate(-1);
+        onClose()
       }, 1500);
     } catch (error) {
       toast(toastConfig("error", "Failed", error.message));

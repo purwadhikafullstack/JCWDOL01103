@@ -88,7 +88,7 @@ const Navbar = () => {
           }}
           cursor="pointer"
         />
-        {location.pathname.split("/")[1] !== "dashboard" && (
+        {location.pathname.split("/")[1] !== "dashboard" && location.pathname.split("/")[1] !== "checkout" && (
           <InputGroup mx={"150px"} display={{ base: "none", lg: "block" }}>
             <InputRightElement pointerEvents="none">
               <BiSearch color="black" fontSize="20px" />

@@ -129,8 +129,8 @@ const Journal = () => {
       };
       const response = await getProductStock(query);
       const quantityBefore =
-        formik.values.warehouse_id && response.data.length > 0
-          ? response.data[0].quantity
+        formik.values.warehouse_id && response.data.warehouse.length > 0
+          ? response.data.warehouse[0].quantity
           : 0;
       formik.setFieldValue(
         `listedProduct[${idx}].quantity_before`,
@@ -167,8 +167,14 @@ const Journal = () => {
         ? parseInt(value) * -1
         : parseInt(value);
     let result = valueBefore + amount;
-    formik.setFieldValue(`listedProduct[${idx}].quantity_after`, isNaN(result) ? 0 : result);
-    formik.setFieldValue(`listedProduct[${idx}].amount`, isNaN(result) ? 0 : parseInt(value));
+    formik.setFieldValue(
+      `listedProduct[${idx}].quantity_after`,
+      isNaN(result) ? 0 : result
+    );
+    formik.setFieldValue(
+      `listedProduct[${idx}].amount`,
+      isNaN(result) ? 0 : parseInt(value)
+    );
   };
   const onClickConfirmHandler = async () => {
     setIsLoading(true);
@@ -220,25 +226,29 @@ const Journal = () => {
             </Select>
             <FormErrorMessage>{formik.errors.type}</FormErrorMessage>
           </FormControl>
-          <SelectWarehouse
-            isOpen={openModalWarehouse}
-            onClose={() => setOpenModalWarehouse(false)}
-            onClickRow={(val) => {
-              setWarehouse(val);
-              formik.setFieldValue("warehouse_id", val.id);
-              setOpenModalWarehouse(false);
-            }}
-            selectedWarehouse={formik.values.warehouse_id}
-            isInvalid={formik.errors.warehouse_id && formik.touched.warehouse_id}
-            onChange={(val)=>formik.setFieldValue("warehouse_id", val.id)}
-          />
+          {userInfo?.role === "master" && (
+            <SelectWarehouse
+              isOpen={openModalWarehouse}
+              onClose={() => setOpenModalWarehouse(false)}
+              onClickRow={(val) => {
+                setWarehouse(val);
+                formik.setFieldValue("warehouse_id", val.id);
+                setOpenModalWarehouse(false);
+              }}
+              selectedWarehouse={formik.values.warehouse_id}
+              isInvalid={
+                formik.errors.warehouse_id && formik.touched.warehouse_id
+              }
+              onChange={(val) => formik.setFieldValue("warehouse_id", val.id)}
+            />
+          )}
           <TableContainer
             pos="relative"
             border="1px"
             borderRadius="md"
             borderColor="inherit"
           >
-            <Table >
+            <Table>
               <Thead>
                 <Tr>
                   <Th>Product Name</Th>
@@ -269,9 +279,11 @@ const Journal = () => {
                               formik.setFieldTouched(
                                 `listedProduct[${idx}].product.value`,
                                 true
-                                )
-                              }
-                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                              )
+                            }
+                            styles={{
+                              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                            }}
                             menuPosition="fixed"
                             menuPortalTarget={document.querySelector("body")}
                             value={formik.values.listedProduct[idx].product}
