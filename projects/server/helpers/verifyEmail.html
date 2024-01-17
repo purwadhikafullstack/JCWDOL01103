@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Verification</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #fff;
+        margin: 0;
+        font-size: 25px;
+      }
+
+      p {
+        color: #555;
+        font-size: 14px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      a {
+        color: #fff;
+      }
+      .header-box {
+        background-color: #000;
+        width: 100%;
+        flex-direction: column;
+        padding: 15px;
+        box-sizing: border-box;
+        color: #fff;
+        text-align: center;
+      }
+      .body-box {
+        padding: 30px;
+      }
+      .p-foot {
+        font-style: italic;
+        padding: 0;
+        margin: 0;
+        color: #777;
+      }
+      .foot-text{
+        color: #fff;
+        margin: 0;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header-box">
+        <h2>Account Verification</h2>
+      </div>
+      <div class="body-box">
+        <p>Hello,</p>
+        <p>
+            We are sending you this email to confirm and verify your account registration.
+        </p>
+        <p>To verify, please click the button below:</p>
+        <a
+          class="reset-link"
+          href="__VERIFYLINK__"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="color: #fff; text-decoration: none; display: inline-block; padding: 10px 15px; background-color: #000; border-radius: 5px;"
+          >Verify</a
+        >
+        <p>
+          If the button above doesn't work, you can also copy and paste the
+          following link into your browser:
+        </p>
+        <p  style="color: blue">__VERIFYLINK__</p>
+        <p class="p-foot">
+        Please ignore this email if you did not initiate the registration or verification process."
+        </p>
+        <p class="p-foot">
+          This link will expire in 12 hours for security reasons.
+        </p>
+    </div>
+    <div class="header-box">
+        <p class="foot-text">SoundSense© All Rights Reserved</p>
+    </div>
+    </div>
+  </body>
+</html>

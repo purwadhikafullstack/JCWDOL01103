@@ -1,5 +1,3 @@
-import { jwtDecode } from "jwt-decode";
-
 export const googleSignInInit = (callback) => {
   window.google.accounts.id.initialize({
     client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,

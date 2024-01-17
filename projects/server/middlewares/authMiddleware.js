@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
 const { createToken } = require("../helpers/jwt");
 const verifyToken = require("../helpers/googleAuth");
+const { encryptData } = require("../helpers/encrypt");
 
 const validatorRegister = async (req, res, next) => {
   const email = req.body.email;
@@ -61,7 +62,7 @@ const authGoogle = async (req, res, next) => {
       return res.status(403).json({
         status: 403,
         message: "Failed",
-        error: "Invalid Token",
+        error: "Invalid Google Token",
       });
     }
     const user = await db.Users.findOne({
@@ -73,13 +74,13 @@ const authGoogle = async (req, res, next) => {
       const newUser = await db.Users.create({
         name: userDecoded.name,
         email: userDecoded.email.toLowerCase(),
-        role: 'user'
+        role: "user",
       });
-      let user_id = newUser.id;
+      let id = encryptData(newUser.id);
       let email = newUser.email;
       let name = newUser.name;
-      let role = 'user'
-      const token = createToken({ user_id, email, name, role });
+      let role = "user";
+      const token = createToken({ id, email, name, role });
       return res.status(200).json({
         status: 200,
         message: "Register & Login Success",
@@ -88,11 +89,11 @@ const authGoogle = async (req, res, next) => {
       });
     }
     if (user && !user.password) {
-      let user_id = user.id;
+      let id = encryptData(user.id);
       let email = user.email;
       let name = user.name;
-      let role = 'user';
-      const token = createToken({ user_id, email, name, role });
+      let role = "user";
+      const token = createToken({ id, email, name, role });
       return res.status(200).json({
         status: 200,
         message: "Login Success",
@@ -101,9 +102,10 @@ const authGoogle = async (req, res, next) => {
       });
     }
     req.userData = {
-      user_id: user.id,
+      id: user.id,
       name: user.name,
       email: user.email,
+      role: user.role,
     };
     next();
   } catch (err) {
@@ -114,8 +116,40 @@ const authGoogle = async (req, res, next) => {
   }
 };
 
+const checkResetToken = async (req, res, next) => {
+  const { token } = req.params;
+  try {
+    const resetToken = await db.Token_Resets.findOne({
+      where:{
+        token: decodeURI(token),
+      }
+    })
+    if(!resetToken){
+      return res.status(400).json({
+        status: 400,
+        message: "Invalid token",
+      });
+    }
+    if(!resetToken.active || resetToken.expiredAt < new Date()){
+      return res.status(401).json({
+        status: 401,
+        message: "Token has expired, please request a new password reset!",
+      });
+    }
+    req.isTokenValid = true
+    next()
+
+  } catch (error) {
+    return res.status(401).json({
+      status: 401,
+      error: error,
+    });
+  }
+};
+
 module.exports = {
   validatorRegister,
   validatorLogin,
   authGoogle,
+  checkResetToken,
 };

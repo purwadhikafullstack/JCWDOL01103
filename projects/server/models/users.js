@@ -1,18 +1,27 @@
 "use strict";
 const { Model } = require("sequelize");
+const { v4: uuidv4 } = require("uuid");
 module.exports = (sequelize, DataTypes) => {
-  class users extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+  class Users extends Model {
     static associate(models) {
-      // define association here
+      Users.hasMany(models.Addresses, {
+        foreignKey: "user_id",
+        as: "addresses",
+      });
+      Users.hasOne(models.Warehouses_Users, {
+        foreignKey: "user_id",
+        as: "warehouse",
+      });
     }
   }
-  users.init(
+  Users.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        allowNull: false,
+        defaultValue: DataTypes.UUIDV4,
+      },
       name: DataTypes.STRING,
       email: {
         type: DataTypes.STRING,
@@ -23,13 +32,20 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      img: DataTypes.TEXT,
+      image: DataTypes.TEXT,
+      status: {
+        type: DataTypes.ENUM("active","inactive","reset"),
+        allowNull: false,
+        defaultValue: "active", 
+      },
     },
     {
       sequelize,
       modelName: "Users",
       tableName: "users",
+      paranoid: true,
+      timestamps: true,
     }
   );
-  return users;
+  return Users;
 };

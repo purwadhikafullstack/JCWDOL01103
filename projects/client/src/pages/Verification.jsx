@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Center, Flex, Heading, Text, useMediaQuery, useToast } from "@chakra-ui/react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Center, Flex, Heading, Text, useMediaQuery } from "@chakra-ui/react";
+import { useNavigate, useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import FormVerification from "../components/organisms/FormVerification";
 import { verificationValidator } from "../api/auth";
 import NotFound from "./NotFound";
-import { toastConfig } from "../utils/toastConfig";
+import { checkAuthorized, loginGoogle } from "../store/slicer/authSlice";
+import { useDispatch } from "react-redux";
 
 function Verification() {
   const [decodedToken, setDecodedToken] = useState(null);
   const param = useParams();
   const navigate = useNavigate();
   const [isLaptop] = useMediaQuery("(min-width: 768px)");
-  const toast = useToast()
-
+  const dispatch = useDispatch()
   useEffect(() => {
     (async () => {
       try {
@@ -22,8 +22,10 @@ function Verification() {
           return navigate("/");
         }
         setDecodedToken(jwtDecode(param.token));
+        dispatch(loginGoogle(param.token))
+        dispatch(checkAuthorized())
       } catch (err) {
-        toast(toastConfig("Error", "Failed", err.toString()));
+        return navigate("/notfound");
       }
     })();
   }, []);

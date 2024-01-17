@@ -9,8 +9,8 @@ export const theme = extendTheme({
     },
   },
   colors: {
-    primaryColor: "#000",
-    // secondaryColor: ,
+    primaryColor: "#000000",
+    secondaryColor: "#ffffff",
     // thirdColor: ,
     // forthColor: ,
     // negativeColor: ,

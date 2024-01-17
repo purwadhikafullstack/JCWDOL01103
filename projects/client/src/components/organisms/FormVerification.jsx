@@ -17,12 +17,14 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { verification } from "../../api/auth";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { loginGoogle } from "../../store/slicer/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { loginGoogle, setLoadingState } from "../../store/slicer/authSlice";
+import { toastConfig } from "../../utils/toastConfig";
 
 function FormVerification({ decodedToken }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
+  const loadingState = useSelector((state)=> state.login.loading)
   const toast = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -45,37 +47,26 @@ function FormVerification({ decodedToken }) {
     }),
     onSubmit: async (values) => {
       try {
+        dispatch(setLoadingState(true))
         await verification({
-            id: decodedToken.user_id,
+            id: decodedToken.id,
             email: decodedToken.email,
             name: values.name,
             password: values.password,
             confirmPassword: values.confirmPassword
         })
-        toast({
-          title: "Success",
-          description: "Verification Success",
-          status: "success",
-          position: "top-right",
-          duration: 2000,
-          isClosable: true,
-        });
+        toast(toastConfig("success", "Success","Verification Success"));
         setTimeout(() => {
           if (location.state && location.state.loginBy === "google") {
             dispatch(loginGoogle(location.state.token));
+            dispatch(setLoadingState(false))
             return navigate("/");
           }
           return navigate("/login");
         }, 2000);
       } catch (error) {
-        toast({
-          title: "Failed",
-          description: error.response.data.message,
-          status: "error",
-          position: "top-right",
-          duration: 3000,
-          isClosable: true,
-        });
+        dispatch(setLoadingState(false))
+        toast(toastConfig("error", "Failed", error.response.data.message));
       }
     },
   });
@@ -84,7 +75,7 @@ function FormVerification({ decodedToken }) {
       <Flex w="full" flexDir="column" rowGap="1rem" justifyContent="center">
         <VStack alignItems="flex-start">
           <FormControl isInvalid={formik.errors.name && formik.touched.name}>
-            <Text>Fullname</Text>
+            <Text>Name</Text>
             <Input
               placeholder="Input your name"
               id="name"
@@ -161,7 +152,7 @@ function FormVerification({ decodedToken }) {
             <FormErrorMessage>{formik.errors.confirmPassword}</FormErrorMessage>
           </FormControl>
         </VStack>
-        <Button type="submit" mt="1rem">
+        <Button type="submit" mt="1rem" isLoading={loadingState}>
           Submit
         </Button>
       </Flex>

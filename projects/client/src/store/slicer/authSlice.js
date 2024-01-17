@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { postLogin } from "../../api/auth";
+import { getUser, postLogin } from "../../api/auth";
+import { jwtDecode } from "jwt-decode";
 
 export const userLogin = createAsyncThunk(
   "auth/postLogin",
@@ -12,6 +13,19 @@ export const userLogin = createAsyncThunk(
     }
   }
 );
+
+export const fetchUserInfo = createAsyncThunk(
+  "auth/getUserInfo",
+  async () => {
+    try {
+      const userData = jwtDecode(localStorage.getItem("token"));
+      const response = await getUser(userData.id);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  }
+)
 
 const initialState = {
   isAuthorized: false,
@@ -31,11 +45,14 @@ const authSlice = createSlice({
         state.user = userData;
       }
     },
+    setLoadingState: (state, action) => {
+      state.loading = action.payload
+    },
     loginGoogle: (state, action) => {
       localStorage.setItem("token", action.payload);
-      state.loading = false;
       state.isAuthorized = true;
       state.response = {message: "Google login succesfully"};
+      state.loading = false;
     },
     logoutAuthorized: (state, action) => {
       localStorage.clear();
@@ -62,8 +79,28 @@ const authSlice = createSlice({
       state.loading = false;
       state.response = action.payload;
     });
+    builder.addCase(fetchUserInfo.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchUserInfo.fulfilled, (state, action) => {
+      const { status, token, message } = action.payload;
+      if (status === 200) {
+        state.loading = false;
+        state.isAuthorized = true;
+        state.user = token;
+        state.response = action.payload;
+        authSlice.caseReducers.checkAuthorized(state, action);
+      } else {
+        state.loading = false;
+        state.response = action.payload;
+      }
+    });
+    builder.addCase(fetchUserInfo.rejected, (state, action) => {
+      state.loading = false;
+      state.response = action.payload;
+    });
   },
 });
 
-export const { checkAuthorized, loginGoogle, logoutAuthorized } = authSlice.actions;
+export const { checkAuthorized, loginGoogle, logoutAuthorized, setLoadingState } = authSlice.actions;
 export default authSlice.reducer;
