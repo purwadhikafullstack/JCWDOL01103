@@ -15,11 +15,14 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { register } from "../../api/auth";
 import { toastConfig } from "../../utils/toastConfig";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoadingState } from "../../store/slicer/authSlice";
 
 function FormRegister({ isLogin, onClickRegister, isLaptop }) {
   const [regisSuccess, setRegisSuccess] = useState(false);
+  const loadingState = useSelector((state) => state.login.loading)
   const toast = useToast();
-
+  const dispatch = useDispatch()
   useEffect(()=>{
     const switchMode=()=>{
       formik.resetForm()
@@ -43,15 +46,21 @@ function FormRegister({ isLogin, onClickRegister, isLaptop }) {
       emailRegis: Yup.string().email().required("Required"),
     }),
     onSubmit: async (values) => {
-      //   setIsLoading(true);
+      dispatch(setLoadingState(true))
       try {
         await register({ email: values.emailRegis });
         toast(toastConfig("success", "Success", "Registration Success"));
         setRegisSuccess(true);
+        setTimeout(()=>{
+          dispatch(setLoadingState(false))
+          onClickRegister(true)
+        },2000)
       } catch (error) {
         toast(toastConfig("error", "Failed", error.response.data.message));
+        setTimeout(()=>{
+          dispatch(setLoadingState(false))
+        },1300)
       }
-      //   setIsLoading(false);
     },
   });
   return (
@@ -120,7 +129,8 @@ function FormRegister({ isLogin, onClickRegister, isLaptop }) {
         }}
         onClick={handleRegister}
         type="submit"
-        isDisabled={regisSuccess}
+        isDisabled={regisSuccess || loadingState}
+        isLoading={!isLogin && loadingState}
       >
         Create Account
       </Button>

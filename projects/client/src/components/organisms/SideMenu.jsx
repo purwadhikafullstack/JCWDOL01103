@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { Flex, Button } from "@chakra-ui/react";
+import { useState, useRef, useEffect } from "react";
+import { Flex, Button, useBreakpoint, useToast } from "@chakra-ui/react";
 import MenuItem from "../molecules/MenuItem";
 import {
   BiMusic,
@@ -11,27 +11,58 @@ import {
   BiX,
   BiMenuAltLeft,
 } from "react-icons/bi";
+import { FaBoxes } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { getUser } from "../../api/auth";
+import { useSelector } from "react-redux";
+import { toastConfig } from "../../utils/toastConfig";
 
-const SideMenu = () => {
+const SideMenu = ({ type }) => {
+  const userState = useSelector(state => state.login.user);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [role, setRole] = useState(null);
   const menuBoxRef = useRef();
+  const displaySize = useBreakpoint();
+  const location = useLocation();
+  const toast = useToast();
+
+  useEffect(() => {
+    setIsMenuVisible(false);
+  }, [displaySize]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        if (userState) {
+          const userDecoded = jwtDecode(userState);
+          const userDetails = await getUser(encodeURIComponent(userDecoded.id));
+          setRole(userDetails.data.role);
+        }
+      } catch (error) {
+        toast(toastConfig("error", "Failed", error.message));
+      }
+    })();
+  }, [userState]);
 
   const toggleMenuVisible = () => {
     setIsMenuVisible(!isMenuVisible);
   };
-
   return (
     <>
-      <Button
-        onClick={toggleMenuVisible}
-        display={{ base: "block", xl: "none" }}
-        position="fixed"
-        top="20px"
-        right="20px"
-        shadow="xl"
-      >
-        <BiMenuAltLeft size={"20px"} />
-      </Button>
+      {type === "navbar" && (
+        <Button
+          onClick={toggleMenuVisible}
+          display={
+            location.pathname.split("/")[1] === "dashboard"
+              ? { base: "block", xl: "none" }
+              : "none"
+          }
+          shadow="xl"
+        >
+          <BiMenuAltLeft size={"20px"} />
+        </Button>
+      )}
       <Flex
         flexDir={"column"}
         maxW={{ base: "100%", xl: "600px" }}
@@ -45,7 +76,12 @@ const SideMenu = () => {
         ref={menuBoxRef}
         position={{ base: "fixed", xl: "static" }}
         top="20px"
-        right={isMenuVisible ? "0" : "-100%"}
+        right={isMenuVisible ? "10px" : "-100%"}
+        display={
+          type === "navbar"
+            ? { base: "flex", xl: "none" }
+            : { base: "none", xl: "flex" }
+        }
         zIndex={100}
       >
         <Button
@@ -58,24 +94,39 @@ const SideMenu = () => {
         >
           <BiX size={"30px"} />
         </Button>
-        <MenuItem
-          icon={<BiUser fontSize={"20px"} />}
-          name="Profile"
-          to={`/dashboard/profile/${localStorage.getItem("id")}`}
-        />
         <MenuItem icon={<BiMusic />} name="Product" to="/dashboard/products" />
         <MenuItem
           icon={<BiCategory />}
           name="Categories"
           to="/dashboard/categories"
         />
-        <MenuItem icon={<BiGroup />} name="Users" to="/dashboard/users" />
+        {role === "master" && (
+          <MenuItem
+            icon={<BiGroup />}
+            name="Users"
+            to="/dashboard/users"
+            display={role === "master" ? "flex" : "none"}
+          />
+        )}
+        {role === "master" && (
+          <MenuItem
+            icon={<BiBuildingHouse />}
+            name="Warehouse"
+            to="/dashboard/warehouses"
+          />
+        )}
         <MenuItem
-          icon={<BiBuildingHouse />}
-          name="Warehouse"
-          to="/dashboard/warehouses"
+          icon={<FaBoxes />}
+          name="Stock"
+          to="/dashboard/product-stock"
         />
-        <MenuItem icon={<BiBook />} name="Journal" to="/dashboard/journals" />
+        {role === "admin" && (
+          <MenuItem
+            icon={<BiBook />}
+            name="Mutation"
+            to="/dashboard/stock-mutation"
+          />
+        )}
       </Flex>
     </>
   );

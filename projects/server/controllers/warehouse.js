@@ -41,6 +41,11 @@ const getWarehouses = async (req, res) => {
   if (query.province_id) {
     whereClause2["$region.province.province_id$"] = query.province_id;
   }
+  if (query.exclude_id){
+    whereClause2.id = {
+      [Op.not]: query.exclude_id
+    }
+  }
   if (query.search) {
     whereClause = {
       [Op.or]: [
@@ -57,7 +62,6 @@ const getWarehouses = async (req, res) => {
       ],
     };
   }
-
   if (query.sort) {
     const filter = query.sort.split("_");
     sortType[0] = filter;
@@ -69,7 +73,7 @@ const getWarehouses = async (req, res) => {
       order: sortType,
       where: { [Op.and]: [whereClause2, whereClause] },
       attributes: {
-        exclude: ["city_id"],
+        exclude: ["city_id","createdAt","updatedAt","deletedAt"],
       },
       include: {
         model: db.Cities,

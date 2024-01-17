@@ -128,7 +128,7 @@ export const SelectWarehouse = ({
                       onClose();
                       setFilterValue("");
                       fetchWarehouse("refresher");
-                      onChange(dt);
+                      onChange && onChange(dt);
                     }}
                   >
                     <Text fontWeight="semibold">{dt.name}</Text>

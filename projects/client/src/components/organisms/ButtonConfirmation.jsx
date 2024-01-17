@@ -1,4 +1,4 @@
-import React, { Children } from "react";
+import React from "react";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -8,7 +8,6 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
-  useDisclosure,
 } from "@chakra-ui/react";
 
 function ButtonConfirmation({
@@ -22,6 +21,7 @@ function ButtonConfirmation({
   children,
   isOpen,
   onClose,
+  isLoading
 }) {
   const cancelRef = React.useRef();
   const onClickHandler = () => {
@@ -47,14 +47,15 @@ function ButtonConfirmation({
       <AlertDialog
         motionPreset="slideInBottom"
         leastDestructiveRef={cancelRef}
-        onClose={onClose}
+        onClose={()=> !isLoading && onClose()}
         isOpen={isOpen}
+        closeOnOverlayClick={false}
         isCentered
       >
         <AlertDialogOverlay />
         <AlertDialogContent>
           <AlertDialogHeader>{title}</AlertDialogHeader>
-          <AlertDialogCloseButton />
+          <AlertDialogCloseButton isDisabled={isLoading} />
           <AlertDialogBody>{desc}</AlertDialogBody>
           <AlertDialogFooter>
             <Button
@@ -62,6 +63,7 @@ function ButtonConfirmation({
               cursor="pointer"
               _hover={{ bg: "primaryColor", color: "secondaryColor" }}
               onClick={onClickConfirm}
+              isLoading={isLoading}
             >
               {buttonConfirm}
             </Button>
@@ -71,6 +73,7 @@ function ButtonConfirmation({
               color="white"
               ref={cancelRef}
               onClick={onClose}
+              isDisabled={isLoading}
             >
               {buttonDiscard}
             </Button>

@@ -2,7 +2,6 @@ require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
-const db = require("./../models");
 const path = require("path");
 
 const apiValidator = require("../middlewares/apiValidatorMiddleware");
@@ -15,6 +14,9 @@ const stockRouter = require("../router/stock");
 const profileRouter = require("./../router/profile");
 const productRouter = require("./../router/product");
 const categoryRouter = require("./../router/category");
+const stockMutationRouter = require("./../router/stockMutation");
+const userRouter = require("../router/users");
+const shippingRouter = require("../router/shipping");
 const cartRouter = require("./../router/cart");
 
 const PORT = process.env.PORT || 8000;
@@ -46,7 +48,9 @@ app.use(profileRouter);
 app.use(productRouter);
 app.use(categoryRouter);
 app.use(cartRouter);
-
+app.use(stockMutationRouter);
+app.use(userRouter);
+app.use(shippingRouter);
 // ===========================
 // NOTE : Add your routes here
 

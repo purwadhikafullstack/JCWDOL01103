@@ -1,11 +1,5 @@
 import { server } from "./index";
 
-const config = {
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-};
-
 export const register = async (data) => {
   const response = await server.post("/register", data);
   return response.data;
@@ -13,7 +7,7 @@ export const register = async (data) => {
 
 export const getUser = async (id) => {
   const idEncoded = encodeURIComponent(id)
-  const response = await server.get(`/users/${idEncoded}`, config)
+  const response = await server.get(`/users/${idEncoded}`)
   return response.data;
 }
 
@@ -42,4 +36,17 @@ export const verifyGoogleLogin = async (token) => {
   return response.data
 }
 
+export const checkResetToken = async (token) =>{
+  const response = await server.get(`/reset/${token}`)
+  return response
+}
 
+export const postResetPassword = async (data) => {
+  const response = await server.post("/reset", data);
+  return response
+}
+
+export const patchNewPassword = async (token, data) =>{
+  const response = await server.patch(`/reset/${token}`, data)
+  return response
+}

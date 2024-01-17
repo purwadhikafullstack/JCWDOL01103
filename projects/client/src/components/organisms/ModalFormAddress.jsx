@@ -25,6 +25,7 @@ import ButtonConfirmation from "./ButtonConfirmation";
 import { createAddress, updateAddress } from "../../api/userAddress";
 function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
   const [openAlert, setOpenAlert] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [provinces, setProvinces] = useState(null);
   const [cities, setCities] = useState(null);
   const toast = useToast();
@@ -46,6 +47,7 @@ function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
   });
   const onConfirmHandler = async () => {
     try {
+      setLoading(true)
       const query = {
         name: formik.values.name,
         city_id: formik.values.city_id,
@@ -56,9 +58,11 @@ function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
         : await createAddress(query);
       toast(toastConfig("success", "Success", response.message));
       setOpenAlert(false);
+      setLoading(false)
       formik.resetForm();
       onClose();
     } catch (error) {
+      setLoading(false)
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
   };
@@ -90,6 +94,9 @@ function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
           street: data.street,
         });
       }
+      if(!data){
+        formik.resetForm()
+      }
     }
     fetchData();
   }, [data]);
@@ -104,7 +111,7 @@ function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create new address</ModalHeader>
+        <ModalHeader>{data ? "Edit Address" : "Create new address"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody display="flex" flexDir="column" pb={6} gap="4">
           <form onSubmit={formik.handleSubmit}>
@@ -204,6 +211,7 @@ function ModalFormAddress({ data, isOpen, onClose, onCloseComplete }) {
                   onClick={formik.handleSubmit}
                   isOpen={openAlert}
                   onClose={() => setOpenAlert(false)}
+                  isLoading={loading}
                 >
                   {data ? "Update" : "Create"}
                 </ButtonConfirmation>

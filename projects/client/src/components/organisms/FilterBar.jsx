@@ -8,7 +8,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { FiSearch, FiX } from "react-icons/fi";
-const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, categoriesName, defaultCategories }) => {
+const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, categoriesName, defaultCategories, onClickCross, placeholderSearch }) => {
   const [category, setCategory] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [sortValue, setSortValue] = useState("");
@@ -42,7 +42,7 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
       >
         <Input
           type="text"
-          placeholder="Search Warehouse Name"
+          placeholder= {placeholderSearch || "Search"}
           focusBorderColor="primaryColor"
           onChange={(e) => setSearchInput(e.target.value)}
           value={searchInput}
@@ -65,7 +65,7 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
               w="fit-content"
               bg="transparent"
               _hover={{ bg: "transparent", color: "negativeColor" }}
-              onClick={() => setSearchInput("")}
+              onClick={() => {setSearchInput(""); onClickCross && onClickCross()}}
             >
               <FiX />
             </Button>
@@ -73,6 +73,7 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
         </InputRightElement>
       </InputGroup>
       <Flex gap="4">
+        {categories &&
         <Select
           fontSize="sm"
           bg="secondaryColor"
@@ -91,6 +92,7 @@ const FilterBar = ({ filterValue, onSearchPressEnter, categories, categoriesId, 
             );
           })}
         </Select>
+        }
         <Select
           fontSize="sm"
           bg="secondaryColor"

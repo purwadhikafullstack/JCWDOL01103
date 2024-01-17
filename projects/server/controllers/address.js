@@ -180,7 +180,6 @@ const setPrimaryAddress = async (req, res) => {
   const { id } = req.body;
   try {
     let decryptedId = decryptData(id);
-    console.log(req.user_id);
     await db.Addresses.update(
       { is_primary: false },
       {

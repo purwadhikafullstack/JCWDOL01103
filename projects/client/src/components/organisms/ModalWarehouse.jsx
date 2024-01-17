@@ -1,18 +1,14 @@
 import {
   Box,
-  Button,
-  Flex,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Text,
 } from "@chakra-ui/react";
 import React from "react";
-import { useSelector } from "react-redux";
 
 function ModalWarehouse({ data, ...props }) {
   return (

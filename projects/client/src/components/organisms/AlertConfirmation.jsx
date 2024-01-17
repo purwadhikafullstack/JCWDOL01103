@@ -7,34 +7,39 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   Button,
+  AlertDialogCloseButton,
 } from "@chakra-ui/react";
 
 const AlertConfirmation = ({
   isOpen,
-  onOpen,
   onClose,
   header,
   description,
   buttonCancel,
   buttonConfirm,
   onClickConfirm,
+  isLoading,
+  onCloseComplete
 }) => {
   const cancelRef = useRef();
   return (
     <AlertDialog
       isOpen={isOpen}
       leastDestructiveRef={cancelRef}
-      onClose={onClose}
       isCentered
+      onCloseComplete={onCloseComplete}
+      closeOnOverlayClick={false}
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
             {header}
           </AlertDialogHeader>
+          <AlertDialogCloseButton isDisabled={isLoading} />
           <AlertDialogBody>{description}</AlertDialogBody>
           <AlertDialogFooter>
             <Button
+              isLoading = {isLoading}
               borderColor="primaryColor"
               cursor="pointer"
               _hover={{ bg: "primaryColor", color: "secondaryColor" }}
@@ -48,6 +53,7 @@ const AlertConfirmation = ({
               color="white"
               ref={cancelRef}
               onClick={onClose}
+              isDisabled={isLoading}
             >
               {buttonCancel}
             </Button>

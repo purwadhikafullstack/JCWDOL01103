@@ -11,12 +11,13 @@ import {
   MenuList,
   MenuItem,
   Text,
-  Link,
   Input,
   InputGroup,
   InputRightElement,
+  Button,
+  useToast,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { getUser, verificationValidator } from "../../api/auth";
@@ -24,8 +25,12 @@ import {
   checkAuthorized,
   logoutAuthorized,
 } from "../../store/slicer/authSlice";
+import { toastConfig } from "../../utils/toastConfig";
+import SideMenu from "./SideMenu";
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const authState = useSelector(state => state.login.isAuthorized);
   const userState = useSelector(state => state.login.user);
   const [userInfo, setUserInfo] = useState(null);
@@ -33,17 +38,20 @@ const Navbar = () => {
   const [cartItemCount, setCartItemCount] = useState(0);
 
   const dispatch = useDispatch();
+  const toast = useToast();
   useEffect(() => {
     (async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await verificationValidator(token);
-        if (!response.data.verified) {
-          dispatch(logoutAuthorized());
+        if (token) {
+          const response = await verificationValidator(token);
+          if (!response.data.verified) {
+            dispatch(logoutAuthorized());
+          }
+          dispatch(checkAuthorized());
         }
-        dispatch(checkAuthorized());
       } catch (error) {
-        console.log(error);
+        dispatch(logoutAuthorized());
       }
     })();
   }, [dispatch]);
@@ -51,19 +59,20 @@ const Navbar = () => {
   useEffect(() => {
     (async () => {
       try {
-        if (authState) {
+        if (userState) {
           const userDecoded = jwtDecode(userState);
-          const userDetails = await getUser(userDecoded.id);
+          const userDetails = await getUser(encodeURIComponent(userDecoded.id));
           setUserInfo(userDetails.data);
         }
       } catch (error) {
-        console.log(error);
+        toast(toastConfig("error", "Failed", error.message));
       }
     })();
   }, [authState, dispatch, userState]);
   const onClickLogout = () => {
     dispatch(logoutAuthorized());
-    navigate("/");
+    setUserInfo(null);
+    navigate("/login");
   };
 
   const onClickCart = () => {
@@ -109,41 +118,129 @@ const Navbar = () => {
           alt="Soundsense Logo"
           h={{ base: "40px", lg: "60px" }}
           objectFit="cover"
+          onClick={() => {
+            navigate("/");
+          }}
+          cursor="pointer"
         />
-        <InputGroup mx={"150px"} display={{ base: "none", lg: "block" }}>
-          <InputRightElement pointerEvents="none">
-            <BiSearch color="black" fontSize="20px" />
-          </InputRightElement>
-          <Input
-            placeholder="Search for Sense Gear"
-            focusBorderColor="black"
-            borderRadius={"xl"}
-            border={"1px"}
-          />
-        </InputGroup>
+        {location.pathname.split("/")[1] !== "dashboard" &&
+          location.pathname.split("/")[1] !== "checkout" && (
+            <InputGroup mx={"150px"} display={{ base: "none", lg: "block" }}>
+              <InputRightElement pointerEvents="none">
+                <BiSearch color="black" fontSize="20px" />
+              </InputRightElement>
+              <Input
+                placeholder="Search for Sense Gear"
+                focusBorderColor="black"
+                borderRadius={"xl"}
+                border={"1px"}
+              />
+            </InputGroup>
+          )}
         <Flex>
           <Menu>
-            <MenuButton>
-              <Flex alignItems={"center"}>
-                <BiUser color="black" fontSize="30px" />
-                {/* <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" /> */}
-                <Text
-                  fontSize={"md"}
-                  fontWeight={"bold"}
-                  ml={2}
-                  mr={5}
-                  pr={5}
-                  borderRight={"2px"}
-                  borderColor={"blackAlpha.400"}
-                  display={{ base: "none", lg: "block" }}
-                >
-                  <Link>Account</Link>
-                </Text>
-              </Flex>
-            </MenuButton>
-            <MenuList p="4">
+            {!userInfo ? (
+              <Button
+                bg="black"
+                size="sm"
+                color="white"
+                mr="2"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </Button>
+            ) : (
+              <>
+                <MenuButton>
+                  <Flex
+                    alignItems={"center"}
+                    ml={2}
+                    mr={{ base: "1", lg: "5" }}
+                    pr={
+                      userInfo?.role !== "admin" &&
+                      userInfo?.role !== "master" && { base: "1", lg: "5" }
+                    }
+                    boxSizing="content-box"
+                    borderRight={
+                      userInfo?.role !== "admin" &&
+                      userInfo?.role !== "master" &&
+                      "2px"
+                    }
+                    borderColor={"blackAlpha.400"}
+                  >
+                    <BiUser color="black" size="30px" />
+                    {/* <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" /> */}
+                    <Flex
+                      flexDir="column"
+                      alignItems="start"
+                      ml={2}
+                      maxW="130px"
+                      w="fit-content"
+                      display={{ base: "none", lg: "flex" }}
+                    >
+                      <Text
+                        w="full"
+                        fontSize={"md"}
+                        fontWeight={"bold"}
+                        overflow="hidden"
+                        whiteSpace="nowrap"
+                        textOverflow="ellipsis"
+                        textAlign="start"
+                      >
+                        {userInfo?.name}
+                      </Text>
+                      <Text fontSize={"sm"}>{userInfo?.role}</Text>
+                    </Flex>
+                  </Flex>
+                </MenuButton>
+                <SideMenu type="navbar" />
+              </>
+            )}
+            <MenuList p="4" maxW="250px">
               {authState ? (
                 <>
+                  <Flex
+                    mb="2"
+                    display={{ base: "flex", lg: "none" }}
+                    flexDir="column"
+                  >
+                    <Text noOfLines="1" fontWeight="bold">
+                      {userInfo?.name}
+                    </Text>
+                    <Text noOfLines="1" size="sm" fontStyle="italic">
+                      {userInfo?.role}
+                    </Text>
+                  </Flex>
+                  {userInfo?.role === "user" && (
+                    <MenuItem
+                      bg="black"
+                      color="white"
+                      borderRadius="md"
+                      justifyContent="center"
+                      mb="2"
+                      _hover={{ opacity: "0.2" }}
+                      onClick={() => navigate("/account")}
+                    >
+                      Edit Profile
+                    </MenuItem>
+                  )}
+                  {(userInfo?.role === "admin" ||
+                    userInfo?.role === "master") && (
+                    <MenuItem
+                      mb="2"
+                      bg="black"
+                      color="white"
+                      borderRadius="md"
+                      justifyContent="center"
+                      _hover={{ opacity: "0.2" }}
+                      onClick={() =>
+                        location.pathname.split("/")[1] !== "dashboard" &&
+                        navigate("/dashboard")
+                      }
+                    >
+                      Dashboard
+                    </MenuItem>
+                  )}
                   <MenuItem
                     bg="black"
                     color="white"
@@ -155,17 +252,6 @@ const Navbar = () => {
                   >
                     Logout
                   </MenuItem>
-                  {userInfo?.role === "admin" && (
-                    <MenuItem
-                      bg="black"
-                      color="white"
-                      borderRadius="md"
-                      justifyContent="center"
-                      _hover={{ opacity: "0.2" }}
-                    >
-                      Dashboard
-                    </MenuItem>
-                  )}
                 </>
               ) : (
                 <>
@@ -194,7 +280,7 @@ const Navbar = () => {
               )}
             </MenuList>
           </Menu>
-          <Menu>
+          {userInfo?.role !== "admin" && userInfo?.role !== "master" && (
             <MenuButton onClick={onClickCart}>
               <Flex alignItems={"center"}>
                 <BiCartAlt color="black" fontSize="30px" />
@@ -217,7 +303,7 @@ const Navbar = () => {
                 </Text>
               </Flex>
             </MenuButton>
-          </Menu>
+          )}
         </Flex>
       </Flex>
     </Container>

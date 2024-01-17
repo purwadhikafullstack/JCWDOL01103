@@ -2,13 +2,7 @@
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Addresses extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
       Addresses.belongsTo(models.Users, {
         foreignKey: "id",
         as: "user",
@@ -17,10 +11,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "city_id",
         as: "region",
       });
-      // Addresses.hasOne(models.Cities, {
-      //   foreignKey: 'city_id',
-      //   as:'region'
-      // })
     }
   }
   Addresses.init(
@@ -32,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       user_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
           model: "users",

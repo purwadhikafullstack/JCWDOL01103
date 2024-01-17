@@ -1,9 +1,12 @@
 const db = require("./../models");
 const bcrypt = require("bcrypt");
 const transporter = require("../helpers/nodemailer");
+const { sendEmailReset, sendEmailVerification } = require("../utils/sendEmail");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
 const { createToken, decodeToken } = require("../helpers/jwt");
 const { encryptData, decryptData } = require("../helpers/encrypt");
+const { Op, literal } = require("sequelize");
 
 const register = async (req, res) => {
   try {
@@ -15,26 +18,9 @@ const register = async (req, res) => {
     let id = encryptData(newUser.id);
     let role = newUser.role;
     let token = createToken({ email, id, role });
-    let mail = {
-      from: `Admin <xordyzen@gmail.com>`,
-      to: `${email}`,
-      subject: "Account verification",
-      html: `<a href='http://localhost:3000/verification/${token}'>Click here for verify</a>`,
-    };
-    transporter.sendMail(mail, (errMail, resMail) => {
-      if (errMail) {
-        return res.status(500).send({
-          message: "Email registration failed!",
-          success: false,
-        });
-      }
-      return res.status(200).send({
-        message: "Check your email to verification!",
-        success: true,
-      });
-    });
+    await sendEmailVerification(encodeURI(token), email);
     return res.status(200).json({
-      message: "Register success",
+      message: "Register success, Check your email to verify!",
       data: newUser,
     });
   } catch (err) {
@@ -46,29 +32,36 @@ const register = async (req, res) => {
 
 const validatorVerification = async (req, res) => {
   const { token } = req.params;
-  const user = decodeToken(token);
-  if (!user.data) {
+  try {
+    const user = decodeToken(token);
+    if (!user.data) {
+      return res.status(200).json({
+        error: user,
+        verified: false,
+      });
+    }
+    const checkUser = await db.Users.findOne({
+      where: {
+        email: user.data.email,
+        password: null,
+      },
+    });
+    if (checkUser) {
+      return res.status(200).json({
+        message: "Email has not been verified",
+        verified: false,
+      });
+    }
     return res.status(200).json({
-      error: user,
-      verified: false,
+      message: "Email has been verified",
+      verified: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "error",
+      error: error,
     });
   }
-  const checkUser = await db.Users.findOne({
-    where: {
-      email: user.data.email,
-      password: null,
-    },
-  });
-  if (checkUser) {
-    return res.status(200).json({
-      message: "Email has not been verified",
-      verified: false,
-    });
-  }
-  return res.status(200).json({
-    message: "Email has been verified",
-    verified: true,
-  });
 };
 
 const verification = async (req, res) => {
@@ -132,13 +125,13 @@ const login = async (req, res) => {
 
 const getUser = async (req, res) => {
   const { id } = req.params;
-  const decryptedId = id;
   try {
+    const decryptedId = decryptData(decodeURIComponent(id));
     const user = await db.Users.findOne({
       where: {
         id: decryptedId,
       },
-      attributes: ["id", "name", "email", "role"],
+      attributes: ["id", "name", "email", "role", "status"],
     });
     return res.status(200).json({
       status: 200,
@@ -164,15 +157,127 @@ const authValidator = async (req, res) => {
       return decode;
     });
     return res.status(200).json({
-      code: 403,
       message: "Authorized",
       data: verify,
     });
   } catch (error) {
     return res.status(403).json({
-      code: 403,
       message: "Unauthorized",
       error: err.toString(),
+    });
+  }
+};
+
+const requestResetPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await db.Users.findOne({
+      where: {
+        email: email.toLowerCase(),
+        role: "user",
+      },
+    });
+    if (!user) {
+      return res.status(400).json({
+        status: 400,
+        message: "Email is not registered!",
+      });
+    }
+    const tokenReset = await db.Token_Resets.findOne({
+      where: {
+        user_id: user.id,
+        active: true,
+        expiredAt: {
+          [Op.gte]: new Date(),
+        },
+      },
+    });
+    if (tokenReset) {
+      return res.status(400).json({
+        status: 400,
+        message:
+          "You have requested a password reset, please check your email!",
+      });
+    }
+    let id = encryptData(user.id);
+    let token = createToken({ email, id }, "2h");
+    await sendEmailReset(encodeURI(token), email);
+    await db.Token_Resets.create({
+      user_id: user.id,
+      token: token,
+      active: true,
+      expiredAt: literal(`DATE_ADD(NOW(), INTERVAL 2 HOUR)`),
+    });
+    return res.status(200).send({
+      message: "Email has been sent, check your email to reset the password!",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "error",
+      error: err.toString(),
+    });
+  }
+};
+const checkTokenStatus = async (req, res) => {
+  if (req.isTokenValid) {
+    return res.status(200).json({
+      status: 200,
+      message: "Token Authorized",
+    });
+  }
+};
+
+const setNewPassword = async (req, res) => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+  const transaction = await db.sequelize.transaction();
+  try {
+    const decodedToken = decodeToken(decodeURIComponent(token));
+    const decryptedId = decryptData(decodedToken.data.id);
+    const user = await db.Users.findOne({
+      where: {
+        id: decryptedId,
+        email: decodedToken.data.email,
+      },
+    });
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+      });
+    }
+    const salt = await bcrypt.genSalt(12);
+    const hashPassword = await bcrypt.hash(newPassword, salt);
+    await db.Users.update(
+      {
+        password: hashPassword,
+        status: "active",
+      },
+      {
+        where: {
+          id: decryptedId,
+          email: decodedToken.data.email,
+        },
+        transaction: transaction,
+      }
+    );
+    await db.Token_Resets.update(
+      { active: false },
+      {
+        where: {
+          token: token,
+        },
+        transaction: transaction,
+      }
+    );
+    await transaction.commit();
+    return res.status(200).json({
+      message: "Set new password success",
+    });
+  } catch (error) {
+    await transaction.rollback();
+    return res.status(500).json({
+      message: "Set new password failed",
+      error: error,
     });
   }
 };
@@ -184,4 +289,7 @@ module.exports = {
   validatorVerification,
   getUser,
   authValidator,
+  checkTokenStatus,
+  requestResetPassword,
+  setNewPassword,
 };

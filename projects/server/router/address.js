@@ -5,7 +5,6 @@ const queryValidation = require("../helpers/expressValidator");
 const addressController = require("../controllers/address");
 const geolocationMiddleware = require("../middlewares/geolocationMiddleware");
 const { checkRole } = require("../middlewares/apiValidatorMiddleware");
-const apiValidatorMiddleware = require("../middlewares/apiValidatorMiddleware");
 
 router.post(
   "/addresses",
@@ -36,5 +35,9 @@ router.post(
   queryValidation([check("id").notEmpty()]),
   addressController.setPrimaryAddress
 );
-router.delete("/addresses/:id", addressController.deleteAddress);
+router.delete(
+  "/addresses/:id",
+  checkRole(["user"]),
+  addressController.deleteAddress
+);
 module.exports = router;

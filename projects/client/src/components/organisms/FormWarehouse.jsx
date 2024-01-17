@@ -22,6 +22,7 @@ import { useSelector } from "react-redux";
 
 export const FormWarehouse = ({onCloseComplete, onClickCancel}) => {
   const [provinces, setProvinces] = useState(null);
+  const [loading, setLoading] = useState(false)
   const [cities, setCities] = useState(null);
   const toast = useToast();
   const data = useSelector((state) => state.formWarehouse.selectedWarehouse);
@@ -46,6 +47,7 @@ export const FormWarehouse = ({onCloseComplete, onClickCancel}) => {
   });
   const onConfirmHandler = async () => {
     try {
+      setLoading(true)
       const query = {
         name: formik.values.name,
         city_id: formik.values.city_id,
@@ -55,9 +57,11 @@ export const FormWarehouse = ({onCloseComplete, onClickCancel}) => {
         ? await updateWarehouse(data.id, query)
         : await createWarehouse(query);
       toast(toastConfig("success", "Success", response.message));
+      setLoading(false)
       onClose()
       onCloseComplete("success")
     } catch (error) {
+      setLoading(false)
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
   };
@@ -170,6 +174,7 @@ export const FormWarehouse = ({onCloseComplete, onClickCancel}) => {
         </VStack>
         <Flex alignSelf="flex-end" columnGap="1rem">
           <ButtonConfirmation
+            isLoading={loading}
             variant="secondary"
             type="submit"
             buttonTitle="Create"
@@ -185,7 +190,7 @@ export const FormWarehouse = ({onCloseComplete, onClickCancel}) => {
           >
             {data ? "Update" : "Create"}
           </ButtonConfirmation>
-          <Button bg="primaryColor" color="secondaryColor" cursor="pointer" onClick={onClickCancel}>
+          <Button isDisabled={loading} bg="primaryColor" color="secondaryColor" cursor="pointer" onClick={onClickCancel}>
             Cancel
           </Button>
         </Flex>

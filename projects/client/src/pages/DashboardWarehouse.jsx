@@ -1,7 +1,7 @@
 import {
-  AlertDialog,
   Button,
   Flex,
+  Heading,
   useMediaQuery,
   useToast,
 } from "@chakra-ui/react";
@@ -18,9 +18,9 @@ import { getProvinces } from "../api/region";
 import AlertConfirmation from "../components/organisms/AlertConfirmation";
 
 const DashboardWarehouse = () => {
-  // const [selectedData, setSelectedData] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [isBtnLoading, setBtnLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [categories, setCategories] = useState();
   const [data, setData] = useState(null);
@@ -31,79 +31,85 @@ const DashboardWarehouse = () => {
   const [paramObj, setParamObj] = useState({
     search: "",
     sort: "",
+    province_id: "",
   });
-  const fetchData = async() => {
-    const response = await getWarehouses(paramObj);
+  const fetchData = async () => {
     const result = await getProvinces();
-    setData(response.data);
     setCategories(result.data);
-  }
+  };
   useEffect(() => {
-    fetchData()
-  }, []);
+    fetchData();
+    getWarehouseData();
+  }, [paramObj.sort, paramObj.province_id]);
 
-  const getWarehouseData = async (param = {}) => {
+  const getWarehouseData = async (param = {}, action) => {
     const params = {
       ...paramObj,
       ...param,
     };
     setTableLoading(true);
     try {
-      const resProduct = await getWarehouses(params);
+      const resProduct = await getWarehouses(action ? null : params);
       setData(resProduct.data);
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      toast(toastConfig("error", "Failed", error.message));
     }
     setTableLoading(false);
   };
-
-  useEffect(() => {
-    getWarehouseData();
-  }, [paramObj]);
 
   async function onChangePageHandler(value) {
     await getWarehouseData({ page: value });
   }
   const onClickDelete = async (id) => {
     try {
+      setBtnLoading(true);
       const response = await deleteWarehouse(id);
       toast(toastConfig("success", "Success", response.message));
-      setDeleteDataId(null);
-      setOpenDeleteDialog(false);
-      fetchData();
+      setTimeout(() => {
+        setDeleteDataId(null);
+        setOpenDeleteDialog(false);
+        fetchData();
+        setBtnLoading(false);
+      }, 1500);
     } catch (error) {
       toast(toastConfig("error", "Failed", error.response.data.message));
     }
   };
+
   return (
     <Flex
       h="full"
+      w="100%"
       minH="100vh"
       maxH="100vh"
       alignItems="center"
       flexDir="column"
-      bg="gray.100"
       gap="5"
     >
+      <Heading size="lg" mb="5" alignSelf="start">
+        Manage Warehouses
+      </Heading>
       <Flex
         h="fit-content"
         flexDir={isLaptop ? "row" : "column"}
-        pt="10"
+        w="full"
         rowGap="10"
         columnGap="4"
         justifyContent="center"
       >
         <FilterBar
+          placeholderSearch="Search warehouse by name or city"
           filterValue={(value) => setParamObj(value)}
           onSearchPressEnter={getWarehouseData}
           categories={categories}
           categoriesName="province_name"
           categoriesId="province_id"
           defaultCategories="Filter by Province"
+          onClickCross={() => getWarehouseData(undefined, "refresher")}
         />
 
         <Button
-          alignSelf={isLaptop ? "unset" :"flex-end"}
+          alignSelf={isLaptop ? "unset" : "flex-end"}
           maxW="fit-content"
           bg="primaryColor"
           color="secondaryColor"
@@ -116,8 +122,8 @@ const DashboardWarehouse = () => {
       <Flex
         bg="white"
         w="full"
-        h="50%"
-        p="10"
+        minH="50%"
+        pb='5'
         borderRadius="lg"
         flexDir="column"
         rowGap="3"
@@ -148,7 +154,7 @@ const DashboardWarehouse = () => {
           setOpenCreateModal(false);
           dispatch(setSelectedWarehouse(null));
         }}
-        onCloseComplete={fetchData}
+        onCloseComplete={getWarehouseData}
       />
       <AlertConfirmation
         header="Are you sure ?"
@@ -162,6 +168,8 @@ const DashboardWarehouse = () => {
         }}
         onOpen={() => setOpenDeleteDialog(true)}
         onClickConfirm={() => onClickDelete(deleteDataId)}
+        onCloseComplete={getWarehouseData}
+        isLoading={isBtnLoading}
       />
     </Flex>
   );
