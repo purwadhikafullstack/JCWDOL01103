@@ -15,7 +15,6 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Button,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,7 +30,7 @@ const Navbar = () => {
   const userState = useSelector(state => state.login.user);
   const [userInfo, setUserInfo] = useState(null);
   const reduxItemCount = useSelector(state => state.cart.itemCount);
-  const [cartItemCount, setCartItemCount] = useState(0); // Initialize cartItemCount here
+  const [cartItemCount, setCartItemCount] = useState(0);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -47,7 +46,7 @@ const Navbar = () => {
         console.log(error);
       }
     })();
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     (async () => {
@@ -61,7 +60,7 @@ const Navbar = () => {
         console.log(error);
       }
     })();
-  }, [authState, dispatch]);
+  }, [authState, dispatch, userState]);
   const onClickLogout = () => {
     dispatch(logoutAuthorized());
     navigate("/");
