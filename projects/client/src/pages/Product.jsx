@@ -30,6 +30,7 @@ import {
   Flex,
   Spinner,
   Avatar,
+  Select,
 } from "@chakra-ui/react";
 import { BiEditAlt, BiTrashAlt, BiSortZA, BiTime } from "react-icons/bi";
 
@@ -49,8 +50,36 @@ const Category = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [userRole, setUserRole] = useState(null);
   const imageURL = "http://localhost:8000/uploads/";
-
   const toast = useToast();
+  const categoryOptions = [
+    { value: "guitars", label: "Guitars" },
+    { value: "drums", label: "Drums" },
+    { value: "keyboards", label: "Keyboards" },
+    { value: "microphone", label: "Microphone" },
+    { value: "bass", label: "Bass" },
+    { value: "percussion", label: "Percussion" },
+    { value: "dj equipment", label: "DJ Equipment" },
+    { value: "orchestra", label: "Orchestra" },
+    { value: "sound", label: "Sound" },
+    { value: "studio recording", label: "Studio Recording" },
+    { value: "software", label: "Software" },
+  ];
+  const subCategoryOptions = [
+    { value: "acoustic", label: "Acoustic" },
+    { value: "electric", label: "Electric" },
+    { value: "ukulele", label: "Ukulele" },
+    { value: "bass", label: "Bass" },
+    { value: "guitar", label: "Guitar" },
+    { value: "drums", label: "Drums" },
+    { value: "keyboard", label: "Keyboard" },
+    { value: "microphone", label: "Microphone" },
+    { value: "percussion", label: "Percussion" },
+    { value: "dj-equipment", label: "DJ Equipment" },
+    { value: "orchestra", label: "Orchestra" },
+    { value: "sound", label: "Sound" },
+    { value: "studio-recording", label: "Studio Recording" },
+    { value: "software", label: "Software" },
+  ];
 
   const getProducts = useCallback(async () => {
     setIsLoading(true);
@@ -92,8 +121,8 @@ const Category = () => {
     initialValues: {
       product_name: "",
       description: "",
-      product_category: "",
-      product_sub_category: "",
+      product_category: categoryOptions[0].value,
+      product_sub_category: subCategoryOptions[0].value,
       price: "",
       weight: "",
       image: null,
@@ -207,8 +236,8 @@ const Category = () => {
     initialValues: {
       product_name: "",
       description: "",
-      product_category: "",
-      product_sub_category: "",
+      product_category: categoryOptions[0].value,
+      product_sub_category: subCategoryOptions[0].value,
       price: "",
       weight: "",
       image: null,
@@ -407,14 +436,20 @@ const Category = () => {
                   <FormLabel fontSize={16} mt={1}>
                     Category
                   </FormLabel>
-                  <Input
+                  <Select
                     mb={3}
                     focusBorderColor="black"
-                    placeholder="Category"
+                    placeholder="Select Category"
                     name="product_category"
                     onChange={addFormik.handleChange}
                     onBlur={addFormik.handleBlur}
-                  />
+                  >
+                    {categoryOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
                   {addFormik.touched.product_category &&
                   addFormik.errors.product_category ? (
                     <Text mb={3} mt={-2} color={"red.500"} fontSize={"sm"}>
@@ -424,15 +459,21 @@ const Category = () => {
                   <FormLabel fontSize={16} mt={1}>
                     Sub Category
                   </FormLabel>
-                  <Input
+                  <Select
                     mb={3}
                     focusBorderColor="black"
-                    placeholder="Sub Category"
+                    placeholder="Select Sub Category"
                     name="product_sub_category"
                     onChange={addFormik.handleChange}
                     onBlur={addFormik.handleBlur}
-                  />
-                  {addFormik.touched.product_sub_category &&
+                  >
+                    {subCategoryOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                  {addFormik.touched.product_category &&
                   addFormik.errors.product_sub_category ? (
                     <Text mb={3} mt={-2} color={"red.500"} fontSize={"sm"}>
                       {addFormik.errors.product_sub_category}
@@ -638,15 +679,24 @@ const Category = () => {
                                   <FormLabel fontSize={16} mt={1}>
                                     Category
                                   </FormLabel>
-                                  <Input
+                                  <Select
                                     mb={3}
                                     focusBorderColor="black"
-                                    placeholder="Category"
-                                    value={editFormik.values.product_category}
+                                    placeholder="Select Category"
                                     name="product_category"
                                     onChange={editFormik.handleChange}
                                     onBlur={editFormik.handleBlur}
-                                  />
+                                    value={editFormik.values.product_category}
+                                  >
+                                    {categoryOptions.map(option => (
+                                      <option
+                                        key={option.value}
+                                        value={option.value}
+                                      >
+                                        {option.label}
+                                      </option>
+                                    ))}
+                                  </Select>
                                   {editFormik.touched.product_category &&
                                   editFormik.errors.product_category ? (
                                     <Text
@@ -661,17 +711,26 @@ const Category = () => {
                                   <FormLabel fontSize={16} mt={1}>
                                     Sub Category
                                   </FormLabel>
-                                  <Input
+                                  <Select
                                     mb={3}
                                     focusBorderColor="black"
-                                    placeholder="Sub Category"
-                                    value={
-                                      editFormik.values.product_sub_category
-                                    }
+                                    placeholder="Select Sub Category"
                                     name="product_sub_category"
                                     onChange={editFormik.handleChange}
                                     onBlur={editFormik.handleBlur}
-                                  />
+                                    value={
+                                      editFormik.values.product_sub_category
+                                    }
+                                  >
+                                    {subCategoryOptions.map(option => (
+                                      <option
+                                        key={option.value}
+                                        value={option.value}
+                                      >
+                                        {option.label}
+                                      </option>
+                                    ))}
+                                  </Select>
                                   {editFormik.touched.product_sub_category &&
                                   editFormik.errors.product_sub_category ? (
                                     <Text

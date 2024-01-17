@@ -3,45 +3,59 @@ const db = require("../models");
 const { Op } = require("sequelize");
 
 const createStock = async (req, res) => {
-  const { journal_type, amount } = req.body;
+  const { type } = req.body;
+  let results = [];
   try {
-    const lastJournal = await db.Stock_Journals.findOne({
-      order: [["createdAt", "DESC"]],
-      where: {
-        stock_id: req.stock.id,
-      },
-    });
-    req.differeces = journal_type === "reducing" ? amount * -1 : amount;
-    if (lastJournal) {
-      if (journal_type === "reducing" && lastJournal.quantity_after < amount) {
+    for (const item of req.stock) {
+      let stockId = item.stock.dataValues?.id;
+      let amount = item?.restock;
+      let qty = item.stock.dataValues?.quantity;
+      let differences = type === "reducing" ? amount * -1 : amount;
+      if (type === "reducing") {
+        if (qty >= amount) {
+          await db.Stocks.decrement("quantity", {
+            by: amount,
+            where: {
+              id: stockId,
+            },
+            transaction: req.transaction,
+          });
+        } else {
+          return res.status(400).json({
+            message: "Amount must be greater than quantity before",
+            error: "Amount must be greater than quantity before",
+          });
+        }
+      } else if (type === "adding") {
+        await db.Stocks.increment("quantity", {
+          by: amount,
+          where: {
+            id: stockId,
+          },
+          transaction: req.transaction,
+        });
+      } else {
         return res.status(400).json({
-          message: "Amount must be greater than before stock quantity",
+          message: "Wrong journal type",
         });
       }
-      req.afterQty = lastJournal.quantity_after + amount;
-    }
-    let updatedQty = req.afterQty || amount;
-    let qtyBefore = lastJournal ? lastJournal.quantity_after : 0;
-    await db.Stock_Journals.create({
-      stock_id: req.stock.id,
-      quantity_before: qtyBefore,
-      quantity_after: updatedQty,
-      amount: req.differeces,
-    });
-    await db.Stocks.update(
-      {
-        quantity: updatedQty,
-      },
-      {
-        where: {
-          id: req.stock.id,
+      await db.Stock_Journals.create(
+        {
+          stock_id: stockId,
+          quantity_before: qty,
+          quantity_after: qty + differences,
+          amount: differences,
         },
-      }
-    );
+        { transaction: req.transaction }
+      );
+    }
+    await req.transaction.commit();
     return res.status(200).json({
-      message: "Create journal successfully",
+      message: "Restock product successfully",
+      data: results,
     });
   } catch (error) {
+    await req.transaction.rollback();
     return res.status(500).json({
       message: "Create journal failed",
       error: error.toString(),
@@ -53,11 +67,9 @@ const getStock = async (req, res) => {
   const { warehouse_id, product_id } = req.query;
   let whereClause = {};
   if (warehouse_id) {
-    // whereClause.warehouse_id = decryptData(warehouse_id);
     whereClause.warehouse_id = warehouse_id;
   }
   if (product_id) {
-    // whereClause.product_id = decryptData(product_id);
     whereClause.product_id = product_id;
   }
   try {
@@ -67,16 +79,21 @@ const getStock = async (req, res) => {
         exclude: ["createdAt", "updatedAt", "deletedAt"],
       },
     });
-    const encryptedResult = stock.map((dt) => {
+    let total = 0;
+    const encryptedResult = stock.map(dt => {
       const newStock = { ...dt.dataValues };
+      total += newStock.quantity;
       newStock.id = encryptData(newStock.id);
-        newStock.warehouse_id = encryptData(newStock.warehouse_id);
-        newStock.product_id = encryptData(newStock.product_id);
+      newStock.warehouse_id = encryptData(newStock.warehouse_id);
+      newStock.product_id = encryptData(newStock.product_id);
       return newStock;
     });
     return res.status(200).json({
       message: "Get Stock successfully",
-      data: encryptedResult,
+      data: {
+        total: total,
+        warehouse: encryptedResult,
+      },
     });
   } catch (error) {
     return res.status(500).json({
@@ -105,17 +122,17 @@ const getProducts = async (req, res) => {
       include: {
         model: db.Stocks,
         as: "stock",
-        attributes: ["quantity"]
+        attributes: ["quantity"],
       },
     });
-    let result = null
-    if(products && warehouse_id){
-        const resProducts = products.map(dt => {
-            const newProducts = { ...dt.dataValues };
-            newProducts.stock =  dt.stock[0].quantity;
-            return newProducts
-        })
-        result = resProducts
+    let result = null;
+    if (products && warehouse_id) {
+      const resProducts = products.map(dt => {
+        const newProducts = { ...dt.dataValues };
+        newProducts.stock = dt.stock[0].quantity;
+        return newProducts;
+      });
+      result = resProducts;
     }
     return res.status(200).json({
       message: "Get products successfully",

@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { BiCartAdd, BiShoppingBag } from "react-icons/bi";
 import { useToast } from "@chakra-ui/toast";
-
+import { jwtDecode } from "jwt-decode";
 import { toastConfig } from "../utils/toastConfig";
 
 const ProductDetail = () => {
@@ -23,6 +23,8 @@ const ProductDetail = () => {
   const params = useParams();
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
+  const [userRole, setUserRole] = useState(null);
+  const [productStocks, setProductStocks] = useState(0);
   const imageURL = "http://localhost:8000/uploads/";
 
   useEffect(() => {
@@ -51,6 +53,22 @@ const ProductDetail = () => {
       setQuantity(prevQuantity => prevQuantity - 1);
     }
   };
+
+  const getUserRoleFromToken = token => {
+    try {
+      const decodedToken = jwtDecode(token);
+      return decodedToken.role;
+    } catch (error) {
+      console.error("Error decoding token", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = getUserRoleFromToken(token);
+    setUserRole(role);
+  }, []);
 
   const addToCart = async () => {
     try {
@@ -149,11 +167,18 @@ const ProductDetail = () => {
                 onClick={orderNow}
                 px={8}
                 mr={5}
+                hidden={userRole === "master" && "admin"}
               >
                 <BiShoppingBag mr={2} />
                 Buy Now
               </Button>
-              <Button bg="black" color={"white"} onClick={addToCart} px={8}>
+              <Button
+                bg="black"
+                color={"white"}
+                onClick={addToCart}
+                px={8}
+                hidden={userRole === "master" && "admin"}
+              >
                 <BiCartAdd /> Add to Cart
               </Button>
             </Flex>

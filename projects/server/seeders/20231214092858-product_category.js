@@ -42,6 +42,18 @@ module.exports = {
         createdAt: currentDate,
         updatedAt: currentDate,
       },
+      {
+        id: 7,
+        name: "sound system",
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      },
+      {
+        id: 6,
+        name: "dj equipment",
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      },
     ]);
   },
 

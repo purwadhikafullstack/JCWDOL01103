@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Navbar from "../components/organisms/Navbar";
 import Footer from "../components/organisms/Footer";
 import { server } from "../api/index";
@@ -18,31 +18,28 @@ import {
 import { BiSortZA, BiTime, BiCategory, BiX } from "react-icons/bi";
 
 const Shop = () => {
-  const location = useLocation();
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("ascending");
   const [sortField, setSortField] = useState("product_name");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(4);
+  const [itemsPerPage] = useState(8);
   const [totalPages, setTotalPages] = useState(0);
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [isCategoryVisible, setIsCategoryVisible] = useState(false);
+  const [productStocks, setProductStocks] = useState(1);
   const categoryBoxRef = useRef();
   const imageURL = "http://localhost:8000/uploads/";
 
   const getProducts = useCallback(async () => {
     try {
       const sortParam = sortOrder === "ascending" ? "asc" : "desc";
-      const categoryQuery = new URLSearchParams(location.search).get(
-        "category"
-      );
 
       const response = await server.get("/products", {
         params: {
           search: searchQuery,
-          categories: categoryQuery || selectedCategories.join(","),
+          categories: selectedCategories.join(","),
           sort: sortField,
           order: sortParam,
           page: currentPage,
@@ -57,7 +54,6 @@ const Shop = () => {
             product.product_sub_category?.name || "No Subcategory",
         }))
       );
-      console.info(response.data.data);
       setTotalPages(response.data.totalPages);
     } catch (e) {
       console.error("Error fetching products:", e);
@@ -75,17 +71,6 @@ const Shop = () => {
   useEffect(() => {
     getProducts();
   }, [getProducts]);
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const selectedCategory = queryParams.get("category");
-
-    if (selectedCategory) {
-      setSelectedCategories([selectedCategory]);
-    }
-
-    getProducts();
-  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -106,6 +91,53 @@ const Shop = () => {
         : [...prevSelectedCategories, categoryId]
     );
   };
+
+  // useEffect(() => {
+  //   const fetchStocks = async () => {
+  //     try {
+  //       const response = await server.get("/stock", {
+  //         params: {
+  //           product_id: 1,
+  //         },
+  //       });
+  //       setProductStocks(response.data.data);
+  //     } catch (error) {
+  //       console.error("Error fetching stock data:", error);
+  //     }
+  //   };
+
+  //   fetchStocks();
+  // }, []);
+
+  // const fetchStocks = useCallback(async () => {
+  //   try {
+  //     const productIds = products.map(product => product.id);
+  //     const response = await server.get("/stock", {
+  //       params: {
+  //         product_id: productIds.join(","),
+  //       },
+  //     });
+
+  //     console.log("Response Stocks:", response.data.data); // Log untuk melihat struktur data dalam response
+
+  //     let stocks = {};
+  //     response.data.data.warehouse.forEach(item => {
+  //       stocks[item.product_id] = item.quantity;
+  //     });
+
+  //     console.log("Mapped Stocks:", stocks); // Log untuk melihat hasil mapping
+
+  //     setProductStocks(stocks);
+  //   } catch (error) {
+  //     console.error("Error fetching stock data:", error);
+  //   }
+  // }, [products]);
+
+  // useEffect(() => {
+  //   if (products.length > 0) {
+  //     fetchStocks();
+  //   }
+  // }, [products, fetchStocks]);
 
   const handlePageChange = page => {
     setCurrentPage(page);
@@ -260,9 +292,18 @@ const Shop = () => {
                         >
                           {product?.product_name}
                         </Heading>
-                        <Text fontSize={"sm"} mt={3} color={"green.500"}>
-                          Tersedia
-                        </Text>
+                        {productStocks === 0 ? (
+                          <Text fontSize={"sm"} mt={3} color={"red.500"}>
+                            Sold Out
+                          </Text>
+                        ) : (
+                          <Text fontSize={"sm"} mt={3} color={"green.500"}>
+                            Stock:{" "}
+                            {productStocks !== undefined
+                              ? productStocks
+                              : "Loading..."}
+                          </Text>
+                        )}
                         <Text
                           fontSize={{ base: "md", xl: "lg" }}
                           fontWeight={"bold"}

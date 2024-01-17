@@ -1,3 +1,4 @@
+const { encryptData, decryptData } = require("../helpers/encrypt");
 const db = require("../models");
 const products = db.Products;
 const category = db.Products_Category;
@@ -7,8 +8,9 @@ const { Op } = require("sequelize");
 const product = {
   getSingleProduct: async (req, res) => {
     try {
-      const product = await products.findOne({
-        where: { id: req.params.id },
+      const { id } = req.params;
+      const productData = await products.findOne({
+        where: { id: decryptData(id) },
         include: [
           {
             model: category,
@@ -23,7 +25,7 @@ const product = {
         ],
       });
 
-      if (!product) {
+      if (!productData) {
         return res.status(404).json({
           status: 404,
           message: "Product Not Found",
@@ -32,11 +34,16 @@ const product = {
         });
       }
 
+      const encryptedProduct = {
+        ...productData.dataValues,
+        id: encryptData(productData.id.toString()),
+      };
+
       res.status(200).json({
         status: 200,
         message: "Request Success",
         error: null,
-        data: product,
+        data: encryptedProduct,
       });
     } catch (e) {
       res.status(500).json({
@@ -69,9 +76,7 @@ const product = {
         query.include.push({
           model: category,
           as: "product_category",
-          where: {
-            id: { [Op.in]: categoryIds },
-          },
+          where: { id: { [Op.in]: categoryIds } },
           required: true,
         });
       }
@@ -100,11 +105,16 @@ const product = {
 
       const totalPages = Math.ceil(count / limit);
 
+      const encryptedProducts = rows.map(product => ({
+        ...product.dataValues,
+        id: encryptData(product.id.toString()),
+      }));
+
       res.status(200).json({
         status: 200,
         message: "Request Success",
         error: null,
-        data: rows,
+        data: encryptedProducts,
         totalPages: totalPages,
       });
     } catch (e) {
@@ -202,7 +212,7 @@ const product = {
       const existingProductWithName = await products.findOne({
         where: {
           product_name,
-          id: { [Op.ne]: id },
+          id: { [Op.ne]: decryptData(id) }, // Decrypt the ID
         },
       });
 
@@ -235,7 +245,7 @@ const product = {
         });
       }
 
-      const productToUpdate = await products.findByPk(id);
+      const productToUpdate = await products.findByPk(decryptData(id)); // Decrypt the ID
 
       if (!productToUpdate) {
         return res.status(404).json({
@@ -268,9 +278,11 @@ const product = {
   },
 
   deleteProduct: async (req, res) => {
+    const productId = decryptData(req.params.id); // Decrypt the ID
+
     const product = await products.findOne({
       where: {
-        id: req.params.id,
+        id: productId,
       },
     });
 
@@ -284,8 +296,8 @@ const product = {
     }
 
     try {
-      const product = await products.destroy({
-        where: { id: req.params.id },
+      await products.destroy({
+        where: { id: productId },
       });
       res.status(200).json({
         status: 200,

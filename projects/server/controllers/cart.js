@@ -1,3 +1,4 @@
+const { decryptData } = require("../helpers/encrypt");
 const db = require("../models");
 const cart = db.Cart;
 const cart_detail = db.Cart_Detail;
@@ -36,6 +37,7 @@ const carts = {
   createCart: async (req, res) => {
     const user_id = req.user.id;
     const { product_id, quantity } = req.body;
+    const productId = decryptData(product_id);
 
     try {
       let userCart = await cart.findOne({
@@ -48,7 +50,7 @@ const carts = {
         userCart = await cart.create({ user_id: user_id });
       }
 
-      const productExists = await products.findByPk(product_id);
+      const productExists = await products.findByPk(productId);
       if (!productExists) {
         return res.status(404).json({
           status: 404,
@@ -57,7 +59,7 @@ const carts = {
       }
 
       const [cartItem, created] = await cart_detail.findOrCreate({
-        where: { cart_id: userCart.id, product_id: product_id },
+        where: { cart_id: userCart.id, product_id: productId },
         defaults: { quantity: quantity },
       });
 

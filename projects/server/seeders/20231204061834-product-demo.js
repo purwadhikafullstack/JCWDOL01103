@@ -84,6 +84,59 @@ module.exports = {
         createdAt: currentDate,
         updatedAt: currentDate,
       },
+      {
+        id: 7,
+        product_name: "Behringer QX1222USB Xenyx Mixer w/ USB and Effects",
+        description:
+          "About This Product The compact XENYX QX1222USB mixer allows you to effortlessly achieve premium-quality sound.",
+        product_category_id: 5,
+        product_sub_category_id: 1,
+        price: 3784000,
+        weight: 7,
+        image: "IMG-1705411264879290885.jpeg",
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      },
+      {
+        id: 8,
+        product_name:
+          "Aston Microphones Origin Large-diaphragm Condenser Microphone",
+        description:
+          "This Product This production kit pairs a rock'n'roll black version of Aston’s legendary game-changing microphone, the Origin, with the best-in-class Aston Swiftshield pop filter and shock mount set – everything you need for professional grade recordings of vocals, instruments and pretty much anything else you can throw at it!",
+        product_category_id: 6,
+        product_sub_category_id: 1,
+        price: 5485000,
+        weight: 7,
+        image: "IMG-1705411364821891486.jpeg",
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      },
+      {
+        id: 9,
+        product_name: "EVH 5150 III 50W 6L6 112 CMB Blk 230V Eur",
+        description:
+          "Packed with powerful tone, the EVH® 5150III® 50W 6L6 112 Combo is arena-sized sound in a tiny, Celestion®-powered form factor for easier transfer.",
+        product_category_id: 7,
+        product_sub_category_id: 1,
+        price: 2210000,
+        weight: 20,
+        image: "IMG-1705411960949733332.jpeg",
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      },
+      {
+        id: 10,
+        product_name: "Korg NC-Q1 Smart Noise Cancelling DJ Headphones",
+        description:
+          "Best hearing protection and sound control; a new era in headphone monitoring.",
+        product_category_id: 8,
+        product_sub_category_id: 1,
+        price: 4520000,
+        weight: 7,
+        image: "IMG-1705412015251799811.jpeg",
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      },
     ]);
   },
 
