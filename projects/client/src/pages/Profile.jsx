@@ -374,7 +374,6 @@ const Profile = () => {
           </form>
         </Box>
       </Box>
-      <Footer />
     </>
   );
 };
