@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setItemCount } from "../store/slicer/cartSlice";
 import { server } from "../api/index";
 import Navbar from "../components/organisms/Navbar";
 import Footer from "../components/organisms/Footer";
@@ -26,39 +28,59 @@ import { BiTrashAlt } from "react-icons/bi";
 import { toastConfig } from "../utils/toastConfig";
 
 const Cart = () => {
+  const dispatch = useDispatch();
   const [cartItems, setCartItems] = useState([]);
   const toast = useToast();
   const imageURL = "http://localhost:8000/uploads/";
 
-  const getCart = async () => {
+  const getCartItems = async () => {
     try {
       const response = await server.get("/cart");
-      const data = response.data;
-      setCartItems(data);
+      setCartItems(response.data);
+
+      const totalItems = response.data.reduce((total, cart) => {
+        return (
+          total +
+          cart.detail.reduce((detailTotal, detail) => {
+            return detailTotal + detail.quantity;
+          }, 0)
+        );
+      }, 0);
+      dispatch(setItemCount(totalItems));
     } catch (error) {
-      console.error("Error fetching product:", error);
+      console.error("Error fetching cart items:", error);
     }
   };
 
   useEffect(() => {
-    getCart();
+    getCartItems();
   }, []);
 
   const handleQuantityChange = (value, cartId, detailId) => {
-    setCartItems(
-      cartItems.map(cartItem =>
-        cartItem.id === cartId
-          ? {
-              ...cartItem,
-              detail: cartItem.detail.map(detail =>
-                detail.id === detailId
-                  ? { ...detail, quantity: parseInt(value, 10) }
-                  : detail
-              ),
-            }
-          : cartItem
-      )
+    const updatedCartItems = cartItems.map(cartItem =>
+      cartItem.id === cartId
+        ? {
+            ...cartItem,
+            detail: cartItem.detail.map(detail =>
+              detail.id === detailId
+                ? { ...detail, quantity: parseInt(value, 10) }
+                : detail
+            ),
+          }
+        : cartItem
     );
+
+    setCartItems(updatedCartItems);
+
+    const totalItems = updatedCartItems.reduce((total, cart) => {
+      return (
+        total +
+        cart.detail.reduce((detailTotal, detail) => {
+          return detailTotal + detail.quantity;
+        }, 0)
+      );
+    }, 0);
+    dispatch(setItemCount(totalItems));
   };
 
   const calculateTotalPrice = () => {
@@ -79,9 +101,23 @@ const Cart = () => {
       const response = await server.delete(`/cart/${cartItemId}`);
 
       if (response.status === 200) {
-        setCartItems(cartItems.filter(item => item.id !== cartItemId));
+        const updatedCartItems = cartItems.filter(
+          item => item.id !== cartItemId
+        );
+        setCartItems(updatedCartItems);
         toast(toastConfig("success", "Success", response.data.message));
-        getCart();
+
+        const totalItems = updatedCartItems.reduce((total, cart) => {
+          return (
+            total +
+            cart.detail.reduce((detailTotal, detail) => {
+              return detailTotal + detail.quantity;
+            }, 0)
+          );
+        }, 0);
+        dispatch(setItemCount(totalItems));
+
+        getCartItems();
       }
     } catch (error) {
       console.error("Error deleting cart item:", error);

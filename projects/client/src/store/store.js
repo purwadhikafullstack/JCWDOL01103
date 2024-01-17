@@ -1,12 +1,14 @@
-import { configureStore } from '@reduxjs/toolkit';
-import loginReducers from './slicer/authSlice';
-import formWarehouseReducers from './slicer/formWarehouseSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import loginReducers from "./slicer/authSlice";
+import formWarehouseReducers from "./slicer/formWarehouseSlice";
+import cartReducer from "./slicer/cartSlice";
 
 const store = configureStore({
-    reducer: {
-      login: loginReducers,
-      formWarehouse: formWarehouseReducers
-    }
-  });
-  
-  export default store;
+  reducer: {
+    login: loginReducers,
+    formWarehouse: formWarehouseReducers,
+    cart: cartReducer,
+  },
+});
+
+export default store;

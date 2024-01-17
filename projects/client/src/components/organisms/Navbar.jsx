@@ -30,7 +30,8 @@ const Navbar = () => {
   const authState = useSelector(state => state.login.isAuthorized);
   const userState = useSelector(state => state.login.user);
   const [userInfo, setUserInfo] = useState(null);
-  const [cartItemCount, setCartItemCount] = useState(0);
+  const reduxItemCount = useSelector(state => state.cart.itemCount);
+  const [cartItemCount, setCartItemCount] = useState(0); // Initialize cartItemCount here
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -66,20 +67,29 @@ const Navbar = () => {
     navigate("/");
   };
 
-  useEffect(() => {
-    const loadCartData = async () => {
-      try {
-        const response = await server.get("/cart");
-        const cartItems = response.data;
-        const itemCount = cartItems.reduce((total, item) => {
-          return total + (item.quantity || 0);
-        }, 0);
-        setCartItemCount(itemCount);
-      } catch (error) {
-        console.error("Error fetching cart data:", error);
-      }
-    };
+  const onClickCart = () => {
+    navigate("/cart");
+  };
 
+  const loadCartData = async () => {
+    try {
+      const response = await server.get("/cart");
+      const cartData = response.data;
+
+      let totalCount = 0;
+      cartData.forEach(cart => {
+        cart.detail.forEach(item => {
+          totalCount += item.quantity;
+        });
+      });
+
+      setCartItemCount(totalCount);
+    } catch (error) {
+      console.error("Error fetching cart data:", error);
+    }
+  };
+
+  useEffect(() => {
     if (authState) {
       loadCartData();
     }
@@ -186,11 +196,25 @@ const Navbar = () => {
             </MenuList>
           </Menu>
           <Menu>
-            <MenuButton>
+            <MenuButton onClick={onClickCart}>
               <Flex alignItems={"center"}>
                 <BiCartAlt color="black" fontSize="30px" />
-                <Text ml={2} color="red.500">
-                  {cartItemCount}
+                <Text
+                  ml={2}
+                  color="white"
+                  fontSize={{ base: "9px", lg: "12px" }}
+                  fontWeight={"bold"}
+                  bg="black"
+                  px={2}
+                  py={1}
+                  border={"2px"}
+                  borderColor={"white"}
+                  borderRadius={"full"}
+                  position={"absolute"}
+                  top={{ base: -1, lg: 1 }}
+                  right={{ base: 2, lg: 0 }}
+                >
+                  {reduxItemCount}
                 </Text>
               </Flex>
             </MenuButton>
