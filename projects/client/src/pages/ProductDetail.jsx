@@ -24,7 +24,6 @@ const ProductDetail = () => {
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [userRole, setUserRole] = useState(null);
-  const [productStocks, setProductStocks] = useState(0);
   const imageURL = "http://localhost:8000/uploads/";
 
   useEffect(() => {
@@ -92,13 +91,18 @@ const ProductDetail = () => {
       <Container
         as="section"
         maxW={{ xl: "7xl", "2xl": "8xl" }}
-        mt={{ base: 10, xl: "100px" }}
-        mx={{ base: 4, xl: "200px" }}
+        mt={{ base: 10, lg: "100px" }}
+        mx={{ base: 0, lg: "200px" }}
       >
-        <Flex w={"full"} flexDir={{ base: "column", xl: "row" }}>
-          <Box w={{ base: "100%", xl: "50%" }}>
+        <Flex
+          w={"full"}
+          flexDir={{ base: "column", lg: "row" }}
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
+          <Box w={{ base: "100%", lg: "50%" }}>
             <Image
-              w="600px"
+              w={{ base: "100%", xl: "550px" }}
               src={`${imageURL}${product?.image}`}
               alt={product?.product_name}
               title={product?.product_name}

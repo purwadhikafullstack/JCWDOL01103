@@ -28,7 +28,7 @@ const Shop = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [isCategoryVisible, setIsCategoryVisible] = useState(false);
-  const [productStocks, setProductStocks] = useState(1);
+  const [productStocks, setProductStocks] = useState({});
   const categoryBoxRef = useRef();
   const imageURL = "http://localhost:8000/uploads/";
 
@@ -92,52 +92,27 @@ const Shop = () => {
     );
   };
 
-  // useEffect(() => {
-  //   const fetchStocks = async () => {
-  //     try {
-  //       const response = await server.get("/stock", {
-  //         params: {
-  //           product_id: 1,
-  //         },
-  //       });
-  //       setProductStocks(response.data.data);
-  //     } catch (error) {
-  //       console.error("Error fetching stock data:", error);
-  //     }
-  //   };
+  const fetchStocks = useCallback(async () => {
+    try {
+      const productIds = products
+        .map(product => encodeURIComponent(product.id))
+        .join(",");
+      const response = await server.get(`/stock?product_id=${productIds}`);
+      let stocks = {};
+      response.data.data.warehouse.forEach(item => {
+        stocks[item.product_id] = item.quantity;
+      });
+      setProductStocks(stocks);
+    } catch (error) {
+      console.error("Error fetching stock data:", error);
+    }
+  }, [products]);
 
-  //   fetchStocks();
-  // }, []);
-
-  // const fetchStocks = useCallback(async () => {
-  //   try {
-  //     const productIds = products.map(product => product.id);
-  //     const response = await server.get("/stock", {
-  //       params: {
-  //         product_id: productIds.join(","),
-  //       },
-  //     });
-
-  //     console.log("Response Stocks:", response.data.data); // Log untuk melihat struktur data dalam response
-
-  //     let stocks = {};
-  //     response.data.data.warehouse.forEach(item => {
-  //       stocks[item.product_id] = item.quantity;
-  //     });
-
-  //     console.log("Mapped Stocks:", stocks); // Log untuk melihat hasil mapping
-
-  //     setProductStocks(stocks);
-  //   } catch (error) {
-  //     console.error("Error fetching stock data:", error);
-  //   }
-  // }, [products]);
-
-  // useEffect(() => {
-  //   if (products.length > 0) {
-  //     fetchStocks();
-  //   }
-  // }, [products, fetchStocks]);
+  useEffect(() => {
+    if (products.length > 0) {
+      fetchStocks();
+    }
+  }, [products, fetchStocks]);
 
   const handlePageChange = page => {
     setCurrentPage(page);
@@ -259,7 +234,7 @@ const Shop = () => {
               <>
                 <SimpleGrid columns={{ base: 2, xl: 4 }} gap={5}>
                   {products.map((product, index) => (
-                    <Link to={`product/${product.id}`}>
+                    <Link to={`product/${product.id}`} key={index}>
                       <Box
                         key={index}
                         h="max-content"
@@ -292,18 +267,17 @@ const Shop = () => {
                         >
                           {product?.product_name}
                         </Heading>
-                        {productStocks === 0 ? (
-                          <Text fontSize={"sm"} mt={3} color={"red.500"}>
-                            Sold Out
-                          </Text>
-                        ) : (
-                          <Text fontSize={"sm"} mt={3} color={"green.500"}>
-                            Stock:{" "}
-                            {productStocks !== undefined
-                              ? productStocks
-                              : "Loading..."}
-                          </Text>
-                        )}
+                        <Text
+                          fontSize={"sm"}
+                          mt={3}
+                          color={
+                            productStocks[product.id] ? "green.500" : "red.500"
+                          }
+                        >
+                          {productStocks[product.id]
+                            ? `Stock: ${productStocks[product.id]}`
+                            : "Sold Out"}
+                        </Text>
                         <Text
                           fontSize={{ base: "md", xl: "lg" }}
                           fontWeight={"bold"}

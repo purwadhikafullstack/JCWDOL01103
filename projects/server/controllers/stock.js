@@ -65,14 +65,17 @@ const createStock = async (req, res) => {
 
 const getStock = async (req, res) => {
   const { warehouse_id, product_id } = req.query;
-  let whereClause = {};
-  if (warehouse_id) {
-    whereClause.warehouse_id = warehouse_id;
-  }
-  if (product_id) {
-    whereClause.product_id = product_id;
-  }
   try {
+    let whereClause = {};
+    if (warehouse_id) {
+      whereClause.warehouse_id = warehouse_id;
+    }
+    if (product_id) {
+      const decryptedProductId = decryptData(product_id);
+      if (decryptedProductId) {
+        whereClause.product_id = decryptedProductId;
+      }
+    }
     const stock = await db.Stocks.findAll({
       where: whereClause,
       attributes: {

@@ -212,7 +212,7 @@ const product = {
       const existingProductWithName = await products.findOne({
         where: {
           product_name,
-          id: { [Op.ne]: decryptData(id) }, // Decrypt the ID
+          id: { [Op.ne]: decryptData(id) },
         },
       });
 
