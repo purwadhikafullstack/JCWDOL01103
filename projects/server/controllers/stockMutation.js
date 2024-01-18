@@ -5,15 +5,17 @@ const {
   findNearestWarehouse,
   checkNearestWarehouseStock,
 } = require("../services/stockMutationService");
+const { decryptData } = require("../helpers/encrypt");
 
 const createMutation = async (req, res) => {
   const { from_warehouse_id, to_warehouse_id, products } = req.body;
   try {
     const mutations = products.map((dt) => {
+      let decryptedProductId = decryptData(dt.product_id)
       return {
         from_warehouse_id: from_warehouse_id,
         to_warehouse_id: to_warehouse_id,
-        product_id: dt.product_id,
+        product_id: decryptedProductId,
         quantity: dt.quantity,
         status: "waiting",
       };
@@ -87,7 +89,7 @@ const createAutoMutation = async (req, res) => {
     );
     const mutations = results.flatMap((product) =>
       product.warehouses.map((warehouse) => ({
-        product_id: product.product_id,
+        product_id: decryptData(product.product_id),
         from_warehouse_id: warehouse.id,
         to_warehouse_id: from_warehouse_id,
         quantity: warehouse.stockAssist,
