@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setItemCount } from "../store/slicer/cartSlice";
 import { server } from "../api/index";
-// import Navbar from "../components/organisms/Navbar";
-// import Footer from "../components/organisms/Footer";
 import {
   Box,
   Container,
@@ -57,18 +55,24 @@ const Cart = () => {
   }, []);
 
   const handleQuantityChange = (value, cartId, detailId) => {
-    const updatedCartItems = cartItems.map(cartItem =>
-      cartItem.id === cartId
-        ? {
-            ...cartItem,
-            detail: cartItem.detail.map(detail =>
-              detail.id === detailId
-                ? { ...detail, quantity: parseInt(value, 10) }
-                : detail
-            ),
-          }
-        : cartItem
-    );
+    const updatedCartItems = cartItems.map(cartItem => {
+      if (cartItem.id === cartId) {
+        return {
+          ...cartItem,
+          detail: cartItem.detail.map(detail => {
+            if (detail.id === detailId) {
+              let newQuantity = parseInt(value, 10);
+              if (isNaN(newQuantity) || newQuantity < 1) {
+                newQuantity = 1;
+              }
+              return { ...detail, quantity: newQuantity };
+            }
+            return detail;
+          }),
+        };
+      }
+      return cartItem;
+    });
 
     setCartItems(updatedCartItems);
 
@@ -126,7 +130,6 @@ const Cart = () => {
 
   return (
     <>
-      {/* <Navbar /> */}
       <Container
         as="section"
         maxW={{ xl: "7xl", "2xl": "8xl" }}
@@ -278,7 +281,6 @@ const Cart = () => {
           </Grid>
         )}
       </Container>
-      {/* <Footer /> */}
     </>
   );
 };

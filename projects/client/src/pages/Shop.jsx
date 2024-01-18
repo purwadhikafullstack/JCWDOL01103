@@ -26,7 +26,6 @@ const Shop = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [isCategoryVisible, setIsCategoryVisible] = useState(false);
-  const [productStocks, setProductStocks] = useState({});
   const categoryBoxRef = useRef();
   const imageURL = "http://localhost:8000/uploads/";
 
@@ -50,6 +49,7 @@ const Shop = () => {
           categoryName: product.product_category?.name || "No Category",
           subCategoryName:
             product.product_sub_category?.name || "No Subcategory",
+          totalStock: calculateTotalStock(product.stock),
         }))
       );
       setTotalPages(response.data.totalPages);
@@ -82,6 +82,14 @@ const Shop = () => {
     fetchCategories();
   }, []);
 
+  console.info(products, "INI Product");
+  console.info(products[0], "INI STOCK");
+
+  const calculateTotalStock = stockArray => {
+    return stockArray
+      ? stockArray.reduce((sum, stockItem) => sum + stockItem.quantity, 0)
+      : 0;
+  };
   const handleCategoryChange = categoryId => {
     setSelectedCategories(prevSelectedCategories =>
       prevSelectedCategories.includes(categoryId)
@@ -89,28 +97,6 @@ const Shop = () => {
         : [...prevSelectedCategories, categoryId]
     );
   };
-
-  const fetchStocks = useCallback(async () => {
-    try {
-      const productIds = products
-        .map(product => encodeURIComponent(product.id))
-        .join(",");
-      const response = await server.get(`/stock?product_id=${productIds}`);
-      let stocks = {};
-      response.data.data.warehouse.forEach(item => {
-        stocks[item.product_id] = item.quantity;
-      });
-      setProductStocks(stocks);
-    } catch (error) {
-      console.error("Error fetching stock data:", error);
-    }
-  }, [products]);
-
-  useEffect(() => {
-    if (products.length > 0) {
-      fetchStocks();
-    }
-  }, [products, fetchStocks]);
 
   const handlePageChange = page => {
     setCurrentPage(page);
@@ -268,12 +254,12 @@ const Shop = () => {
                           fontSize={"sm"}
                           mt={3}
                           color={
-                            productStocks[product.id] ? "green.500" : "red.500"
+                            product.totalStock > 0 ? "green.500" : "red.500"
                           }
                         >
-                          {productStocks[product.id]
-                            ? `Stock: ${productStocks[product.id]}`
-                            : "Sold Out"}
+                          {product.totalStock > 0
+                            ? `Stock: ${product.totalStock}`
+                            : "Out of Stock"}
                         </Text>
                         <Text
                           fontSize={{ base: "md", xl: "lg" }}

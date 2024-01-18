@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { server } from "../api/index";
-// import Navbar from "../components/organisms/Navbar";
-// import Footer from "../components/organisms/Footer";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Container,
@@ -13,12 +12,13 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { BiCartAdd, BiShoppingBag } from "react-icons/bi";
+import { BiCartAdd } from "react-icons/bi";
 import { useToast } from "@chakra-ui/toast";
 import { jwtDecode } from "jwt-decode";
 import { toastConfig } from "../utils/toastConfig";
 
 const ProductDetail = () => {
+  const navigate = useNavigate();
   const toast = useToast();
   const params = useParams();
   const [product, setProduct] = useState({});
@@ -30,8 +30,12 @@ const ProductDetail = () => {
     const getProduct = async () => {
       try {
         const response = await server.get(`/product/${params.id}`);
-        setProduct(response.data.data);
-        console.info(response.data.data);
+        const productData = response.data.data;
+        const totalStock = productData.stock.reduce(
+          (sum, stockItem) => sum + stockItem.quantity,
+          0
+        );
+        setProduct({ ...productData, totalStock });
       } catch (error) {
         console.error("Error fetching product:", error);
       }
@@ -40,11 +44,14 @@ const ProductDetail = () => {
   }, [params.id]);
 
   const handleQuantityChange = e => {
-    setQuantity(Math.max(1, parseInt(e.target.value)));
+    const newQuantity = parseInt(e.target.value);
+    setQuantity(Math.max(0, newQuantity));
   };
 
   const incrementQuantity = () => {
-    setQuantity(prevQuantity => prevQuantity + 1);
+    if (quantity < product.totalStock) {
+      setQuantity(prevQuantity => prevQuantity + 1);
+    }
   };
 
   const decrementQuantity = () => {
@@ -70,6 +77,12 @@ const ProductDetail = () => {
   }, []);
 
   const addToCart = async () => {
+    if (!userRole) {
+      toast(toastConfig("error", "Failed", "Please login first!"));
+      navigate("/login");
+      return;
+    }
+
     try {
       const response = await server.post("/cart", {
         product_id: product.id,
@@ -81,13 +94,8 @@ const ProductDetail = () => {
     }
   };
 
-  const orderNow = () => {
-    console.log("Order Now", product.product_name, quantity);
-  };
-
   return (
     <>
-      {/* <Navbar /> */}
       <Container
         as="section"
         maxW={{ xl: "7xl", "2xl": "8xl" }}
@@ -123,6 +131,7 @@ const ProductDetail = () => {
               fontSize={{ base: "32px", xl: "3xl" }}
               fontWeight={"black"}
               as={"h1"}
+              w={{ base: "full", xl: "600px" }}
             >
               {product?.product_name}
             </Heading>
@@ -143,45 +152,59 @@ const ProductDetail = () => {
             <Text mt={5} w={{ base: "90%", xl: "600px" }}>
               {product?.description}
             </Text>
-            <Flex mt={8} alignItems="center">
-              <Text mr={3} fontWeight={"semibold"}>
-                Quantity:
-              </Text>
-              <Button onClick={decrementQuantity} mr={1}>
-                -
-              </Button>
-              <Input
-                type="number"
-                value={quantity}
-                onChange={handleQuantityChange}
-                w="60px"
-                mr={1}
-              />
-              <Button onClick={incrementQuantity} mr={8}>
-                +
-              </Button>
-              <Text fontWeight={"semibold"} w={"100px"} lineHeight={"1"}>
-                Only 10 Items Left
-              </Text>
-            </Flex>
-            <Flex alignItems="center" mt={10}>
+            <Box>
+              <Flex alignItems={"center"} mt={8}>
+                <Flex alignItems="center">
+                  <Text mr={3} fontWeight={"semibold"}>
+                    Quantity:
+                  </Text>
+                  <Button
+                    onClick={decrementQuantity}
+                    mr={1}
+                    isDisabled={product.totalStock === 0}
+                  >
+                    -
+                  </Button>
+                  <Input
+                    type="number"
+                    value={quantity}
+                    onChange={handleQuantityChange}
+                    w="60px"
+                    mr={1}
+                    min={0}
+                    defaultValue={0}
+                    max={product.totalStock}
+                  />
+                  <Button
+                    onClick={incrementQuantity}
+                    mr={8}
+                    isDisabled={product.totalStock === 0}
+                  >
+                    +
+                  </Button>
+                </Flex>
+                <Text
+                  fontWeight={"semibold"}
+                  w={"100px"}
+                  lineHeight={"1"}
+                  color={product.totalStock > 0 ? "black" : "red.500"}
+                >
+                  {product.totalStock > 0
+                    ? `Only ${product.totalStock} Items Left`
+                    : "Out of Stock"}
+                </Text>
+              </Flex>
+            </Box>
+
+            <Flex mt={10}>
               <Button
-                bg="gray.600"
-                color={"white"}
-                onClick={orderNow}
-                px={8}
-                mr={5}
-                hidden={userRole === "master" && "admin"}
-              >
-                <BiShoppingBag mr={2} />
-                Buy Now
-              </Button>
-              <Button
+                w={{ base: "full", lg: "40%" }}
                 bg="black"
                 color={"white"}
                 onClick={addToCart}
                 px={8}
                 hidden={userRole === "master" && "admin"}
+                isDisabled={product.totalStock === 0}
               >
                 <BiCartAdd /> Add to Cart
               </Button>
@@ -189,7 +212,6 @@ const ProductDetail = () => {
           </Box>
         </Flex>
       </Container>
-      {/* <Footer /> */}
     </>
   );
 };

@@ -3,12 +3,25 @@ const db = require("../models");
 const products = db.Products;
 const category = db.Products_Category;
 const sub_category = db.Products_Sub_Category;
+const stocks = db.Stocks;
 const { Op } = require("sequelize");
 
 const product = {
   getSingleProduct: async (req, res) => {
     try {
       const { id } = req.params;
+      let decryptedId;
+
+      try {
+        decryptedId = decryptData(id);
+      } catch (error) {
+        return res.status(400).json({
+          status: 400,
+          message: "Invalid Product ID",
+          error: error.toString(),
+        });
+      }
+
       const productData = await products.findOne({
         where: { id: decryptData(id) },
         include: [
@@ -21,6 +34,10 @@ const product = {
             model: sub_category,
             as: "product_sub_category",
             attributes: ["name"],
+          },
+          {
+            model: stocks,
+            as: "stock",
           },
         ],
       });
@@ -96,6 +113,10 @@ const product = {
             model: sub_category,
             as: "product_sub_category",
             attributes: ["id", "name"],
+          },
+          {
+            model: stocks,
+            as: "stock",
           },
         ],
         ...query,
@@ -278,31 +299,38 @@ const product = {
   },
 
   deleteProduct: async (req, res) => {
-    const productId = decryptData(req.params.id); // Decrypt the ID
-
-    const product = await products.findOne({
-      where: {
-        id: productId,
-      },
-    });
-
-    if (!product) {
-      return res.status(404).json({
-        status: 404,
-        message: "Product Not Found",
-        error: null,
-        data: null,
-      });
-    }
-
     try {
-      await products.destroy({
-        where: { id: productId },
+      const { id } = req.params;
+      let decryptedId;
+
+      try {
+        decryptedId = decryptData(id);
+      } catch (error) {
+        return res.status(400).json({
+          status: 400,
+          message: "Invalid Product ID",
+          error: error.toString(),
+        });
+      }
+
+      const product = await products.findOne({
+        where: { id: decryptedId },
       });
+
+      if (!product) {
+        return res.status(404).json({
+          status: 404,
+          message: "Product Not Found",
+        });
+      }
+
+      await products.destroy({
+        where: { id: decryptedId },
+      });
+
       res.status(200).json({
         status: 200,
         message: "Product Successfully Deleted",
-        error: null,
       });
     } catch (e) {
       res.status(500).json({
