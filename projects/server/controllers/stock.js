@@ -1,6 +1,5 @@
 const { encryptData, decryptData } = require("../helpers/encrypt");
 const db = require("../models");
-const { Op } = require("sequelize");
 
 const createStock = async (req, res) => {
   const { type } = req.body;
@@ -106,72 +105,7 @@ const getStock = async (req, res) => {
   }
 };
 
-const getProducts = async (req, res) => {
-  const { product_id, warehouse_id } = req.query;
-  try {
-    let whereClause = {};
-    let whereClause2 = {};
-    if (product_id) {
-      whereClause.id = product_id;
-    }
-    if (warehouse_id) {
-      whereClause2["$stock.warehouse_id$"] = warehouse_id;
-    }
-    const products = await db.Products.findAll({
-      where: { [Op.and]: [whereClause, whereClause2] },
-      attributes: {
-        exclude: ["createdAt", "updatedAt", "deletedAt"],
-      },
-      include: {
-        model: db.Stocks,
-        as: "stock",
-        attributes: ["quantity"],
-      },
-    });
-    let result = null;
-    if (products && warehouse_id) {
-      const resProducts = products.map(dt => {
-        const newProducts = { ...dt.dataValues };
-        newProducts.stock = dt.stock[0].quantity;
-        return newProducts;
-      });
-      result = resProducts;
-    }
-    return res.status(200).json({
-      message: "Get products successfully",
-      data: result ? result : products,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Get products failed",
-      error: error.toString(),
-    });
-  }
+module.exports = {
+  createStock,
+  getStock,
 };
-
-const getProduct = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const products = await db.Products.findOne({
-      where: { id: id },
-      attributes: {
-        exclude: ["createdAt", "updatedAt", "deletedAt"],
-      },
-      include: {
-        model: db.Stocks,
-        as: "stock",
-      },
-    });
-    return res.status(200).json({
-      message: "Get products successfully",
-      data: products,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Get products failed",
-      error: error.toString(),
-    });
-  }
-};
-
-module.exports = { createStock, getStock, getProducts, getProduct };
