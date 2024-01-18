@@ -1,0 +1,27 @@
+{
+  "development": {
+    "username": "root",
+    "password": "1234567890",
+    "database": "sound_sense",
+    "host": "127.0.0.1",
+    "port": "3306",
+    "dialect": "mysql",
+    "timezone": "+07:00"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "timezone": "+07:00"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "timezone": "+07:00"
+  }
+}
