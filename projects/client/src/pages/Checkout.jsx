@@ -24,7 +24,7 @@ const steps = [
   { title: "Review", description: "Review order" },
 ];
 const Checkout = () => {
-  const checkoutAddress = useSelector(state => state.formCheckout.address);
+  const checkoutAddress = useSelector((state) => state.formCheckout.address);
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,
@@ -70,11 +70,7 @@ const Checkout = () => {
           {steps[activeStep].description}
         </Heading>
         {/* Put Component Here */}
-        <Flex
-          flexDir="column"
-          w="full"
-          display={activeStep === 0 ? "flex" : "none"}
-        >
+        <Flex flexDir="column" w="full" display={activeStep === 0 ? "flex" : "none"}>
           <InputAddress />
           <InputShipping />
         </Flex>
