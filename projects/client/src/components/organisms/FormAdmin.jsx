@@ -177,10 +177,10 @@ const FormAdmin = ({ data, isOpen, onClose, onCloseComplete }) => {
             </VStack>
           </ModalBody>
           <ModalFooter>
-            <Button isLoading={btnloading} type="submit">
+            <Button isLoading={btnloading} mr="2" type="submit">
               {data ? "Update" : "Create"}
             </Button>
-            <Button bg="black" mr="2" color="white" isDisabled={btnloading}>
+            <Button bg="black" color="white" isDisabled={btnloading}>
               Cancel
             </Button>
           </ModalFooter>
