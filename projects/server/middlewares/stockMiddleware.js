@@ -1,3 +1,4 @@
+const { decryptData } = require("../helpers/encrypt");
 const db = require("../models");
 
 const checkStock = async (req, res, next) => {
@@ -7,13 +8,14 @@ const checkStock = async (req, res, next) => {
     let warehouseId = warehouse_id || from_warehouse_id
     const result = await Promise.all(
       products.map(async (data) => {
+        let decryptedData = decryptData(data.product_id)
         const [stock, created] = await db.Stocks.findOrCreate({
           where: {
-            product_id: data.product_id,
+            product_id: decryptedData,
             warehouse_id: warehouseId,
           },
           defaults: {
-            product_id: data.product_id,
+            product_id: decryptedData,
             warehouse_id: warehouseId,
             quantity: 0,
           },
