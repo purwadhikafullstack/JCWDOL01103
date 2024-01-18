@@ -1,15 +1,31 @@
 const express = require("express");
-const { profileController } = require("../controllers/profile");
+const { profile } = require("../controllers/profile");
 const { multerUpload } = require("../middlewares/multer");
 const router = express.Router();
+const {
+  validateApi,
+  checkRole,
+} = require("../middlewares/apiValidatorMiddleware");
 
-router.get("/profile/:id", profileController.getProfile);
-router.put("/profile/:id/name", profileController.updateName);
+router.get("/profile", validateApi, checkRole(["user"]), profile.getProfile);
 router.put(
-  "/profile/:id/image",
-  multerUpload.single("image"),
-  profileController.updateImage
+  "/profile/name",
+  validateApi,
+  checkRole(["user"]),
+  profile.updateName
 );
-router.put("/profile/:id/password", profileController.updatePassword);
+router.put(
+  "/profile/image",
+  validateApi,
+  checkRole(["user"]),
+  multerUpload.single("image"),
+  profile.updateImage
+);
+router.put(
+  "/profile/password",
+  validateApi,
+  checkRole(["user"]),
+  profile.updatePassword
+);
 
 module.exports = router;

@@ -1,13 +1,10 @@
 import { server } from "../api/index";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { useFormik } from "formik";
+
 import * as Yup from "yup";
-import Navbar from "../components/organisms/Navbar";
-import Footer from "../components/organisms/Footer";
 import {
   Avatar,
-  Container,
   Heading,
   Grid,
   GridItem,
@@ -21,7 +18,6 @@ import {
 } from "@chakra-ui/react";
 
 const Profile = () => {
-  const params = useParams();
   const [profileData, setProfileData] = useState([]);
   const [successNameMessage, setSuccessNameMessage] = useState(null);
   const [errorNameMessage, setErrorNameMessage] = useState(null);
@@ -29,18 +25,20 @@ const Profile = () => {
   const [errorPasswordMessage, setErrorPasswordMessage] = useState(null);
   const [successImageMessage, setSuccessImageMessage] = useState(null);
   const [errorImageMessage, setErrorImageMessage] = useState(null);
+  const imageURL = "http://localhost:8000/uploads/";
+
+  const getProfile = async () => {
+    try {
+      const response = await server.get(`/profile`);
+      setProfileData(response.data);
+    } catch (e) {
+      console.error("Error: ", e);
+    }
+  };
 
   useEffect(() => {
-    const getProfile = async () => {
-      try {
-        const response = await server.get(`/profile/${params.id}`);
-        setProfileData(response.data);
-      } catch (e) {
-        console.error(e + "error");
-      }
-    };
     getProfile();
-  }, [params.id]);
+  }, []);
 
   const imageFormik = useFormik({
     initialValues: {
@@ -70,16 +68,13 @@ const Profile = () => {
         imageData.append("image", selectedFile);
 
         try {
-          const response = await server.put(
-            `/profile/${params.id}/image`,
-            imageData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
+          const response = await server.put(`/profile/image`, imageData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
           setSuccessImageMessage(response.data.message);
+          getProfile();
         } catch (e) {
           setErrorImageMessage(e.response.data.message);
         }
@@ -99,10 +94,17 @@ const Profile = () => {
     }),
     onSubmit: async values => {
       try {
-        const response = await server.put(`/profile/${params.id}/name`, {
+        const response = await server.put(`/profile/name`, {
           name: nameFormik.values.name,
         });
         setSuccessNameMessage(response.data.message);
+        setProfileData(prevData => ({
+          ...prevData,
+          data: {
+            ...prevData.data,
+            name: nameFormik.values.name,
+          },
+        }));
       } catch (e) {
         setErrorNameMessage(e.response.data.message);
       }
@@ -126,7 +128,7 @@ const Profile = () => {
     }),
     onSubmit: async values => {
       try {
-        const response = await server.put(`/profile/${params.id}/password`, {
+        const response = await server.put(`/profile/password`, {
           oldPassword: values.oldPassword,
           newPassword: values.newPassword,
           confNewPassword: values.confNewPassword,
@@ -140,11 +142,7 @@ const Profile = () => {
 
   return (
     <>
-      <Container
-        as="section"
-        mt={{ base: "45px", xl: "100px" }}
-        textAlign={"left"}
-      >
+      <Box ml={{ base: "0", xl: "50px" }} px={5} my={5}>
         <Heading
           fontSize={{ base: "25px", xl: "3xl" }}
           fontWeight={"black"}
@@ -162,11 +160,12 @@ const Profile = () => {
           gap={{ base: 4, xl: 4 }}
         >
           <GridItem>
-            {profileData && (
+            {profileData && profileData.data && (
               <Avatar
+                key={new Date().getTime()}
                 size="2xl"
-                name={profileData.data?.name}
-                src={`http://localhost:8000/uploads/${profileData.data?.image}`}
+                name={profileData.data.name}
+                src={`${imageURL}${profileData?.data.image}`}
                 bg="black"
                 color="white"
                 boxShadow="lg"
@@ -374,7 +373,7 @@ const Profile = () => {
             )}
           </form>
         </Box>
-      </Container>
+      </Box>
     </>
   );
 };

@@ -1,22 +1,23 @@
 const db = require("../models");
-const user = db.user;
+const user = db.Users;
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
-const profileController = {
+const profile = {
   getProfile: async (req, res) => {
     try {
-      const profile = await user.findOne({
+      const userId = req.user.id;
+      const userProfile = await user.findOne({
         attributes: { exclude: ["password", "role"] },
-        where: {
-          user_id: req.params.id,
-        },
+        where: { id: userId },
       });
+      if (!userProfile) {
+        return res.status(404).json({ message: "User not found" });
+      }
       res.status(200).json({
         status: 200,
-        message: "Request was successfull",
+        message: "Request was successful",
         error: null,
-        data: profile,
+        data: userProfile,
       });
     } catch (e) {
       res.status(500).json({
@@ -41,7 +42,7 @@ const profileController = {
     try {
       const findUser = await user.findOne({
         where: {
-          user_id: req.params.id,
+          id: req.user.id,
         },
       });
 
@@ -53,7 +54,7 @@ const profileController = {
         { name: name },
         {
           where: {
-            user_id: req.params.id,
+            id: req.user.id,
           },
         }
       );
@@ -82,7 +83,7 @@ const profileController = {
     try {
       const findUser = await user.findOne({
         where: {
-          user_id: req.params.id,
+          id: req.user.id,
         },
       });
 
@@ -94,7 +95,7 @@ const profileController = {
         { image: image.filename },
         {
           where: {
-            user_id: req.params.id,
+            id: req.user.id,
           },
         }
       );
@@ -119,7 +120,7 @@ const profileController = {
     try {
       const findUser = await user.findOne({
         where: {
-          user_id: req.params.id,
+          id: req.user.id,
         },
       });
 
@@ -149,7 +150,7 @@ const profileController = {
         { password: hashPassword },
         {
           where: {
-            user_id: req.params.id,
+            id: req.user.id,
           },
         }
       );
@@ -169,4 +170,4 @@ const profileController = {
   },
 };
 
-module.exports = { profileController };
+module.exports = { profile };

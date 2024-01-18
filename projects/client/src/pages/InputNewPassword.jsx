@@ -46,7 +46,7 @@ function InputNewPassword() {
         "Passwords didn't match"
       ),
     }),
-    onSubmit: async (values) => {
+    onSubmit: async values => {
       try {
         setBtnLoading(true);
         const data = {

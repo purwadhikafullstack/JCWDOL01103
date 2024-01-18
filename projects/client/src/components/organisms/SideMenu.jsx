@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import { toastConfig } from "../../utils/toastConfig";
 
 const SideMenu = ({ type }) => {
-  const userState = useSelector((state) => state.login.user);
+  const userState = useSelector(state => state.login.user);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [role, setRole] = useState(null);
   const menuBoxRef = useRef();
@@ -94,11 +94,6 @@ const SideMenu = ({ type }) => {
         >
           <BiX size={"30px"} />
         </Button>
-        <MenuItem
-          icon={<BiUser fontSize={"20px"} />}
-          name="Profile"
-          to={`/dashboard/profile/${localStorage.getItem("id")}`}
-        />
         <MenuItem icon={<BiMusic />} name="Product" to="/dashboard/products" />
         <MenuItem
           icon={<BiCategory />}

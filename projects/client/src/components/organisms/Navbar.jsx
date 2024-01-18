@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import soundsenseLogo from "../../assets/img/soundsense-dark.png";
+import { server } from "../../api/index";
 import { BiUser, BiCartAlt, BiSearch } from "react-icons/bi";
 import {
   Container,
@@ -29,16 +30,19 @@ import SideMenu from "./SideMenu";
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const authState = useSelector((state) => state.login.isAuthorized);
-  const userState = useSelector((state) => state.login.user);
+  const authState = useSelector(state => state.login.isAuthorized);
+  const userState = useSelector(state => state.login.user);
   const [userInfo, setUserInfo] = useState(null);
+  const reduxItemCount = useSelector(state => state.cart.itemCount);
+  const [cartItemCount, setCartItemCount] = useState(0);
+
   const dispatch = useDispatch();
   const toast = useToast();
   useEffect(() => {
     (async () => {
       try {
         const token = localStorage.getItem("token");
-        if(token){
+        if (token) {
           const response = await verificationValidator(token);
           if (!response.data.verified) {
             dispatch(logoutAuthorized());
@@ -68,6 +72,35 @@ const Navbar = () => {
     setUserInfo(null);
     navigate("/login");
   };
+
+  const onClickCart = () => {
+    navigate("/cart");
+  };
+
+  const loadCartData = async () => {
+    try {
+      const response = await server.get("/cart");
+      const cartData = response.data;
+
+      let totalCount = 0;
+      cartData.forEach(cart => {
+        cart.detail.forEach(item => {
+          totalCount += item.quantity;
+        });
+      });
+
+      setCartItemCount(totalCount);
+    } catch (error) {
+      console.error("Error fetching cart data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (authState) {
+      loadCartData();
+    }
+  }, [authState]);
+
   return (
     <Container
       as="nav"
@@ -88,19 +121,20 @@ const Navbar = () => {
           }}
           cursor="pointer"
         />
-        {location.pathname.split("/")[1] !== "dashboard" && location.pathname.split("/")[1] !== "checkout" && (
-          <InputGroup mx={"150px"} display={{ base: "none", lg: "block" }}>
-            <InputRightElement pointerEvents="none">
-              <BiSearch color="black" fontSize="20px" />
-            </InputRightElement>
-            <Input
-              placeholder="Search for Sense Gear"
-              focusBorderColor="black"
-              borderRadius={"xl"}
-              border={"1px"}
-            />
-          </InputGroup>
-        )}
+        {location.pathname.split("/")[1] !== "dashboard" &&
+          location.pathname.split("/")[1] !== "checkout" && (
+            <InputGroup mx={"150px"} display={{ base: "none", lg: "block" }}>
+              <InputRightElement pointerEvents="none">
+                <BiSearch color="black" fontSize="20px" />
+              </InputRightElement>
+              <Input
+                placeholder="Search for Sense Gear"
+                focusBorderColor="black"
+                borderRadius={"xl"}
+                border={"1px"}
+              />
+            </InputGroup>
+          )}
         <Flex>
           <Menu>
             {!userInfo ? (
@@ -115,49 +149,55 @@ const Navbar = () => {
               </Button>
             ) : (
               <>
-              <MenuButton>
-                <Flex
-                  alignItems={"center"}
-                  ml={2}
-                  mr={{ base: "1", lg: "5" }}
-                  pr={
-                    userInfo?.role !== "admin" &&
-                    userInfo?.role !== "master" && { base: "1", lg: "5" }
-                  }
-                  boxSizing="content-box"
-                  borderRight={
-                    userInfo?.role !== "admin" &&
-                    userInfo?.role !== "master" &&
-                    "2px"
-                  }
-                  borderColor={"blackAlpha.400"}
-                >
-                  <BiUser color="black" size="30px" />
-                  {/* <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" /> */}
+                <MenuButton>
                   <Flex
-                    flexDir="column"
-                    alignItems="start"
+                    alignItems={"center"}
                     ml={2}
-                    maxW="130px"
-                    w="fit-content"
-                    display={{ base: "none", lg: "flex" }}
+                    mr={{ base: "1", lg: "5" }}
+                    pr={
+                      userInfo?.role !== "admin" &&
+                      userInfo?.role !== "master" && { base: "1", lg: "5" }
+                    }
+                    boxSizing="content-box"
+                    borderRight={
+                      userInfo?.role !== "admin" &&
+                      userInfo?.role !== "master" &&
+                      "2px"
+                    }
+                    borderColor={"blackAlpha.400"}
                   >
-                    <Text
-                      w="full"
-                      fontSize={"md"}
-                      fontWeight={"bold"}
-                      overflow="hidden"
-                      whiteSpace="nowrap"
-                      textOverflow="ellipsis"
-                      textAlign="start"
+                    <BiUser color="black" size="30px" />
+                    <Flex
+                      flexDir="column"
+                      alignItems="start"
+                      ml={2}
+                      maxW="130px"
+                      w="fit-content"
+                      display={{ base: "none", lg: "flex" }}
                     >
-                      {userInfo?.name}
-                    </Text>
-                    <Text fontSize={"sm"}>{userInfo?.role}</Text>
+                      <Text
+                        w="full"
+                        fontSize={"md"}
+                        fontWeight={"bold"}
+                        overflow="hidden"
+                        whiteSpace="nowrap"
+                        textOverflow="ellipsis"
+                        textAlign="start"
+                      >
+                        {userInfo?.name
+                          .split(" ")
+                          .map(
+                            word => word.charAt(0).toUpperCase() + word.slice(1)
+                          )
+                          .join(" ")}
+                      </Text>
+                      <Text fontSize={"sm"} mt={-2}>
+                        {userInfo?.role}
+                      </Text>
+                    </Flex>
                   </Flex>
-                </Flex>
-              </MenuButton>
-              <SideMenu type="navbar"/>
+                </MenuButton>
+                <SideMenu type="navbar" />
               </>
             )}
             <MenuList p="4" maxW="250px">
@@ -188,7 +228,8 @@ const Navbar = () => {
                       Edit Profile
                     </MenuItem>
                   )}
-                  {(userInfo?.role === "admin" || userInfo?.role === "master") && (
+                  {(userInfo?.role === "admin" ||
+                    userInfo?.role === "master") && (
                     <MenuItem
                       mb="2"
                       bg="black"
@@ -196,7 +237,10 @@ const Navbar = () => {
                       borderRadius="md"
                       justifyContent="center"
                       _hover={{ opacity: "0.2" }}
-                      onClick={()=> location.pathname.split("/")[1] !== "dashboard" && navigate("/dashboard")}
+                      onClick={() =>
+                        location.pathname.split("/")[1] !== "dashboard" &&
+                        navigate("/dashboard")
+                      }
                     >
                       Dashboard
                     </MenuItem>
@@ -242,16 +286,28 @@ const Navbar = () => {
           </Menu>
           {userInfo?.role !== "admin" && userInfo?.role !== "master" && (
             <Menu>
-              <MenuButton>
+              <MenuButton onClick={onClickCart}>
                 <Flex alignItems={"center"}>
                   <BiCartAlt color="black" fontSize="30px" />
+                  <Text
+                    ml={2}
+                    color="white"
+                    fontSize={{ base: "9px", lg: "12px" }}
+                    fontWeight={"bold"}
+                    bg="black"
+                    px={2}
+                    py={1}
+                    border={"2px"}
+                    borderColor={"white"}
+                    borderRadius={"full"}
+                    position={"absolute"}
+                    top={{ base: -1, lg: 1 }}
+                    right={{ base: 2, lg: 0 }}
+                  >
+                    {reduxItemCount}
+                  </Text>
                 </Flex>
               </MenuButton>
-              <MenuList>
-                <Text mx={"auto"} fontWeight={"bold"} textAlign="center" my={3}>
-                  Your Cart Is Empty
-                </Text>
-              </MenuList>
             </Menu>
           )}
         </Flex>

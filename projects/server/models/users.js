@@ -8,9 +8,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "user_id",
         as: "addresses",
       });
-      Users.hasOne(models.Warehouses_Users, {
+      Users.hasOne(models.Cart, {
         foreignKey: "user_id",
-        as: "warehouse",
+        as: "cart",
       });
     }
   }
@@ -34,17 +34,18 @@ module.exports = (sequelize, DataTypes) => {
       },
       image: DataTypes.TEXT,
       status: {
-        type: DataTypes.ENUM("active","inactive","reset"),
+        type: DataTypes.ENUM("active", "inactive", "reset"),
         allowNull: false,
-        defaultValue: "active", 
+        defaultValue: "active",
       },
     },
+
     {
       sequelize,
       modelName: "Users",
       tableName: "users",
-      paranoid: true,
       timestamps: true,
+      paranoid: true,
     }
   );
   return Users;

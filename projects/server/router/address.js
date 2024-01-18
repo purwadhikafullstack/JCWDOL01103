@@ -32,10 +32,12 @@ router.patch(
 router.post(
   "/addresses/primary",
   checkRole(["user"]),
-  queryValidation([
-    check("id").notEmpty(),
-  ]),
+  queryValidation([check("id").notEmpty()]),
   addressController.setPrimaryAddress
 );
-router.delete("/addresses/:id",checkRole(["user"]), addressController.deleteAddress);
+router.delete(
+  "/addresses/:id",
+  checkRole(["user"]),
+  addressController.deleteAddress
+);
 module.exports = router;

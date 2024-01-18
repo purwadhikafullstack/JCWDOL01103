@@ -24,46 +24,50 @@ export const SelectWarehouse = ({
   onChange,
   selectedWarehouse,
   isInvalid,
-  isDisabled
+  isDisabled,
 }) => {
   const [warehouses, setWarehouses] = useState(null);
-  const [warehouse, setWarehouse] = useState(null)
+  const [warehouse, setWarehouse] = useState(null);
   const [filterValue, setFilterValue] = useState("");
   const [page, setPage] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-  const fetchWarehouse = async (action) => {
+  const fetchWarehouse = async action => {
     try {
       const queryFilter = {
         search: filterValue,
         page: page,
         exclude_id: except_id,
-      }
-      const response = await getWarehouses(action === "refresher" ? null : queryFilter );
+      };
+      const response = await getWarehouses(
+        action === "refresher" ? null : queryFilter
+      );
       setWarehouses(response.data);
-      return response.data
+      return response.data;
     } catch (error) {
       toast(toastConfig("error", "Failed", error.message));
     }
-  }
+  };
   useEffect(() => {
     (() => {
-      fetchWarehouse()
+      fetchWarehouse();
     })();
   }, [page, except_id]);
-  useEffect(()=>{
-    (async ()=>{
+  useEffect(() => {
+    (async () => {
       try {
         const response = await fetchWarehouse();
-        if(selectedWarehouse){
-          const warehouseDetails = response.warehouses.find(obj => obj.id == selectedWarehouse);
-          setWarehouse(warehouseDetails)
+        if (selectedWarehouse) {
+          const warehouseDetails = response.warehouses.find(
+            obj => obj.id == selectedWarehouse
+          );
+          setWarehouse(warehouseDetails);
         }
       } catch (error) {
         toast(toastConfig("error", "Failed", error.message));
       }
-    })()
-  },[selectedWarehouse])
+    })();
+  }, [selectedWarehouse]);
   return (
     <VStack w="full" justifyContent="start" alignItems="start">
       <Text>Warehouse :</Text>
@@ -83,9 +87,17 @@ export const SelectWarehouse = ({
             <Text>{`${warehouse?.region.city_name}, ${warehouse?.region.province.province_name}, ${warehouse?.region.postal_code}`}</Text>
           </Flex>
         ) : (
-          <Text mb="3" color="gray.500">Please select warehouse</Text>
+          <Text mb="3" color="gray.500">
+            Please select warehouse
+          </Text>
         )}
-        <Button bg="primaryColor" size="sm" color="white" isDisabled={isDisabled} onClick={onOpen}>
+        <Button
+          bg="primaryColor"
+          size="sm"
+          color="white"
+          isDisabled={isDisabled}
+          onClick={onOpen}
+        >
           {selectedWarehouse ? "Change" : "Select"}
         </Button>
       </Box>
@@ -97,11 +109,11 @@ export const SelectWarehouse = ({
           <ModalBody display="flex" flexDir="column" pb={6} gap="4" maxH="70vh">
             <SearchInput
               placeholder="Search warehouse name"
-              onChangeInput={(val) => setFilterValue(val)}
+              onChangeInput={val => setFilterValue(val)}
               onPressEnter={fetchWarehouse}
             />
             <Flex overflow="scroll" flexDir="column" gap="4">
-              {warehouses?.warehouses?.map((dt) => {
+              {warehouses?.warehouses?.map(dt => {
                 return (
                   <Flex
                     key={dt.id}
@@ -112,7 +124,12 @@ export const SelectWarehouse = ({
                     borderRadius="md"
                     py="2"
                     px="4"
-                    onClick={async() => {onClose(); setFilterValue(""); fetchWarehouse("refresher") ; onChange && onChange(dt)}}
+                    onClick={async () => {
+                      onClose();
+                      setFilterValue("");
+                      fetchWarehouse("refresher");
+                      onChange && onChange(dt);
+                    }}
                   >
                     <Text fontWeight="semibold">{dt.name}</Text>
                     <Text>
@@ -127,7 +144,7 @@ export const SelectWarehouse = ({
             <Pagination
               totalPage={warehouses?.totalPages}
               currentPage={warehouses?.currentPage}
-              onChangePage={(num) => setPage(num)}
+              onChangePage={num => setPage(num)}
             />
           </ModalBody>
         </ModalContent>
