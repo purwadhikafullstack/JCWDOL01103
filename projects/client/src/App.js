@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Homepage from "./pages/Homepage";
-import Profile from "./pages/Profile";
 import Authentication from "./pages/Authentication";
 import Verification from "./pages/Verification";
 import NotFound from "./pages/NotFound";
@@ -25,13 +24,19 @@ import Checkout from "./pages/Checkout";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Homepage />} />
       <Route path="/login" element={<Authentication />} />
       <Route path="/verification/:token" element={<Verification />} />
       <Route path="/reset" element={<ResetPassword />} />
       <Route path="/reset/:token" element={<InputNewPassword />} />
-      <Route path="/profile/:id" element={<Profile />} />
       <Route element={<LayoutRoot />}>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/products" element={<Product />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/shop/product/:id" element={<ProductDetail />} />
+        <Route
+          path="/cart"
+          element={<ProtectedRoute element={<Cart />} roles={["user"]} />}
+        />
         <Route
           path="/account"
           element={
@@ -50,7 +55,7 @@ function App() {
         />
       </Route>
       <Route path="/dashboard" element={<LayoutDashboard />}>
-        <Route index element={<Navigate to="product" replace={true} />} />
+        <Route index element={<Navigate to="products" replace={true} />} />
         <Route
           path="warehouses"
           element={
@@ -91,13 +96,7 @@ function App() {
           }
         />
       </Route>
-      <Route path="/products" element={<Product />} />
-      <Route path="/shop" element={<Shop />} />
-      <Route path="/shop/product/:id" element={<ProductDetail />} />
-      <Route
-        path="/cart"
-        element={<ProtectedRoute element={<Cart />} roles={["user"]} />}
-      />
+
       <Route path="/not-found" element={<NotFound />} />
       <Route path="/forbidden" element={<NotFound type="forbidden" />} />
       <Route path="*" element={<NotFound />} />

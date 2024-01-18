@@ -49,7 +49,7 @@ module.exports = {
         updatedAt: currentDate,
       },
       {
-        id: 6,
+        id: 8,
         name: "dj equipment",
         createdAt: currentDate,
         updatedAt: currentDate,

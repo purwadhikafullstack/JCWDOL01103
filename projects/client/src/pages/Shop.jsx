@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../components/organisms/Navbar";
-import Footer from "../components/organisms/Footer";
 import { server } from "../api/index";
 import {
   Box,
@@ -141,7 +139,6 @@ const Shop = () => {
 
   return (
     <>
-      <Navbar />
       <Container
         as="section"
         maxW={{ xl: "7xl", "2xl": "8xl" }}
@@ -331,7 +328,6 @@ const Shop = () => {
           </Box>
         </Flex>
       </Container>
-      <Footer />
     </>
   );
 };

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setItemCount } from "../store/slicer/cartSlice";
 import { server } from "../api/index";
-import Navbar from "../components/organisms/Navbar";
-import Footer from "../components/organisms/Footer";
+// import Navbar from "../components/organisms/Navbar";
+// import Footer from "../components/organisms/Footer";
 import {
   Box,
   Container,
@@ -126,7 +126,7 @@ const Cart = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <Container
         as="section"
         maxW={{ xl: "7xl", "2xl": "8xl" }}
@@ -278,7 +278,7 @@ const Cart = () => {
           </Grid>
         )}
       </Container>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

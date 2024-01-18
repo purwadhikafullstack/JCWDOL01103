@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { server } from "../api/index";
-import Navbar from "../components/organisms/Navbar";
-import Footer from "../components/organisms/Footer";
+// import Navbar from "../components/organisms/Navbar";
+// import Footer from "../components/organisms/Footer";
 import {
   Box,
   Container,
@@ -87,7 +87,7 @@ const ProductDetail = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <Container
         as="section"
         maxW={{ xl: "7xl", "2xl": "8xl" }}
@@ -189,7 +189,7 @@ const ProductDetail = () => {
           </Box>
         </Flex>
       </Container>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

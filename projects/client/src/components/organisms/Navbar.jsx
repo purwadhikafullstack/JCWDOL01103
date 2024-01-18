@@ -30,7 +30,6 @@ import SideMenu from "./SideMenu";
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
   const authState = useSelector(state => state.login.isAuthorized);
   const userState = useSelector(state => state.login.user);
   const [userInfo, setUserInfo] = useState(null);
@@ -54,8 +53,7 @@ const Navbar = () => {
         dispatch(logoutAuthorized());
       }
     })();
-  }, [dispatch]);
-
+  }, []);
   useEffect(() => {
     (async () => {
       try {
@@ -68,7 +66,7 @@ const Navbar = () => {
         toast(toastConfig("error", "Failed", error.message));
       }
     })();
-  }, [authState, dispatch, userState]);
+  }, [authState, dispatch]);
   const onClickLogout = () => {
     dispatch(logoutAuthorized());
     setUserInfo(null);
@@ -169,7 +167,6 @@ const Navbar = () => {
                     borderColor={"blackAlpha.400"}
                   >
                     <BiUser color="black" size="30px" />
-                    {/* <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" /> */}
                     <Flex
                       flexDir="column"
                       alignItems="start"
@@ -187,9 +184,16 @@ const Navbar = () => {
                         textOverflow="ellipsis"
                         textAlign="start"
                       >
-                        {userInfo?.name}
+                        {userInfo?.name
+                          .split(" ")
+                          .map(
+                            word => word.charAt(0).toUpperCase() + word.slice(1)
+                          )
+                          .join(" ")}
                       </Text>
-                      <Text fontSize={"sm"}>{userInfo?.role}</Text>
+                      <Text fontSize={"sm"} mt={-2}>
+                        {userInfo?.role}
+                      </Text>
                     </Flex>
                   </Flex>
                 </MenuButton>
@@ -281,28 +285,30 @@ const Navbar = () => {
             </MenuList>
           </Menu>
           {userInfo?.role !== "admin" && userInfo?.role !== "master" && (
-            <MenuButton onClick={onClickCart}>
-              <Flex alignItems={"center"}>
-                <BiCartAlt color="black" fontSize="30px" />
-                <Text
-                  ml={2}
-                  color="white"
-                  fontSize={{ base: "9px", lg: "12px" }}
-                  fontWeight={"bold"}
-                  bg="black"
-                  px={2}
-                  py={1}
-                  border={"2px"}
-                  borderColor={"white"}
-                  borderRadius={"full"}
-                  position={"absolute"}
-                  top={{ base: -1, lg: 1 }}
-                  right={{ base: 2, lg: 0 }}
-                >
-                  {reduxItemCount}
-                </Text>
-              </Flex>
-            </MenuButton>
+            <Menu>
+              <MenuButton onClick={onClickCart}>
+                <Flex alignItems={"center"}>
+                  <BiCartAlt color="black" fontSize="30px" />
+                  <Text
+                    ml={2}
+                    color="white"
+                    fontSize={{ base: "9px", lg: "12px" }}
+                    fontWeight={"bold"}
+                    bg="black"
+                    px={2}
+                    py={1}
+                    border={"2px"}
+                    borderColor={"white"}
+                    borderRadius={"full"}
+                    position={"absolute"}
+                    top={{ base: -1, lg: 1 }}
+                    right={{ base: 2, lg: 0 }}
+                  >
+                    {reduxItemCount}
+                  </Text>
+                </Flex>
+              </MenuButton>
+            </Menu>
           )}
         </Flex>
       </Flex>
