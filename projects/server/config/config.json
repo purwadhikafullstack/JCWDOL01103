@@ -1,10 +1,10 @@
 {
   "development": {
-    "username": "root",
-    "password": "root",
-    "database": "soundsense",
-    "host": "localhost",
-    "port": "8889",
+    "username": "jcwdol01103",
+    "password": "jcwdol01103",
+    "database": "jcwdol01103",
+    "host": "jcwdol01103.purwadhikabootcamp.com",
+    "port": "3306",
     "dialect": "mysql",
     "timezone": "+07:00"
   },

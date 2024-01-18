@@ -35,7 +35,6 @@ const AlertConfirmation = ({
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
             {header}
           </AlertDialogHeader>
-          <AlertDialogCloseButton isDisabled={isLoading} />
           <AlertDialogBody>{description}</AlertDialogBody>
           <AlertDialogFooter>
             <Button
