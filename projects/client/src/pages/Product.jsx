@@ -32,7 +32,9 @@ import {
   Avatar,
   Select,
 } from "@chakra-ui/react";
-import { BiEditAlt, BiTrashAlt, BiSortZA, BiTime } from "react-icons/bi";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { HiOutlinePencil } from "react-icons/hi";
+import { BiSortZA, BiTime } from "react-icons/bi";
 
 const Category = () => {
   const [products, setProducts] = useState([]);
@@ -46,7 +48,7 @@ const Category = () => {
   const [sortOrder, setSortOrder] = useState("ascending");
   const [sortField, setSortField] = useState("product_name");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [itemsPerPage] = useState(8);
   const [totalPages, setTotalPages] = useState(0);
   const [userRole, setUserRole] = useState(null);
   const imageURL = "http://localhost:8000/uploads/";
@@ -347,7 +349,7 @@ const Category = () => {
 
   return (
     <>
-      <Box ml={{ base: "0", xl: "50px" }} px={5} my={5}>
+      <Box ml={0} my={5} overflowX="auto">
         <Heading
           fontSize={{ base: "25px", xl: "3xl" }}
           fontWeight={"black"}
@@ -361,11 +363,12 @@ const Category = () => {
           <Button
             bg="black"
             color="white"
+            w={"200px"}
             _hover={{ bg: "blackAlpha.600" }}
             onClick={() => setIsAddModalOpen(true)}
             isDisabled={userRole !== "master"}
           >
-            Add Product
+            Create
           </Button>
           <Input
             w={"30%"}
@@ -548,342 +551,340 @@ const Category = () => {
             </form>
           </Modal>
         </FormControl>
-
-        <TableContainer>
-          {isLoading ? (
-            <Spinner size="md" />
-          ) : (
-            <Table variant="simple">
-              <Thead>
-                <Tr>
-                  <Th>No</Th>
-                  <Th>Name</Th>
-                  <Th>Description</Th>
-                  <Th>Category</Th>
-                  <Th>Sub Category</Th>
-                  <Th>Price</Th>
-                  <Th>Weight</Th>
-                  <Th>Image</Th>
-                  <Th>Actions</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {products.length === 0 ? (
+        <Box maxWidth="100%" overflowX="scroll">
+          <TableContainer overflowX="auto">
+            {isLoading ? (
+              <Spinner size="md" />
+            ) : (
+              <Table variant="simple" size={"sm"}>
+                <Thead>
                   <Tr>
-                    <Td colSpan="3" textAlign="center">
-                      Data Not Found
-                    </Td>
+                    <Th>No</Th>
+                    <Th>Name</Th>
+                    <Th>Description</Th>
+                    <Th>Category</Th>
+                    <Th>Price</Th>
+                    <Th>Weight</Th>
+                    <Th>Image</Th>
+                    <Th>Actions</Th>
                   </Tr>
-                ) : (
-                  products.map((product, index) => (
-                    <Tr key={product.id}>
-                      <Td>{index + 1}</Td>
-                      <Td maxW="400px" isTruncated>
-                        {product.product_name}
-                      </Td>
-                      <Td maxW="400px" isTruncated>
-                        {product.description}
-                      </Td>
-                      <Td maxW="400px" isTruncated>
-                        {product.categoryName}
-                      </Td>
-                      <Td maxW="400px" isTruncated>
-                        {product.subCategoryName}
-                      </Td>
-                      <Td maxW="400px" isTruncated>
-                        {product.price
-                          ? product.price.toLocaleString("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                              minimumFractionDigits: 0,
-                              maximumFractionDigits: 2,
-                            })
-                          : "Loading price..."}
-                      </Td>
-                      <Td maxW="400px" isTruncated>
-                        {`${product.weight} Kg`}
-                      </Td>
-                      <Td maxW="400px" isTruncated>
-                        <Avatar
-                          name={product.product_name}
-                          src={`${imageURL}${product?.image}`}
-                        />
-                      </Td>
-                      <Td>
-                        <Button
-                          bg="green"
-                          color="white"
-                          mt={1}
-                          mr={4}
-                          _hover={{ bg: "blackAlpha.600" }}
-                          onClick={() => handleOpenEditModal(product.id)}
-                          isDisabled={userRole !== "master"}
-                        >
-                          {/* Modal Edit Product */}
-                          <Modal
-                            isOpen={isEditModalOpen}
-                            onClose={() => setIsEditModalOpen(false)}
-                            mx={5}
-                          >
-                            <form onSubmit={editFormik.handleSubmit}>
-                              <ModalOverlay />
-                              <ModalContent>
-                                <ModalHeader>Edit Product</ModalHeader>
-                                <ModalBody>
-                                  <FormLabel fontSize={16} mt={1}>
-                                    Name
-                                  </FormLabel>
-                                  <Input
-                                    mb={3}
-                                    focusBorderColor="black"
-                                    placeholder="Name"
-                                    value={editFormik.values.product_name}
-                                    name="product_name"
-                                    onChange={editFormik.handleChange}
-                                    onBlur={editFormik.handleBlur}
-                                  />
-                                  {editFormik.touched.product_name &&
-                                  editFormik.errors.product_name ? (
-                                    <Text
-                                      mb={3}
-                                      mt={-2}
-                                      color={"red.500"}
-                                      fontSize={"sm"}
-                                    >
-                                      {editFormik.errors.product_name}
-                                    </Text>
-                                  ) : null}
-                                  <FormLabel fontSize={16} mt={1}>
-                                    Description
-                                  </FormLabel>
-                                  <Input
-                                    mb={3}
-                                    focusBorderColor="black"
-                                    placeholder="Description"
-                                    value={editFormik.values.description}
-                                    name="description"
-                                    onChange={editFormik.handleChange}
-                                    onBlur={editFormik.handleBlur}
-                                  />
-                                  {editFormik.touched.description &&
-                                  editFormik.errors.description ? (
-                                    <Text
-                                      mb={3}
-                                      mt={-2}
-                                      color={"red.500"}
-                                      fontSize={"sm"}
-                                    >
-                                      {editFormik.errors.description}
-                                    </Text>
-                                  ) : null}
-                                  <FormLabel fontSize={16} mt={1}>
-                                    Category
-                                  </FormLabel>
-                                  <Select
-                                    mb={3}
-                                    focusBorderColor="black"
-                                    placeholder="Select Category"
-                                    name="product_category"
-                                    onChange={editFormik.handleChange}
-                                    onBlur={editFormik.handleBlur}
-                                    value={editFormik.values.product_category}
-                                  >
-                                    {categoryOptions.map(option => (
-                                      <option
-                                        key={option.value}
-                                        value={option.value}
-                                      >
-                                        {option.label}
-                                      </option>
-                                    ))}
-                                  </Select>
-                                  {editFormik.touched.product_category &&
-                                  editFormik.errors.product_category ? (
-                                    <Text
-                                      mb={3}
-                                      mt={-2}
-                                      color={"red.500"}
-                                      fontSize={"sm"}
-                                    >
-                                      {editFormik.errors.product_category}
-                                    </Text>
-                                  ) : null}
-                                  <FormLabel fontSize={16} mt={1}>
-                                    Sub Category
-                                  </FormLabel>
-                                  <Select
-                                    mb={3}
-                                    focusBorderColor="black"
-                                    placeholder="Select Sub Category"
-                                    name="product_sub_category"
-                                    onChange={editFormik.handleChange}
-                                    onBlur={editFormik.handleBlur}
-                                    value={
-                                      editFormik.values.product_sub_category
-                                    }
-                                  >
-                                    {subCategoryOptions.map(option => (
-                                      <option
-                                        key={option.value}
-                                        value={option.value}
-                                      >
-                                        {option.label}
-                                      </option>
-                                    ))}
-                                  </Select>
-                                  {editFormik.touched.product_sub_category &&
-                                  editFormik.errors.product_sub_category ? (
-                                    <Text
-                                      mb={3}
-                                      mt={-2}
-                                      color={"red.500"}
-                                      fontSize={"sm"}
-                                    >
-                                      {editFormik.errors.product_sub_category}
-                                    </Text>
-                                  ) : null}
-                                  <FormLabel fontSize={16} mt={1}>
-                                    Price
-                                  </FormLabel>
-                                  <Input
-                                    mb={3}
-                                    focusBorderColor="black"
-                                    placeholder="Price"
-                                    value={editFormik.values.price}
-                                    name="price"
-                                    type="number"
-                                    onChange={editFormik.handleChange}
-                                    onBlur={editFormik.handleBlur}
-                                  />
-                                  {editFormik.touched.price &&
-                                  editFormik.errors.price ? (
-                                    <Text
-                                      mb={3}
-                                      mt={-2}
-                                      color={"red.500"}
-                                      fontSize={"sm"}
-                                    >
-                                      {editFormik.errors.price}
-                                    </Text>
-                                  ) : null}
-                                  <FormLabel fontSize={16} mt={1}>
-                                    Weight
-                                  </FormLabel>
-                                  <Input
-                                    mb={3}
-                                    focusBorderColor="black"
-                                    placeholder="Weight"
-                                    value={editFormik.values.weight}
-                                    name="weight"
-                                    type="number"
-                                    onChange={editFormik.handleChange}
-                                    onBlur={editFormik.handleBlur}
-                                  />
-                                  {editFormik.touched.weight &&
-                                  editFormik.errors.weight ? (
-                                    <Text
-                                      mb={3}
-                                      mt={-2}
-                                      color={"red.500"}
-                                      fontSize={"sm"}
-                                    >
-                                      {editFormik.errors.weight}
-                                    </Text>
-                                  ) : null}
-                                  <FormLabel fontSize={16} mt={1}>
-                                    Image
-                                  </FormLabel>
-                                  <Input
-                                    mb={3}
-                                    focusBorderColor="black"
-                                    placeholder="Image"
-                                    name="image"
-                                    type="file"
-                                    onChange={event => {
-                                      editFormik.setFieldValue(
-                                        "image",
-                                        event.currentTarget.files[0]
-                                      );
-                                    }}
-                                    onBlur={editFormik.handleBlur}
-                                  />
-                                  {editFormik.touched.image &&
-                                  editFormik.errors.image ? (
-                                    <Text
-                                      mb={3}
-                                      mt={-2}
-                                      color={"red.500"}
-                                      fontSize={"sm"}
-                                    >
-                                      {editFormik.errors.image}
-                                    </Text>
-                                  ) : null}
-                                </ModalBody>
-                                <ModalFooter>
-                                  <Button
-                                    colorScheme="green"
-                                    mr={3}
-                                    type="submit"
-                                  >
-                                    Edit
-                                  </Button>
-                                  <Button
-                                    onClick={() => setIsEditModalOpen(false)}
-                                  >
-                                    Cancel
-                                  </Button>
-                                </ModalFooter>
-                              </ModalContent>
-                            </form>
-                          </Modal>
-                          <BiEditAlt />
-                        </Button>
-                        <Button
-                          bg="red"
-                          color="white"
-                          mt={1}
-                          _hover={{ bg: "blackAlpha.600" }}
-                          onClick={() => {
-                            setDeletingProductId(product.id);
-                            setIsConfModalOpen(true);
-                          }}
-                          isDisabled={userRole !== "master"}
-                        >
-                          <BiTrashAlt />
-                        </Button>
-
-                        <Modal
-                          isOpen={isConfModalOpen}
-                          onClose={() => setIsConfModalOpen(false)}
-                        >
-                          <ModalOverlay />
-                          <ModalContent>
-                            <ModalHeader>Confirmation</ModalHeader>
-                            <ModalBody>
-                              Are you sure you want to delete this product?
-                            </ModalBody>
-                            <ModalFooter>
-                              <Button
-                                colorScheme="red"
-                                mr={3}
-                                onClick={deleteHandler}
-                              >
-                                Delete
-                              </Button>
-                              <Button onClick={() => setIsConfModalOpen(false)}>
-                                Cancel
-                              </Button>
-                            </ModalFooter>
-                          </ModalContent>
-                        </Modal>
+                </Thead>
+                <Tbody>
+                  {products.length === 0 ? (
+                    <Tr>
+                      <Td colSpan="3" textAlign="center">
+                        Data Not Found
                       </Td>
                     </Tr>
-                  ))
-                )}
-              </Tbody>
-            </Table>
-          )}
-        </TableContainer>
+                  ) : (
+                    products.map((product, index) => (
+                      <Tr key={product.id}>
+                        <Td>{index + 1}</Td>
+                        <Td maxW="300px" isTruncated>
+                          {product.product_name}
+                        </Td>
+                        <Td maxW="150px" isTruncated>
+                          {product.description}
+                        </Td>
+                        <Td maxW="400px" isTruncated>
+                          {product.categoryName}
+                        </Td>
+                        <Td maxW="400px" isTruncated>
+                          {product.price
+                            ? product.price.toLocaleString("id-ID", {
+                                style: "currency",
+                                currency: "IDR",
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 2,
+                              })
+                            : "Loading price..."}
+                        </Td>
+                        <Td maxW="100px" isTruncated>
+                          {`${product.weight} Kg`}
+                        </Td>
+                        <Td maxW="200px" isTruncated>
+                          <Avatar
+                            name={product.product_name}
+                            src={`${imageURL}${product?.image}`}
+                          />
+                        </Td>
+                        <Td>
+                          <Button
+                            bg="transparent"
+                            mt={1}
+                            mr={4}
+                            _hover={{ bg: "blackAlpha.600" }}
+                            onClick={() => handleOpenEditModal(product.id)}
+                            isDisabled={userRole !== "master"}
+                          >
+                            {/* Modal Edit Product */}
+                            <Modal
+                              isOpen={isEditModalOpen}
+                              onClose={() => setIsEditModalOpen(false)}
+                              mx={5}
+                            >
+                              <form onSubmit={editFormik.handleSubmit}>
+                                <ModalOverlay />
+                                <ModalContent>
+                                  <ModalHeader>Edit Product</ModalHeader>
+                                  <ModalBody>
+                                    <FormLabel fontSize={16} mt={1}>
+                                      Name
+                                    </FormLabel>
+                                    <Input
+                                      mb={3}
+                                      focusBorderColor="black"
+                                      placeholder="Name"
+                                      value={editFormik.values.product_name}
+                                      name="product_name"
+                                      onChange={editFormik.handleChange}
+                                      onBlur={editFormik.handleBlur}
+                                    />
+                                    {editFormik.touched.product_name &&
+                                    editFormik.errors.product_name ? (
+                                      <Text
+                                        mb={3}
+                                        mt={-2}
+                                        color={"red.500"}
+                                        fontSize={"sm"}
+                                      >
+                                        {editFormik.errors.product_name}
+                                      </Text>
+                                    ) : null}
+                                    <FormLabel fontSize={16} mt={1}>
+                                      Description
+                                    </FormLabel>
+                                    <Input
+                                      mb={3}
+                                      focusBorderColor="black"
+                                      placeholder="Description"
+                                      value={editFormik.values.description}
+                                      name="description"
+                                      onChange={editFormik.handleChange}
+                                      onBlur={editFormik.handleBlur}
+                                    />
+                                    {editFormik.touched.description &&
+                                    editFormik.errors.description ? (
+                                      <Text
+                                        mb={3}
+                                        mt={-2}
+                                        color={"red.500"}
+                                        fontSize={"sm"}
+                                      >
+                                        {editFormik.errors.description}
+                                      </Text>
+                                    ) : null}
+                                    <FormLabel fontSize={16} mt={1}>
+                                      Category
+                                    </FormLabel>
+                                    <Select
+                                      mb={3}
+                                      focusBorderColor="black"
+                                      placeholder="Select Category"
+                                      name="product_category"
+                                      onChange={editFormik.handleChange}
+                                      onBlur={editFormik.handleBlur}
+                                      value={editFormik.values.product_category}
+                                    >
+                                      {categoryOptions.map(option => (
+                                        <option
+                                          key={option.value}
+                                          value={option.value}
+                                        >
+                                          {option.label}
+                                        </option>
+                                      ))}
+                                    </Select>
+                                    {editFormik.touched.product_category &&
+                                    editFormik.errors.product_category ? (
+                                      <Text
+                                        mb={3}
+                                        mt={-2}
+                                        color={"red.500"}
+                                        fontSize={"sm"}
+                                      >
+                                        {editFormik.errors.product_category}
+                                      </Text>
+                                    ) : null}
+                                    <FormLabel fontSize={16} mt={1}>
+                                      Sub Category
+                                    </FormLabel>
+                                    <Select
+                                      mb={3}
+                                      focusBorderColor="black"
+                                      placeholder="Select Sub Category"
+                                      name="product_sub_category"
+                                      onChange={editFormik.handleChange}
+                                      onBlur={editFormik.handleBlur}
+                                      value={
+                                        editFormik.values.product_sub_category
+                                      }
+                                    >
+                                      {subCategoryOptions.map(option => (
+                                        <option
+                                          key={option.value}
+                                          value={option.value}
+                                        >
+                                          {option.label}
+                                        </option>
+                                      ))}
+                                    </Select>
+                                    {editFormik.touched.product_sub_category &&
+                                    editFormik.errors.product_sub_category ? (
+                                      <Text
+                                        mb={3}
+                                        mt={-2}
+                                        color={"red.500"}
+                                        fontSize={"sm"}
+                                      >
+                                        {editFormik.errors.product_sub_category}
+                                      </Text>
+                                    ) : null}
+                                    <FormLabel fontSize={16} mt={1}>
+                                      Price
+                                    </FormLabel>
+                                    <Input
+                                      mb={3}
+                                      focusBorderColor="black"
+                                      placeholder="Price"
+                                      value={editFormik.values.price}
+                                      name="price"
+                                      type="number"
+                                      onChange={editFormik.handleChange}
+                                      onBlur={editFormik.handleBlur}
+                                    />
+                                    {editFormik.touched.price &&
+                                    editFormik.errors.price ? (
+                                      <Text
+                                        mb={3}
+                                        mt={-2}
+                                        color={"red.500"}
+                                        fontSize={"sm"}
+                                      >
+                                        {editFormik.errors.price}
+                                      </Text>
+                                    ) : null}
+                                    <FormLabel fontSize={16} mt={1}>
+                                      Weight
+                                    </FormLabel>
+                                    <Input
+                                      mb={3}
+                                      focusBorderColor="black"
+                                      placeholder="Weight"
+                                      value={editFormik.values.weight}
+                                      name="weight"
+                                      type="number"
+                                      onChange={editFormik.handleChange}
+                                      onBlur={editFormik.handleBlur}
+                                    />
+                                    {editFormik.touched.weight &&
+                                    editFormik.errors.weight ? (
+                                      <Text
+                                        mb={3}
+                                        mt={-2}
+                                        color={"red.500"}
+                                        fontSize={"sm"}
+                                      >
+                                        {editFormik.errors.weight}
+                                      </Text>
+                                    ) : null}
+                                    <FormLabel fontSize={16} mt={1}>
+                                      Image
+                                    </FormLabel>
+                                    <Input
+                                      mb={3}
+                                      focusBorderColor="black"
+                                      placeholder="Image"
+                                      name="image"
+                                      type="file"
+                                      onChange={event => {
+                                        editFormik.setFieldValue(
+                                          "image",
+                                          event.currentTarget.files[0]
+                                        );
+                                      }}
+                                      onBlur={editFormik.handleBlur}
+                                    />
+                                    {editFormik.touched.image &&
+                                    editFormik.errors.image ? (
+                                      <Text
+                                        mb={3}
+                                        mt={-2}
+                                        color={"red.500"}
+                                        fontSize={"sm"}
+                                      >
+                                        {editFormik.errors.image}
+                                      </Text>
+                                    ) : null}
+                                  </ModalBody>
+                                  <ModalFooter>
+                                    <Button
+                                      colorScheme="green"
+                                      mr={3}
+                                      type="submit"
+                                    >
+                                      Edit
+                                    </Button>
+                                    <Button
+                                      onClick={() => setIsEditModalOpen(false)}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </ModalFooter>
+                                </ModalContent>
+                              </form>
+                            </Modal>
+                            <HiOutlinePencil />
+                          </Button>
+                          <Button
+                            bg="transparent"
+                            mt={1}
+                            _hover={{ bg: "blackAlpha.600" }}
+                            onClick={() => {
+                              setDeletingProductId(product.id);
+                              setIsConfModalOpen(true);
+                            }}
+                            isDisabled={userRole !== "master"}
+                          >
+                            <FaRegTrashAlt />
+                          </Button>
+
+                          <Modal
+                            isOpen={isConfModalOpen}
+                            onClose={() => setIsConfModalOpen(false)}
+                          >
+                            <ModalOverlay />
+                            <ModalContent>
+                              <ModalHeader>Confirmation</ModalHeader>
+                              <ModalBody>
+                                Are you sure you want to delete this product?
+                              </ModalBody>
+                              <ModalFooter>
+                                <Button
+                                  colorScheme="red"
+                                  mr={3}
+                                  onClick={deleteHandler}
+                                >
+                                  Delete
+                                </Button>
+                                <Button
+                                  onClick={() => setIsConfModalOpen(false)}
+                                >
+                                  Cancel
+                                </Button>
+                              </ModalFooter>
+                            </ModalContent>
+                          </Modal>
+                        </Td>
+                      </Tr>
+                    ))
+                  )}
+                </Tbody>
+              </Table>
+            )}
+          </TableContainer>
+        </Box>
+
         <Flex mt="5">
           <Button
             onClick={() => handlePageChange(currentPage - 1)}
