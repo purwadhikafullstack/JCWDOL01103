@@ -85,7 +85,7 @@ const Journal = () => {
       try {
         const response = await getProducts();
         const userData = jwtDecode(localStorage.getItem("token"));
-        const options = response.data.map((dt) => {
+        const options = response.data.map(dt => {
           return {
             value: dt.id,
             label: dt.product_name,
@@ -105,11 +105,11 @@ const Journal = () => {
     })();
   }, []);
   useEffect(() => {
-    const updatedOptions = products?.map((dt) => {
+    const updatedOptions = products?.map(dt => {
       return {
         ...dt,
         isDisabled: formik.values.listedProduct.some(
-          (selectedOption) => selectedOption.product.value == dt.value
+          selectedOption => selectedOption.product.value == dt.value
         ),
       };
     });
@@ -152,7 +152,7 @@ const Journal = () => {
     ]);
   };
 
-  const onDeleteHandler = (idx) => {
+  const onDeleteHandler = idx => {
     const newArr = formik.values.listedProduct;
     newArr.splice(idx, 1);
     formik.setFieldValue("listedProduct", [...newArr]);
@@ -180,7 +180,7 @@ const Journal = () => {
     setIsLoading(true);
     try {
       const value = formik.values;
-      const products = value.listedProduct.map((dt) => {
+      const products = value.listedProduct.map(dt => {
         return {
           product_id: dt.product.value,
           amount: dt.amount,
@@ -230,7 +230,7 @@ const Journal = () => {
             <SelectWarehouse
               isOpen={openModalWarehouse}
               onClose={() => setOpenModalWarehouse(false)}
-              onClickRow={(val) => {
+              onClickRow={val => {
                 setWarehouse(val);
                 formik.setFieldValue("warehouse_id", val.id);
                 setOpenModalWarehouse(false);
@@ -239,7 +239,7 @@ const Journal = () => {
               isInvalid={
                 formik.errors.warehouse_id && formik.touched.warehouse_id
               }
-              onChange={(val) => formik.setFieldValue("warehouse_id", val.id)}
+              onChange={val => formik.setFieldValue("warehouse_id", val.id)}
             />
           )}
           <TableContainer
@@ -274,7 +274,7 @@ const Journal = () => {
                             id={`listedProduct[${idx}].product.value`}
                             name={`listedProduct[${idx}].product.value`}
                             placeholder="Select Product"
-                            onChange={(opt) => onChangeProductHandler(opt, idx)}
+                            onChange={opt => onChangeProductHandler(opt, idx)}
                             onBlur={() =>
                               formik.setFieldTouched(
                                 `listedProduct[${idx}].product.value`,
@@ -282,7 +282,7 @@ const Journal = () => {
                               )
                             }
                             styles={{
-                              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                              menuPortal: base => ({ ...base, zIndex: 9999 }),
                             }}
                             menuPosition="fixed"
                             menuPortalTarget={document.querySelector("body")}
@@ -321,7 +321,7 @@ const Journal = () => {
                             }
                             id={`listedProduct[${idx}].amount`}
                             name={`listedProduct[${idx}].amount`}
-                            onChange={(value) =>
+                            onChange={value =>
                               onChangeAmountHandler(value, idx)
                             }
                             onBlur={formik.handleBlur}

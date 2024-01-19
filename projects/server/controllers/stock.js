@@ -82,7 +82,7 @@ const getStock = async (req, res) => {
       },
     });
     let total = 0;
-    const encryptedResult = stock.map((dt) => {
+    const encryptedResult = stock.map(dt => {
       const newStock = { ...dt.dataValues };
       total += newStock.quantity;
       newStock.id = encryptData(newStock.id);

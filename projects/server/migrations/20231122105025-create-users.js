@@ -16,17 +16,17 @@ module.exports = {
         type: Sequelize.STRING,
       },
       password: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       role: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       image: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       status: {
-        type: Sequelize.ENUM("active","inactive","reset"),
+        type: Sequelize.ENUM("active", "inactive", "reset"),
         allowNull: false,
         defaultValue: "active",
       },

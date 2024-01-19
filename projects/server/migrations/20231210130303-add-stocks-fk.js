@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.addConstraint("stocks", {
       fields: ["warehouse_id"],
       type: "foreign key",
@@ -27,8 +27,8 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.removeConstraint('stocks', "fk_stocks_warehousesId");
-    await queryInterface.removeConstraint('stocks', "fk_stocks_productId");
-  }
+  async down(queryInterface, Sequelize) {
+    await queryInterface.removeConstraint("stocks", "fk_stocks_warehousesId");
+    await queryInterface.removeConstraint("stocks", "fk_stocks_productId");
+  },
 };

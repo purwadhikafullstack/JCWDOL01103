@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import guitar from "../../assets/img/guitars.webp";
 import bass from "../../assets/img/bass.webp";
 import dj from "../../assets/img/dj-equipment.webp";
@@ -8,10 +9,15 @@ import orchestra from "../../assets/img/orchestra.webp";
 import software from "../../assets/img/software.webp";
 import sound from "../../assets/img/sound.webp";
 import studio from "../../assets/img/studio-recording.webp";
-
 import { Container, SimpleGrid, Box, Image, Heading } from "@chakra-ui/react";
 
 const CategoryList = () => {
+  const navigate = useNavigate();
+
+  const handleCategoryClick = () => {
+    navigate(`/shop`);
+  };
+
   return (
     <Container
       as="section"
@@ -48,6 +54,7 @@ const CategoryList = () => {
             borderColor: "blackAlpha.400",
             bg: "blackAlpha.300",
           }}
+          onClick={() => handleCategoryClick()}
         >
           <Image
             src={guitar}
@@ -71,6 +78,7 @@ const CategoryList = () => {
             borderColor: "blackAlpha.400",
             bg: "blackAlpha.300",
           }}
+          onClick={() => handleCategoryClick()}
         >
           <Image
             src={bass}
@@ -94,6 +102,7 @@ const CategoryList = () => {
             borderColor: "blackAlpha.400",
             bg: "blackAlpha.300",
           }}
+          onClick={() => handleCategoryClick()}
         >
           <Image
             src={dj}
@@ -117,6 +126,7 @@ const CategoryList = () => {
             borderColor: "blackAlpha.400",
             bg: "blackAlpha.300",
           }}
+          onClick={() => handleCategoryClick()}
         >
           <Image
             src={drums}
@@ -140,6 +150,7 @@ const CategoryList = () => {
             borderColor: "blackAlpha.400",
             bg: "blackAlpha.300",
           }}
+          onClick={() => handleCategoryClick()}
         >
           <Image
             src={keyboards}
@@ -163,6 +174,7 @@ const CategoryList = () => {
             borderColor: "blackAlpha.400",
             bg: "blackAlpha.300",
           }}
+          onClick={() => handleCategoryClick()}
         >
           <Image
             src={microphones}
@@ -186,6 +198,7 @@ const CategoryList = () => {
             borderColor: "blackAlpha.400",
             bg: "blackAlpha.300",
           }}
+          onClick={() => handleCategoryClick()}
         >
           <Image
             src={orchestra}
@@ -209,6 +222,7 @@ const CategoryList = () => {
             borderColor: "blackAlpha.400",
             bg: "blackAlpha.300",
           }}
+          onClick={() => handleCategoryClick()}
         >
           <Image
             src={software}
@@ -232,6 +246,7 @@ const CategoryList = () => {
             borderColor: "blackAlpha.400",
             bg: "blackAlpha.300",
           }}
+          onClick={() => handleCategoryClick()}
         >
           <Image
             src={sound}
@@ -255,6 +270,7 @@ const CategoryList = () => {
             borderColor: "blackAlpha.400",
             bg: "blackAlpha.300",
           }}
+          onClick={() => handleCategoryClick()}
         >
           <Image
             src={studio}

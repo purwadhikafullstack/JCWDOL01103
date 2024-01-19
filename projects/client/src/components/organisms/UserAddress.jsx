@@ -44,7 +44,7 @@ const UserAddress = ({ onChange, action }) => {
   const [filterInput, setFilterInput] = useState("");
   const toast = useToast();
 
-  const handleChangeAddress = async (actionType) => {
+  const handleChangeAddress = async actionType => {
     try {
       setLoading(true);
       const response =
@@ -83,13 +83,13 @@ const UserAddress = ({ onChange, action }) => {
       setOpenAlert(true);
     }
   };
-  const fetchAddress = async (action) => {
+  const fetchAddress = async action => {
     try {
       const filter = {
         search: action ? "" : filterInput,
       };
       const response = await getAddresses(filter);
-      const primaryAddress = response.data.find((dt) => dt.is_primary === true);
+      const primaryAddress = response.data.find(dt => dt.is_primary === true);
       selectedAddressOrder === null && setSelectedAddressOrder(primaryAddress);
       setData(response.data);
     } catch (error) {
@@ -109,7 +109,7 @@ const UserAddress = ({ onChange, action }) => {
     onChange && onChange(selectedAddressOrder);
   }, [selectedAddressOrder]);
   return (
-    <Flex pb='20' w="full" flexDir='column'>
+    <Flex pb="20" w="full" flexDir="column">
       <HStack
         w="full"
         h="max-content"
@@ -124,7 +124,7 @@ const UserAddress = ({ onChange, action }) => {
       >
         <SearchInput
           placeholder="Search here"
-          onChangeInput={(val) => setFilterInput(val)}
+          onChangeInput={val => setFilterInput(val)}
           onPressEnter={fetchAddress}
           onClickCross={() => fetchAddress("refresh")}
         />
@@ -139,107 +139,107 @@ const UserAddress = ({ onChange, action }) => {
           Add New
         </Button>
       </HStack>
-      <Flex alignItems="center" flexDir="column" gap="3" w="100%" pt="3" >
+      <Flex alignItems="center" flexDir="column" gap="3" w="100%" pt="3">
         {loadState ? (
           <Spinner />
         ) : (
-            <VStack w="100%" gap="4">
-              {data?.length === 0 ? (
-                <Text alignSelf="self-start">No Address Found</Text>
-              ) : (
-                data?.map((dt) => {
-                  return (
-                    <Flex
-                      key={dt.id}
-                      w="full"
-                      h="150px"
-                      shadow="md"
-                      gap="3"
-                      flexDir={isLaptop ? "row" : "column"}
-                      justifyContent="space-between"
-                      alignItems={isLaptop ? "center" : "unset"}
-                      py="5"
-                      px="3"
-                      bg="white"
-                      borderRadius="md"
-                      border="1px solid"
-                      borderColor={
-                        action === "order"
-                          ? dt.id === selectedAddressOrder?.id
-                            ? "black"
-                            : "inherit"
-                          : dt.is_primary
+          <VStack w="100%" gap="4">
+            {data?.length === 0 ? (
+              <Text alignSelf="self-start">No Address Found</Text>
+            ) : (
+              data?.map(dt => {
+                return (
+                  <Flex
+                    key={dt.id}
+                    w="full"
+                    h="150px"
+                    shadow="md"
+                    gap="3"
+                    flexDir={isLaptop ? "row" : "column"}
+                    justifyContent="space-between"
+                    alignItems={isLaptop ? "center" : "unset"}
+                    py="5"
+                    px="3"
+                    bg="white"
+                    borderRadius="md"
+                    border="1px solid"
+                    borderColor={
+                      action === "order"
+                        ? dt.id === selectedAddressOrder?.id
                           ? "black"
                           : "inherit"
-                      }
-                      cursor={action === "order" && "pointer"}
-                      onClick={() => {
-                        action === "order" && setSelectedAddressOrder(dt);
-                      }}
-                    >
-                      <Box pr="40px" position="relative">
-                        <Text fontSize="sm" fontWeight="bold">
-                          {dt.is_primary && (
-                            <Text
-                              as="span"
-                              bg="primaryColor"
-                              color="secondaryColor"
-                              py="0.5"
-                              px="1"
-                              borderRadius="md"
-                              fontSize="small"
-                              mr="2"
-                            >
-                              Main
-                            </Text>
-                          )}
-                          {dt.name}
-                        </Text>
-                        <Text fontSize="sm" noOfLines="1">
-                          {dt.street}
-                        </Text>
-                        <Text fontSize="sm" noOfLines="1">
-                          {`${dt.region.city_name}, ${dt.region.province.province_name}`}
-                        </Text>
-                      </Box>
-                      <Flex gap="3" justifyContent="flex-end">
-                        <IconButton
-                          icon={<HiOutlinePencil />}
-                          onClick={() => selectedAddressHandler(dt, "edit")}
-                        />
-                        {!dt.is_primary && (
-                          <Menu>
-                            <MenuButton
-                              as={IconButton}
-                              aria-label="Options"
-                              icon={<BsThreeDots />}
-                            />
-                            <MenuList>
-                              <MenuItem
-                                icon={<HiOutlineTrash />}
-                                onClick={() =>
-                                  selectedAddressHandler(dt, "delete")
-                                }
-                              >
-                                Delete
-                              </MenuItem>
-                              <MenuItem
-                                icon={<BsPinAngle />}
-                                onClick={() =>
-                                  selectedAddressHandler(dt, "select")
-                                }
-                              >
-                                Set as main address
-                              </MenuItem>
-                            </MenuList>
-                          </Menu>
+                        : dt.is_primary
+                        ? "black"
+                        : "inherit"
+                    }
+                    cursor={action === "order" && "pointer"}
+                    onClick={() => {
+                      action === "order" && setSelectedAddressOrder(dt);
+                    }}
+                  >
+                    <Box pr="40px" position="relative">
+                      <Text fontSize="sm" fontWeight="bold">
+                        {dt.is_primary && (
+                          <Text
+                            as="span"
+                            bg="primaryColor"
+                            color="secondaryColor"
+                            py="0.5"
+                            px="1"
+                            borderRadius="md"
+                            fontSize="small"
+                            mr="2"
+                          >
+                            Main
+                          </Text>
                         )}
-                      </Flex>
+                        {dt.name}
+                      </Text>
+                      <Text fontSize="sm" noOfLines="1">
+                        {dt.street}
+                      </Text>
+                      <Text fontSize="sm" noOfLines="1">
+                        {`${dt.region.city_name}, ${dt.region.province.province_name}`}
+                      </Text>
+                    </Box>
+                    <Flex gap="3" justifyContent="flex-end">
+                      <IconButton
+                        icon={<HiOutlinePencil />}
+                        onClick={() => selectedAddressHandler(dt, "edit")}
+                      />
+                      {!dt.is_primary && (
+                        <Menu>
+                          <MenuButton
+                            as={IconButton}
+                            aria-label="Options"
+                            icon={<BsThreeDots />}
+                          />
+                          <MenuList>
+                            <MenuItem
+                              icon={<HiOutlineTrash />}
+                              onClick={() =>
+                                selectedAddressHandler(dt, "delete")
+                              }
+                            >
+                              Delete
+                            </MenuItem>
+                            <MenuItem
+                              icon={<BsPinAngle />}
+                              onClick={() =>
+                                selectedAddressHandler(dt, "select")
+                              }
+                            >
+                              Set as main address
+                            </MenuItem>
+                          </MenuList>
+                        </Menu>
+                      )}
                     </Flex>
-                  );
-                })
-              )}
-            </VStack>
+                  </Flex>
+                );
+              })
+            )}
+          </VStack>
         )}
         <AlertConfirmation
           isOpen={openAlert}

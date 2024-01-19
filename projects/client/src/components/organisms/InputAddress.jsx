@@ -23,23 +23,27 @@ import { toastConfig } from "../../utils/toastConfig";
 
 const InputAddress = ({ isInvalid, onChange }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isOpen: isOpenForm, onOpen: onOpenForm, onClose:onCloseForm} = useDisclosure()
+  const {
+    isOpen: isOpenForm,
+    onOpen: onOpenForm,
+    onClose: onCloseForm,
+  } = useDisclosure();
   const [selected, setSelected] = useState(null);
   const [address, setAddress] = useState(null);
-  const dispatch = useDispatch()
-  const fetchData = async() => {
+  const dispatch = useDispatch();
+  const fetchData = async () => {
     try {
       const response = await getAddresses();
-      const primaryAddress = response.data.find((dt) => dt.is_primary === true);
+      const primaryAddress = response.data.find(dt => dt.is_primary === true);
       setAddress(primaryAddress);
       setSelected(primaryAddress);
-      dispatch(setAddressCheckout(primaryAddress))
+      dispatch(setAddressCheckout(primaryAddress));
     } catch (error) {
-      return null
+      return null;
     }
-  }
+  };
   useEffect(() => {
-    fetchData()
+    fetchData();
   }, []);
   return (
     <Flex w="full">
@@ -62,8 +66,14 @@ const InputAddress = ({ isInvalid, onChange }) => {
           ) : (
             <Text color="gray.500">Please create address first</Text>
           )}
-          <Button bg="primaryColor" size="sm" color="white" mt="3" onClick={()=> address ? onOpen() : onOpenForm()}>
-            {address? "Change" : "Create address"}
+          <Button
+            bg="primaryColor"
+            size="sm"
+            color="white"
+            mt="3"
+            onClick={() => (address ? onOpen() : onOpenForm())}
+          >
+            {address ? "Change" : "Create address"}
           </Button>
           <Modal
             isOpen={isOpen}
@@ -75,11 +85,11 @@ const InputAddress = ({ isInvalid, onChange }) => {
             <ModalContent h="85vh" maxW="700px">
               <ModalHeader>Address List</ModalHeader>
               <ModalCloseButton />
-              <ModalBody pt='0' pos="relative">
+              <ModalBody pt="0" pos="relative">
                 <UserAddress
                   action="order"
-                  onChange={(val) => {
-                    dispatch(setAddressCheckout(val))
+                  onChange={val => {
+                    dispatch(setAddressCheckout(val));
                     onChange && onChange(val);
                     setSelected(val);
                   }}
@@ -91,7 +101,7 @@ const InputAddress = ({ isInvalid, onChange }) => {
                   size="md"
                   color="white"
                   onClick={() => {
-                    dispatch(setAddressCheckout(selected))
+                    dispatch(setAddressCheckout(selected));
                     setAddress(selected);
                     onClose();
                   }}
@@ -104,7 +114,7 @@ const InputAddress = ({ isInvalid, onChange }) => {
         </Box>
       </FormControl>
       <ModalFormAddress
-        onCloseComplete={()=> fetchData()}
+        onCloseComplete={() => fetchData()}
         isOpen={isOpenForm}
         onClose={onCloseForm}
       />

@@ -26,5 +26,10 @@ const formCheckout = createSlice({
   },
 });
 
-export const { setAddressCheckout, setCartCheckout, setPaymentCheckout, setShippingCheckout } = formCheckout.actions;
+export const {
+  setAddressCheckout,
+  setCartCheckout,
+  setPaymentCheckout,
+  setShippingCheckout,
+} = formCheckout.actions;
 export default formCheckout.reducer;

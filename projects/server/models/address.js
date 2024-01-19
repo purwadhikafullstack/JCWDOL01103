@@ -4,12 +4,12 @@ module.exports = (sequelize, DataTypes) => {
   class Addresses extends Model {
     static associate(models) {
       Addresses.belongsTo(models.Users, {
-        foreignKey: 'id',
-        as: 'user',
+        foreignKey: "id",
+        as: "user",
       });
       Addresses.belongsTo(models.Cities, {
-        foreignKey: 'city_id',
-        as:'region'
+        foreignKey: "city_id",
+        as: "region",
       });
     }
   }
@@ -38,12 +38,12 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       name: {
-        type:DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       street: {
-        type:DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       latitude: {
         type: DataTypes.DECIMAL(10, 8),
@@ -53,10 +53,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DECIMAL(11, 8),
         allowNull: false,
       },
-      is_primary:{
+      is_primary: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-      }
+      },
     },
     {
       sequelize,

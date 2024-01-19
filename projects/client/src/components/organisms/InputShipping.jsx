@@ -17,29 +17,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { setShippingCheckout } from "../../store/slicer/checkoutSlice";
 
 const InputShipping = ({ isInvalid }) => {
-  const selectedShipping = useSelector((state) => state.formCheckout.shipping);
-  const selectedAddress = useSelector((state)=> state.formCheckout.address);
+  const selectedShipping = useSelector(state => state.formCheckout.shipping);
+  const selectedAddress = useSelector(state => state.formCheckout.address);
   const [serviceList, setServiceList] = useState(null);
   const dispatch = useDispatch();
   const toast = useToast();
-  const getShipping = async (data) => {
+  const getShipping = async data => {
     try {
       const response = await checkShippingCost(data);
       setServiceList(response.data.rajaongkir.results[0]);
     } catch (error) {
-      return null
+      return null;
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     const data = {
       origin: "1",
       destination: selectedAddress?.city_id,
       weight: 1,
     };
-    selectedShippingHandler(null)
+    selectedShippingHandler(null);
     getShipping(data);
-  },[selectedAddress])
-  const selectedShippingHandler = (val) => {
+  }, [selectedAddress]);
+  const selectedShippingHandler = val => {
     dispatch(setShippingCheckout(val));
   };
   return (
@@ -55,8 +55,7 @@ const InputShipping = ({ isInvalid }) => {
           as={Button}
           rightIcon={<BiChevronDown />}
         >
-          {
-            selectedShipping !== null ?
+          {selectedShipping !== null ? (
             <Flex h="fit-content" flexDir="row" alignItems="center">
               <Image
                 boxSize="3rem"
@@ -68,8 +67,11 @@ const InputShipping = ({ isInvalid }) => {
               <Text mr="5">{selectedShipping?.service}</Text>
               <Text>{formatCurrency(selectedShipping?.cost[0].value)}</Text>
             </Flex>
-            : <Text fontWeight="normal" textAlign="start">Select Shipping</Text>
-          }
+          ) : (
+            <Text fontWeight="normal" textAlign="start">
+              Select Shipping
+            </Text>
+          )}
         </MenuButton>
         <MenuList>
           {serviceList?.costs?.map((dt, idx) => {
