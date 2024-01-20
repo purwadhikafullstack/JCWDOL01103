@@ -10,6 +10,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Spinner,
   Text,
   VStack,
   useMediaQuery,
@@ -27,6 +28,7 @@ function InputNewPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isLaptop] = useMediaQuery("(min-width: 768px)");
   const [isLinkValid, setIsLinkValid] = useState(true);
   const toast = useToast();
@@ -46,7 +48,7 @@ function InputNewPassword() {
         "Passwords didn't match"
       ),
     }),
-    onSubmit: async values => {
+    onSubmit: async (values) => {
       try {
         setBtnLoading(true);
         const data = {
@@ -68,17 +70,29 @@ function InputNewPassword() {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const checkToken = await checkResetToken(param.token);
         if (checkToken.status !== 200) {
-          return setIsLinkValid(false);
+          setIsLinkValid(false);
+          setTimeout(() => {
+            setLoading(false);
+          }, 1300);
         }
       } catch (error) {
         setIsLinkValid(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1300);
       }
     })();
   }, []);
   return (
     <>
+      {loading && (
+        <Center h="100vh" zIndex="10">
+          <Spinner />
+        </Center>
+      )}
       {isLinkValid ? (
         <Center h="100vh" bg="gray.100" flexDir="column" rowGap="1rem">
           <Flex

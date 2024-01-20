@@ -19,7 +19,6 @@ import { getAddresses } from "../../api/userAddress";
 import ModalFormAddress from "./ModalFormAddress";
 import { useDispatch } from "react-redux";
 import { setAddressCheckout } from "../../store/slicer/checkoutSlice";
-import { toastConfig } from "../../utils/toastConfig";
 
 const InputAddress = ({ isInvalid, onChange }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();

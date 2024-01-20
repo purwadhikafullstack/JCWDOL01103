@@ -32,7 +32,7 @@ export const SelectWarehouse = ({
   const [page, setPage] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-  const fetchWarehouse = async action => {
+  const fetchWarehouse = async (action) => {
     try {
       const queryFilter = {
         search: filterValue,
@@ -49,8 +49,8 @@ export const SelectWarehouse = ({
     }
   };
   useEffect(() => {
-    (() => {
-      fetchWarehouse();
+    (async () => {
+      await fetchWarehouse();
     })();
   }, [page, except_id]);
   useEffect(() => {
@@ -68,6 +68,14 @@ export const SelectWarehouse = ({
       }
     })();
   }, [selectedWarehouse]);
+  const onSelectWarehouse = async (dt) => {
+    onClose();
+    setFilterValue("");
+    onChange && onChange(dt);
+    if(dt.id !== selectedWarehouse){
+      await fetchWarehouse();
+    }
+  }
   return (
     <VStack w="full" justifyContent="start" alignItems="start">
       <Text>Warehouse :</Text>
@@ -124,12 +132,7 @@ export const SelectWarehouse = ({
                     borderRadius="md"
                     py="2"
                     px="4"
-                    onClick={async () => {
-                      onClose();
-                      setFilterValue("");
-                      fetchWarehouse("refresher");
-                      onChange && onChange(dt);
-                    }}
+                    onClick={()=> onSelectWarehouse(dt)}
                   >
                     <Text fontWeight="semibold">{dt.name}</Text>
                     <Text>

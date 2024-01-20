@@ -138,8 +138,6 @@ const Mutation = () => {
           >
             <option value="createdAt_DESC">Newest</option>
             <option value="createdAt_ASC">Oldest</option>
-            <option value="sort_ASC">Name (A-Z)</option>
-            <option value="sort_DESC">Name (Z-A)</option>
           </Select>
           {selectedMenu === 0 && (
             <Button
