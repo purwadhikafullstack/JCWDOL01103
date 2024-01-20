@@ -35,6 +35,7 @@ import { jwtDecode } from "jwt-decode";
 import { getAdminWarehouse } from "../../api/adminWarehouse";
 import { postRequestMutation } from "../../api/stockMutation";
 import { getUser } from "../../api/auth";
+import { setSelectedWarehouse } from "../../store/slicer/formWarehouseSlice";
 
 const FormMutation = ({onClose}) => {
   const [openAlert, setOpenAlert] = useState(false);
@@ -100,7 +101,7 @@ const FormMutation = ({onClose}) => {
       }
     })();
   }, []);
-
+  
   useEffect(() => {
     const updatedOptions = products?.map((dt) => {
       return {
@@ -161,8 +162,8 @@ const FormMutation = ({onClose}) => {
         };
       });
       const data = {
-        from_warehouse_id: warehouseId,
-        to_warehouse_id: value.warehouse_id,
+        from_warehouse_id: value.warehouse_id,
+        to_warehouse_id: warehouseId,
         products: products,
       };
       const requestMutation = postRequestMutation(data);
@@ -179,7 +180,6 @@ const FormMutation = ({onClose}) => {
       setIsLoading(false);
     }
   };
-
   return (
     <Flex flexDir="column" gap="2" p="5">
       <Heading size="md">Mutation Request</Heading>

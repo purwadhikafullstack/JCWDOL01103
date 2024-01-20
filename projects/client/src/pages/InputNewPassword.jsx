@@ -74,13 +74,13 @@ function InputNewPassword() {
         const checkToken = await checkResetToken(param.token);
         if (checkToken.status !== 200) {
           setIsLinkValid(false);
-          setTimeout(() => {
-            setLoading(false);
-          }, 1300);
         }
-      } catch (error) {
-        setIsLinkValid(false);
         setTimeout(() => {
+          setLoading(false);
+        }, 1300);
+      } catch (error) {
+        setTimeout(() => {
+          setIsLinkValid(false);
           setLoading(false);
         }, 1300);
       }

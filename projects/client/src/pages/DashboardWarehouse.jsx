@@ -80,8 +80,8 @@ const DashboardWarehouse = () => {
     <Flex
       h="full"
       w="100%"
-      minH="100vh"
-      maxH="100vh"
+      // minH="100vh"
+      maxH="80vh"
       alignItems="center"
       flexDir="column"
       gap="5"
