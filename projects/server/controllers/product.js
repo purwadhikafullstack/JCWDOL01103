@@ -74,7 +74,7 @@ const product = {
     try {
       let query = {};
       const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
+      const limit = parseInt(req.query.limit) || null;
       const offset = (page - 1) * limit;
 
       if (req.query.search) {

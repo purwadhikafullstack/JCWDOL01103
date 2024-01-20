@@ -30,7 +30,9 @@ import {
   Flex,
   Spinner,
 } from "@chakra-ui/react";
-import { BiEditAlt, BiTrashAlt, BiSortZA, BiTime } from "react-icons/bi";
+import { BiSortZA, BiTime } from "react-icons/bi";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { HiOutlinePencil } from "react-icons/hi";
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
@@ -191,7 +193,7 @@ const Category = () => {
 
   return (
     <>
-      <Box ml={{ base: "0", xl: "50px" }} my={5}>
+      <Box ml={{ base: "0", xl: "50px" }} my={5} overflowX="auto">
         <Heading
           fontSize={{ base: "25px", xl: "3xl" }}
           fontWeight={"black"}
@@ -205,12 +207,12 @@ const Category = () => {
           <Button
             bg="black"
             color="white"
-            w={"70%"}
+            w="100%"
             _hover={{ bg: "blackAlpha.600" }}
             onClick={() => setIsAddModalOpen(true)}
             isDisabled={userRole !== "master"}
           >
-            Add Category
+            Create
           </Button>
           <Input
             w={"100%"}
@@ -272,7 +274,7 @@ const Category = () => {
             </form>
           </Modal>
         </FormControl>
-        <TableContainer>
+        <TableContainer overflowX="auto">
           {isLoading ? (
             <Spinner size="md" />
           ) : (
@@ -300,8 +302,7 @@ const Category = () => {
                       </Td>
                       <Td>
                         <Button
-                          bg="green"
-                          color="white"
+                          bg="transparent"
                           mt={1}
                           mr={4}
                           _hover={{ bg: "blackAlpha.600" }}
@@ -357,11 +358,10 @@ const Category = () => {
                               </ModalContent>
                             </form>
                           </Modal>
-                          <BiEditAlt />
+                          <HiOutlinePencil />
                         </Button>
                         <Button
-                          bg="red"
-                          color="white"
+                          bg="transparent"
                           mt={1}
                           _hover={{ bg: "blackAlpha.600" }}
                           onClick={() => {
@@ -370,7 +370,7 @@ const Category = () => {
                           }}
                           isDisabled={userRole !== "master"}
                         >
-                          <BiTrashAlt />
+                          <FaRegTrashAlt />
                         </Button>
 
                         <Modal
