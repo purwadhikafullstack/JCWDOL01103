@@ -43,7 +43,7 @@ function FormRegister({ isLogin, onClickRegister, isLaptop }) {
       emailRegis: "",
     },
     validationSchema: Yup.object({
-      emailRegis: Yup.string().email().required("Required"),
+      emailRegis: Yup.string().email("Email invalid").required("Required"),
     }),
     onSubmit: async (values) => {
       dispatch(setLoadingState(true))
@@ -114,7 +114,7 @@ function FormRegister({ isLogin, onClickRegister, isLaptop }) {
                   value={formik.values.emailRegis}
                 />
               </VStack>
-              <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
+              <FormErrorMessage>{formik.errors.emailRegis}</FormErrorMessage>
             </FormControl>
           </Flex>
         </form>
