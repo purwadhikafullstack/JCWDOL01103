@@ -101,6 +101,12 @@ const Navbar = () => {
     }
   }, [authState]);
 
+  const navigateUrlHandler = () => {
+    if(location.pathname.split("/")[1] === "shop"){
+      return navigate("/login", {state:{redirect: location.pathname}})
+    }
+    return navigate("/login")
+  }
   return (
     <Container
       as="nav"
@@ -143,7 +149,7 @@ const Navbar = () => {
                 size="sm"
                 color="white"
                 mr="2"
-                onClick={() => navigate("/login")}
+                onClick={navigateUrlHandler}
               >
                 Login
               </Button>
