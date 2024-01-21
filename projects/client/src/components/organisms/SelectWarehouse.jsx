@@ -56,9 +56,7 @@ export const SelectWarehouse = ({
   useEffect(() => {
     (async () => {
       try {
-        // const response = await fetchWarehouse();
         const response = await getWarehouses({pageSize: 99999});
-        console.log(response)
         if (selectedWarehouse) {
           const warehouseDetails = response.data.warehouses.find(
             obj => obj.id == selectedWarehouse
