@@ -129,7 +129,7 @@ const DashboardWarehouse = () => {
         rowGap="3"
         boxSizing="border-box"
       >
-        <Flex overflow="scroll">
+        <Flex overflow="auto">
           <TableWarehouse
             data={data?.warehouses}
             onClickEdit={(e) => {

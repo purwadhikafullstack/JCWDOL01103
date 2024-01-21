@@ -120,7 +120,7 @@ export const SelectWarehouse = ({
               onChangeInput={val => setFilterValue(val)}
               onPressEnter={fetchWarehouse}
             />
-            <Flex overflow="scroll" flexDir="column" gap="4">
+            <Flex overflow="auto" flexDir="column" gap="4">
               {warehouses?.warehouses?.map(dt => {
                 return (
                   <Flex

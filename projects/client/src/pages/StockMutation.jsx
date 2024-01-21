@@ -108,7 +108,7 @@ const Mutation = () => {
         Stock Mutation
       </Heading>
       <Tabs w="full" onChange={(val) => setSelectedMenu(val)}>
-        <TabList overflowX="scroll" h="max-content">
+        <TabList>
           <Tab>Outgoing Request</Tab>
           <Tab>Incoming Request</Tab>
         </TabList>
