@@ -27,12 +27,12 @@ const mutationHandler = async (mutationId, status, transaction) => {
 
     await db.Stocks.decrement("quantity", {
       by: mutation.quantity,
-      where: {id: destinationWarehouse.id},
+      where: {id: senderWarehouse.id},
       transaction,
     });
     await db.Stocks.increment("quantity", {
       by: mutation.quantity,
-      where: {id: senderWarehouse.id},
+      where: {id: destinationWarehouse.id},
       transaction,
     });
     await db.Stock_Journals.create({
