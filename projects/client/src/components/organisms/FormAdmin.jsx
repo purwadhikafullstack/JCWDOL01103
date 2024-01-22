@@ -40,9 +40,9 @@ const FormAdmin = ({ data, isOpen, onClose, onCloseComplete }) => {
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email format").required("Required"),
-      password: Yup.string()
-        .required("Required")
-        .min(8, "Password is too short - should be 8 chars minimum."),
+      password: !data
+      ? Yup.string().min(8, 'Password is too short - should be 8 chars minimum.').required("Required")
+      : Yup.string(),
       warehouse: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
@@ -55,10 +55,9 @@ const FormAdmin = ({ data, isOpen, onClose, onCloseComplete }) => {
         };
         if (data) {
           dataValues.id = data.user.id;
-          dataValues.password =
-            data.user.password === dataValues.password
-              ? data.user.password
-              : dataValues.password;
+          if(dataValues === ""){
+            delete dataValues.password
+          }
         }
         const response = data
           ? await updateAdmin(dataValues)
@@ -74,14 +73,13 @@ const FormAdmin = ({ data, isOpen, onClose, onCloseComplete }) => {
       }
     },
   });
-
   useEffect(() => {
     function fetchData() {
       if (data && !formik.dirty) {
         formik.setValues({
           name: data.user.name,
           email: data.user.email,
-          password: data.user.password,
+          password: "",
           warehouse: data.warehouse.id,
         });
       }
@@ -145,7 +143,7 @@ const FormAdmin = ({ data, isOpen, onClose, onCloseComplete }) => {
                       pr="4.5rem"
                       autoComplete="on"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Enter password"
+                      placeholder= {data ? "Change password" : "Enter password"}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       value={formik.values.password}

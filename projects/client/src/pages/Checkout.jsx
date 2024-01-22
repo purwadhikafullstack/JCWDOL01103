@@ -25,6 +25,7 @@ const steps = [
 ];
 const Checkout = () => {
   const checkoutAddress = useSelector((state) => state.formCheckout.address);
+  const checkoutShipping = useSelector((state) => state.formCheckout.shipping)
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,
@@ -34,12 +35,12 @@ const Checkout = () => {
   useEffect(() => {
     const nextHandler = () => {
       setIsDisableNext(false);
-      if (checkoutAddress && activeStep === 0) {
+      if (checkoutAddress && checkoutShipping && activeStep === 0) {
         return setIsDisableNext(true);
       }
     };
     nextHandler();
-  }, [checkoutAddress, activeStep]);
+  }, [checkoutAddress, checkoutShipping, activeStep]);
   return (
     <>
       <Stepper
