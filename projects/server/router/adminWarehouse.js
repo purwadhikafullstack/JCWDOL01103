@@ -40,9 +40,14 @@ router.patch(
     body("name").notEmpty(),
     body("email").notEmpty(),
     body("password")
-      .notEmpty()
-      .isLength({ min: 8 })
-      .withMessage("Password must be at least 8 characters"),
+    .custom((value) => {
+      if (value !== '') {
+        if (value.length < 8) {
+          throw new Error('Password must be at least 8 characters');
+        }
+      }
+      return true;
+    }),
     body("products.*.quantity").notEmpty(),
   ]),
   checkRole(["master"]),

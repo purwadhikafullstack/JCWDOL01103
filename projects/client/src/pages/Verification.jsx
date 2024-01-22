@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Center, Flex, Heading, Text, useMediaQuery } from "@chakra-ui/react";
+import { Center, Flex, Heading, Spinner, Text, useMediaQuery } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import FormVerification from "../components/organisms/FormVerification";
@@ -32,7 +32,9 @@ function Verification() {
   return (
     <>
       {decodedToken === null ? (
-        <NotFound />
+        <Center h="100vh">
+          <Spinner/>
+        </Center>
       ) : (
         <Center h="100vh" bg="gray.100" flexDir="column" rowGap="1rem">
           <Flex
