@@ -11,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "city_id",
         as: "region",
       });
+      Addresses.hasMany(models.Orders, {
+        foreignKey: "address_id",
+        as: "orders",
+      });
+      Addresses.hasMany(models.Shipping, {
+        foreignKey: "address_id",
+        as: "shipping",
+      });
     }
   }
   Addresses.init(

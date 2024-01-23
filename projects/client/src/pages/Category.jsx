@@ -24,7 +24,6 @@ import {
   ModalBody,
   ModalFooter,
   Box,
-  FormControl,
   FormLabel,
   useToast,
   Flex,
@@ -234,46 +233,6 @@ const Category = () => {
             <BiTime size={"50px"} />
           </Button>
         </Flex>
-        <FormControl>
-          <Modal
-            isOpen={isAddModalOpen}
-            onClose={() => setIsAddModalOpen(false)}
-            mx={5}
-          >
-            <form onSubmit={addFormik.handleSubmit}>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>Add Category</ModalHeader>
-                <ModalBody>
-                  <FormLabel fontSize={16} mt={1}>
-                    Product Category
-                  </FormLabel>
-                  <Input
-                    my={2}
-                    focusBorderColor="black"
-                    placeholder="Product Category"
-                    name="name"
-                    onChange={addFormik.handleChange}
-                    onBlur={addFormik.handleBlur}
-                  />
-                  {addFormik.touched.name && addFormik.errors.name ? (
-                    <Text mb={1} color={"red.500"} fontSize={"sm"}>
-                      {addFormik.errors.name}
-                    </Text>
-                  ) : null}
-                </ModalBody>
-                <ModalFooter>
-                  <Button colorScheme="green" mr={3} type="submit">
-                    Add
-                  </Button>
-                  <Button onClick={() => setIsAddModalOpen(false)}>
-                    Cancel
-                  </Button>
-                </ModalFooter>
-              </ModalContent>
-            </form>
-          </Modal>
-        </FormControl>
         <TableContainer overflowX="auto">
           {isLoading ? (
             <Spinner size="md" />
@@ -309,55 +268,6 @@ const Category = () => {
                           onClick={() => handleOpenEditModal(categories.id)}
                           isDisabled={userRole !== "master"}
                         >
-                          <Modal
-                            isOpen={isEditModalOpen}
-                            onClose={() => setIsEditModalOpen(false)}
-                            mx={5}
-                          >
-                            <form onSubmit={editFormik.handleSubmit}>
-                              <ModalOverlay />
-                              <ModalContent>
-                                <ModalHeader>Edit Category</ModalHeader>
-                                <ModalBody>
-                                  <FormLabel fontSize={16} mt={1}>
-                                    Product Category
-                                  </FormLabel>
-                                  <Input
-                                    my={2}
-                                    focusBorderColor="black"
-                                    value={editFormik.values.name}
-                                    name="name"
-                                    onChange={editFormik.handleChange}
-                                    onBlur={editFormik.handleBlur}
-                                  />
-                                  {editFormik.touched.name &&
-                                  editFormik.errors.name ? (
-                                    <Text
-                                      mb={1}
-                                      color={"red.500"}
-                                      fontSize={"sm"}
-                                    >
-                                      {editFormik.errors.name}
-                                    </Text>
-                                  ) : null}
-                                </ModalBody>
-                                <ModalFooter>
-                                  <Button
-                                    colorScheme="green"
-                                    mr={3}
-                                    type="submit"
-                                  >
-                                    Edit
-                                  </Button>
-                                  <Button
-                                    onClick={() => setIsEditModalOpen(false)}
-                                  >
-                                    Cancel
-                                  </Button>
-                                </ModalFooter>
-                              </ModalContent>
-                            </form>
-                          </Modal>
                           <HiOutlinePencil />
                         </Button>
                         <Button
@@ -372,31 +282,6 @@ const Category = () => {
                         >
                           <FaRegTrashAlt />
                         </Button>
-
-                        <Modal
-                          isOpen={isConfModalOpen}
-                          onClose={() => setIsConfModalOpen(false)}
-                        >
-                          <ModalOverlay />
-                          <ModalContent>
-                            <ModalHeader>Confirmation</ModalHeader>
-                            <ModalBody>
-                              Are you sure you want to delete this product?
-                            </ModalBody>
-                            <ModalFooter>
-                              <Button
-                                colorScheme="red"
-                                mr={3}
-                                onClick={deleteHandler}
-                              >
-                                Delete
-                              </Button>
-                              <Button onClick={() => setIsConfModalOpen(false)}>
-                                Cancel
-                              </Button>
-                            </ModalFooter>
-                          </ModalContent>
-                        </Modal>
                       </Td>
                     </Tr>
                   ))
@@ -406,6 +291,102 @@ const Category = () => {
           )}
         </TableContainer>
       </Box>
+
+      {/* Add Modal */}
+      <Modal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        mx={5}
+        isCentered
+      >
+        <form onSubmit={addFormik.handleSubmit}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Add Category</ModalHeader>
+            <ModalBody>
+              <FormLabel fontSize={16} mt={1}>
+                Product Category
+              </FormLabel>
+              <Input
+                my={2}
+                focusBorderColor="black"
+                placeholder="Product Category"
+                name="name"
+                onChange={addFormik.handleChange}
+                onBlur={addFormik.handleBlur}
+              />
+              {addFormik.touched.name && addFormik.errors.name ? (
+                <Text mb={1} color={"red.500"} fontSize={"sm"}>
+                  {addFormik.errors.name}
+                </Text>
+              ) : null}
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="green" mr={3} type="submit">
+                Add
+              </Button>
+              <Button onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
+            </ModalFooter>
+          </ModalContent>
+        </form>
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        mx={5}
+      >
+        <form onSubmit={editFormik.handleSubmit}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Edit Category</ModalHeader>
+            <ModalBody>
+              <FormLabel fontSize={16} mt={1}>
+                Product Category
+              </FormLabel>
+              <Input
+                my={2}
+                focusBorderColor="black"
+                value={editFormik.values.name}
+                name="name"
+                onChange={editFormik.handleChange}
+                onBlur={editFormik.handleBlur}
+              />
+              {editFormik.touched.name && editFormik.errors.name ? (
+                <Text mb={1} color={"red.500"} fontSize={"sm"}>
+                  {editFormik.errors.name}
+                </Text>
+              ) : null}
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="green" mr={3} type="submit">
+                Edit
+              </Button>
+              <Button onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+            </ModalFooter>
+          </ModalContent>
+        </form>
+      </Modal>
+
+      {/* Delete Modal */}
+      <Modal
+        isOpen={isConfModalOpen}
+        onClose={() => setIsConfModalOpen(false)}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirmation</ModalHeader>
+          <ModalBody>Are you sure you want to delete this product?</ModalBody>
+          <ModalFooter>
+            <Button colorScheme="red" mr={3} onClick={deleteHandler}>
+              Delete
+            </Button>
+            <Button onClick={() => setIsConfModalOpen(false)}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

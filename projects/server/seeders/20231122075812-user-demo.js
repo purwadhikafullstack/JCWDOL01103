@@ -50,6 +50,17 @@ module.exports = {
         createdAt: currentDate,
         updatedAt: currentDate,
       },
+      {
+        id: "d9141d28-f0fa-4800-901b-4307ffe471a0",
+        name: "Hilmi W",
+        email: "wijaksanahilmi@gmail.com",
+        password:
+          "$2b$12$HJ7.Cllme/p9RyG4AVTZN.LUK1bcSmcHn3vprSmC.j1UqnsRt887m",
+        role: "user",
+        image: "IMG-1701255709029812832.jpeg",
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      },
     ]);
   },
 

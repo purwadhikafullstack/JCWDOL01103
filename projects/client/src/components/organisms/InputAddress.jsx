@@ -12,6 +12,7 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
+  FormLabel,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import UserAddress from "./UserAddress";
@@ -47,7 +48,9 @@ const InputAddress = ({ isInvalid, onChange }) => {
   return (
     <Flex w="full">
       <FormControl isInvalid={isInvalid}>
-        <Text>Address :</Text>
+        <FormLabel fontSize={16} mt={2} fontWeight={"semibold"}>
+          Address
+        </FormLabel>
         <Box
           justifyContent="flex-end"
           border={isInvalid ? "2px" : "1px"}
