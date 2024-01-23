@@ -290,7 +290,6 @@ const Category = () => {
           )}
         </TableContainer>
       </Box>
-
       {/* Add Modal */}
       <Modal
         isOpen={isAddModalOpen}

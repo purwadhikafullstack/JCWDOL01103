@@ -32,7 +32,7 @@ export const SelectWarehouse = ({
   const [page, setPage] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-  const fetchWarehouse = async (action) => {
+  const fetchWarehouse = async action => {
     try {
       const queryFilter = {
         search: filterValue,
@@ -59,6 +59,7 @@ export const SelectWarehouse = ({
         const response = await getWarehouses({pageSize: 99999});
         if (selectedWarehouse) {
           const warehouseDetails = response.data.warehouses.find(
+
             obj => obj.id == selectedWarehouse
           );
           setWarehouse(warehouseDetails);

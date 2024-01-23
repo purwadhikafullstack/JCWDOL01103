@@ -32,7 +32,6 @@ const Shop = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
   const getProducts = useCallback(async () => {
     try {
       const sortParam = sortOrder === "ascending" ? "asc" : "desc";
@@ -56,7 +55,6 @@ const Shop = () => {
           totalStock: calculateTotalStock(product.stock),
         }))
       );
-
       setTotalPages(response.data.totalPages);
     } catch (e) {
       console.error("Error fetching products:", e);
@@ -86,14 +84,12 @@ const Shop = () => {
     };
     fetchCategories();
   }, []);
-
   const calculateTotalStock = stockArray => {
     const totalStock = stockArray
       ? stockArray.reduce((sum, stockItem) => sum + stockItem.quantity, 0)
       : 0;
     return totalStock;
   };
-
   const handleCategoryChange = categoryId => {
     setSelectedCategories(prevSelectedCategories =>
       prevSelectedCategories.includes(categoryId)

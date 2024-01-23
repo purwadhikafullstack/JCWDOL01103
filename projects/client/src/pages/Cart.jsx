@@ -155,7 +155,6 @@ const Cart = () => {
     }
     navigate("/checkout", { state: { cartItems } });
   };
-
   return (
     <>
       <Container

@@ -509,7 +509,6 @@ const Category = () => {
           </Button>
         </Flex>
       </Box>
-
       {/* Add Modal */}
       <Modal
         isOpen={isAddModalOpen}
