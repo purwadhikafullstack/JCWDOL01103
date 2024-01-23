@@ -30,7 +30,6 @@ function App() {
       <Route path="/reset/:token" element={<InputNewPassword />} />
       <Route element={<LayoutRoot />}>
         <Route path="/" element={<Homepage />} />
-        <Route path="/products" element={<Product />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/shop/product/:id" element={<ProductDetail />} />
         <Route
