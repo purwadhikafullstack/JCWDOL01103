@@ -18,6 +18,7 @@ const stockMutationRouter = require("./../router/stockMutation");
 const userRouter = require("../router/users");
 const shippingRouter = require("../router/shipping");
 const cartRouter = require("./../router/cart");
+const checkoutRouter = require("./../router/checkout");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -51,6 +52,7 @@ app.use(cartRouter);
 app.use(stockMutationRouter);
 app.use(userRouter);
 app.use(shippingRouter);
+app.use(checkoutRouter);
 // ===========================
 // NOTE : Add your routes here
 

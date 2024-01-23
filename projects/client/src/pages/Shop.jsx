@@ -29,6 +29,9 @@ const Shop = () => {
   const categoryBoxRef = useRef();
   const imageURL = "http://localhost:8000/uploads/";
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const getProducts = useCallback(async () => {
     try {
       const sortParam = sortOrder === "ascending" ? "asc" : "desc";
@@ -81,14 +84,11 @@ const Shop = () => {
     };
     fetchCategories();
   }, []);
-
-  console.info(products, "INI Product");
-  console.info(products[0], "INI STOCK");
-
   const calculateTotalStock = stockArray => {
-    return stockArray
+    const totalStock = stockArray
       ? stockArray.reduce((sum, stockItem) => sum + stockItem.quantity, 0)
       : 0;
+    return totalStock;
   };
   const handleCategoryChange = categoryId => {
     setSelectedCategories(prevSelectedCategories =>
@@ -96,6 +96,7 @@ const Shop = () => {
         ? prevSelectedCategories.filter(id => id !== categoryId)
         : [...prevSelectedCategories, categoryId]
     );
+    getProducts();
   };
 
   const handlePageChange = page => {
@@ -161,7 +162,7 @@ const Shop = () => {
               Shop by Category
             </Heading>
             {categories.map(category => (
-              <Box>
+              <Box key={category.id}>
                 <Checkbox
                   mb={1}
                   pos={"flex-start"}

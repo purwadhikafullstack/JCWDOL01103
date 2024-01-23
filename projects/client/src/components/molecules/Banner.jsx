@@ -4,12 +4,19 @@ import { Box, Container, Image } from "@chakra-ui/react";
 import banner1 from "../../assets/img/banner1.jpg";
 import banner2 from "../../assets/img/banner2.jpg";
 import banner3 from "../../assets/img/banner3.jpg";
+import { useNavigate } from "react-router-dom";
 
 import "swiper/css";
 import "swiper/css/autoplay";
 import "swiper/css/scrollbar";
 
 const Banner = () => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/shop");
+  };
+
   return (
     <Container
       as="section"
@@ -30,7 +37,7 @@ const Banner = () => {
           autoplay={{ delay: 3000 }}
           slidesPerView={1}
         >
-          <SwiperSlide>
+          <SwiperSlide onClick={handleClick}>
             <Image
               src={banner1}
               alt="Soundsense Logo"
@@ -39,7 +46,7 @@ const Banner = () => {
               borderRadius={"xl"}
             />
           </SwiperSlide>
-          <SwiperSlide>
+          <SwiperSlide onClick={handleClick}>
             <Image
               src={banner2}
               alt="Soundsense Logo"
@@ -48,7 +55,7 @@ const Banner = () => {
               borderRadius={"xl"}
             />
           </SwiperSlide>
-          <SwiperSlide>
+          <SwiperSlide onClick={handleClick}>
             <Image
               src={banner3}
               alt="Soundsense Logo"

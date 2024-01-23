@@ -37,7 +37,7 @@ const Mutation = () => {
   const [selectedMenu, setSelectedMenu] = useState(0);
   const [mutations, setMutations] = useState([]);
   const [isLoadingList, setIsLoadingList] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [filterInput, setFilterInput] = useState({
     search: "",
     status: "",
@@ -62,21 +62,25 @@ const Mutation = () => {
     (async () => {
       setIsLoadingList(true);
       try {
-        const userData = jwtDecode(localStorage.getItem("token"));
-        const response = await getAdminWarehouse(userData.id);
-        const filter = {};
-        if (selectedMenu === 0) {
-          filter.from = response.data.warehouse_id;
-        }
-        if (selectedMenu === 1) {
-          filter.to = response.data.warehouse_id;
-        }
-        await fetchData(filter);
+        await fetchDataTabs()
       } catch (error) {
-        navigate("/forbidden")
+        navigate("/forbidden");
       }
     })();
   }, [selectedMenu, filterInput]);
+
+  const fetchDataTabs = async () => {
+    const userData = jwtDecode(localStorage.getItem("token"));
+    const response = await getAdminWarehouse(userData.id);
+    const filter = {};
+    if (selectedMenu === 0) {
+      filter.from = response.data.warehouse_id;
+    }
+    if (selectedMenu === 1) {
+      filter.to = response.data.warehouse_id;
+    }
+    await fetchData(filter);
+  };
   const changeStatusHandler = async (id, status) => {
     try {
       const data = {
@@ -100,9 +104,11 @@ const Mutation = () => {
   };
   return (
     <Flex w="full" minH="80vh" flexDir="column">
-      <Heading size="lg" mb="4">Stock Mutation</Heading>
+      <Heading size="lg" mb="4">
+        Stock Mutation
+      </Heading>
       <Tabs w="full" onChange={(val) => setSelectedMenu(val)}>
-        <TabList overflowX="scroll" h="max-content">
+        <TabList>
           <Tab>Outgoing Request</Tab>
           <Tab>Incoming Request</Tab>
         </TabList>
@@ -138,15 +144,9 @@ const Mutation = () => {
           >
             <option value="createdAt_DESC">Newest</option>
             <option value="createdAt_ASC">Oldest</option>
-            <option value="sort_ASC">Name (A-Z)</option>
-            <option value="sort_DESC">Name (Z-A)</option>
           </Select>
           {selectedMenu === 0 && (
-            <Button
-              bg="primaryColor"
-              color="white"
-              onClick={() => onOpen()}
-            >
+            <Button bg="primaryColor" color="white" onClick={() => onOpen()}>
               Request
             </Button>
           )}
@@ -156,7 +156,12 @@ const Mutation = () => {
             <VStack>
               {mutations?.map((dt, idx) => {
                 return (
-                  <ListBox isLoading={isLoadingList} data={dt} key={idx} requestType={selectedMenu}>
+                  <ListBox
+                    isLoading={isLoadingList}
+                    data={dt}
+                    key={idx}
+                    requestType={selectedMenu}
+                  >
                     <MenuItem
                       icon={<BsClipboard2X size="20px" />}
                       isDisabled={dt.status !== "waiting"}
@@ -173,7 +178,12 @@ const Mutation = () => {
             <VStack>
               {mutations?.map((dt, idx) => {
                 return (
-                  <ListBox isLoading={isLoadingList} data={dt} key={idx} requestType={selectedMenu}>
+                  <ListBox
+                    isLoading={isLoadingList}
+                    data={dt}
+                    key={idx}
+                    requestType={selectedMenu}
+                  >
                     <MenuItem
                       icon={<MdCheck size="20px" />}
                       isDisabled={dt.status !== "waiting"}
@@ -196,16 +206,21 @@ const Mutation = () => {
         </TabPanels>
       </Tabs>
       <Pagination />
-      <Modal isOpen={isOpen} onClose={onClose} size="6xl" closeOnOverlayClick={false}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Request Stock Mutation</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody display="flex" flexDir="column" pb={6} gap="4">
-          <FormMutation onClose={ ()=> {onClose(); fetchData()}} />
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        size="6xl"
+        closeOnOverlayClick={false}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Request Stock Mutation</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody display="flex" flexDir="column" pb={6} gap="4">
+            <FormMutation onClose={() => {onClose(); fetchDataTabs()}} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 };

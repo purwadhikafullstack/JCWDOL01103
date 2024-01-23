@@ -49,16 +49,17 @@ export const SelectWarehouse = ({
     }
   };
   useEffect(() => {
-    (() => {
-      fetchWarehouse();
+    (async () => {
+      await fetchWarehouse();
     })();
   }, [page, except_id]);
   useEffect(() => {
     (async () => {
       try {
-        const response = await fetchWarehouse();
+        const response = await getWarehouses({pageSize: 99999});
         if (selectedWarehouse) {
-          const warehouseDetails = response.warehouses.find(
+          const warehouseDetails = response.data.warehouses.find(
+
             obj => obj.id == selectedWarehouse
           );
           setWarehouse(warehouseDetails);
@@ -68,6 +69,14 @@ export const SelectWarehouse = ({
       }
     })();
   }, [selectedWarehouse]);
+  const onSelectWarehouse = async (dt) => {
+    onClose();
+    setFilterValue("");
+    onChange && onChange(dt);
+    if(dt.id !== selectedWarehouse){
+      await fetchWarehouse("refresher");
+    }
+  }
   return (
     <VStack w="full" justifyContent="start" alignItems="start">
       <Text>Warehouse :</Text>
@@ -112,7 +121,7 @@ export const SelectWarehouse = ({
               onChangeInput={val => setFilterValue(val)}
               onPressEnter={fetchWarehouse}
             />
-            <Flex overflow="scroll" flexDir="column" gap="4">
+            <Flex overflow="auto" flexDir="column" gap="4">
               {warehouses?.warehouses?.map(dt => {
                 return (
                   <Flex
@@ -124,12 +133,7 @@ export const SelectWarehouse = ({
                     borderRadius="md"
                     py="2"
                     px="4"
-                    onClick={async () => {
-                      onClose();
-                      setFilterValue("");
-                      fetchWarehouse("refresher");
-                      onChange && onChange(dt);
-                    }}
+                    onClick={()=> onSelectWarehouse(dt)}
                   >
                     <Text fontWeight="semibold">{dt.name}</Text>
                     <Text>

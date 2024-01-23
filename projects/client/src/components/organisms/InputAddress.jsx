@@ -12,6 +12,7 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
+  FormLabel,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import UserAddress from "./UserAddress";
@@ -19,7 +20,6 @@ import { getAddresses } from "../../api/userAddress";
 import ModalFormAddress from "./ModalFormAddress";
 import { useDispatch } from "react-redux";
 import { setAddressCheckout } from "../../store/slicer/checkoutSlice";
-import { toastConfig } from "../../utils/toastConfig";
 
 const InputAddress = ({ isInvalid, onChange }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -48,7 +48,9 @@ const InputAddress = ({ isInvalid, onChange }) => {
   return (
     <Flex w="full">
       <FormControl isInvalid={isInvalid}>
-        <Text>Address :</Text>
+        <FormLabel fontSize={16} mt={2} fontWeight={"semibold"}>
+          Address
+        </FormLabel>
         <Box
           justifyContent="flex-end"
           border={isInvalid ? "2px" : "1px"}

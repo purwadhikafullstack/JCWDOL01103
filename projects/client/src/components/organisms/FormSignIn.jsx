@@ -110,7 +110,6 @@ function FormSignIn({ isLogin, onClickLogin, isLaptop }) {
           );
           if (authResponse.status === 200) {
             setTimeout(() => {
-              // navigate("/");
               dispatch(setLoadingState(false));
             }, 3000);
           }

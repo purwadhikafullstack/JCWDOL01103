@@ -13,8 +13,8 @@ const createMutation = async (req, res) => {
     const mutations = products.map((dt) => {
       let decryptedProductId = decryptData(dt.product_id)
       return {
-        from_warehouse_id: from_warehouse_id,
-        to_warehouse_id: to_warehouse_id,
+        from_warehouse_id: to_warehouse_id,
+        to_warehouse_id: from_warehouse_id,
         product_id: decryptedProductId,
         quantity: dt.quantity,
         status: "waiting",
@@ -87,15 +87,16 @@ const createAutoMutation = async (req, res) => {
       nearestWarehouse,
       products
     );
-    const mutations = results.flatMap((product) =>
+    const assistWarehouseStock = results.flatMap((product) =>
       product.warehouses.map((warehouse) => ({
-        product_id: decryptData(product.product_id),
-        from_warehouse_id: warehouse.id,
-        to_warehouse_id: from_warehouse_id,
+        product_id: product.product_id,
+        from_warehouse_id: from_warehouse_id,
+        to_warehouse_id: warehouse.id,
         quantity: warehouse.stockAssist,
         status: "auto",
       }))
     );
+    const mutations = assistWarehouseStock.filter((item) => item.quantity > 0);
     const mutationList = await db.Stock_Mutations.bulkCreate(mutations, {
       transaction,
     });
@@ -105,6 +106,7 @@ const createAutoMutation = async (req, res) => {
     await transaction.commit();
     return res.status(200).json({
       message: "Create auto mutations successfully",
+      data: mutations
     });
   } catch (error) {
     await transaction.rollback();

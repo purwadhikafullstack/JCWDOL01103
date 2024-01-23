@@ -7,7 +7,7 @@ import {
   MenuItem,
   MenuList,
   Text,
-  useToast,
+  FormLabel,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { checkShippingCost } from "../../api/shipping";
@@ -21,7 +21,6 @@ const InputShipping = ({ isInvalid }) => {
   const selectedAddress = useSelector(state => state.formCheckout.address);
   const [serviceList, setServiceList] = useState(null);
   const dispatch = useDispatch();
-  const toast = useToast();
   const getShipping = async data => {
     try {
       const response = await checkShippingCost(data);
@@ -44,7 +43,9 @@ const InputShipping = ({ isInvalid }) => {
   };
   return (
     <Flex w="full" my="5" flexDir="column">
-      <Text>Shipping :</Text>
+      <FormLabel fontSize={16} mt={1} fontWeight={"semibold"}>
+        Shipping
+      </FormLabel>
       <Menu>
         <MenuButton
           h="fit-content"
