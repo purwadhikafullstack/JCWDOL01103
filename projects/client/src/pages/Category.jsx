@@ -59,7 +59,6 @@ const Category = () => {
           order: sortParam,
         },
       });
-      console.log(response.data.data); // Tambahkan baris ini
       setCategories(response.data.data);
     } catch (e) {
       console.error(e + "gagal memuat data");
