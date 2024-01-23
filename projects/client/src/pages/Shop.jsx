@@ -91,7 +91,6 @@ const Shop = () => {
     const totalStock = stockArray
       ? stockArray.reduce((sum, stockItem) => sum + stockItem.quantity, 0)
       : 0;
-    console.log("Total stock for product:", totalStock);
     return totalStock;
   };
 
