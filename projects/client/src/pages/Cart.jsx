@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setItemCount } from "../store/slicer/cartSlice";
 import { server } from "../api/index";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Container,
@@ -24,10 +25,12 @@ import {
 import { useToast } from "@chakra-ui/toast";
 import { BiTrashAlt } from "react-icons/bi";
 import { toastConfig } from "../utils/toastConfig";
-
+import { jwtDecode } from "jwt-decode";
 const Cart = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
+  const [userRole, setUserRole] = useState(null);
   const toast = useToast();
   const imageURL = "http://localhost:8000/uploads/";
 
@@ -126,6 +129,31 @@ const Cart = () => {
     } catch (error) {
       console.error("Error deleting cart item:", error);
     }
+  };
+
+  const getUserRoleFromToken = token => {
+    try {
+      const decodedToken = jwtDecode(token);
+      return decodedToken.role;
+    } catch (error) {
+      console.error("Error decoding token", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = getUserRoleFromToken(token);
+    setUserRole(role);
+  }, []);
+
+  const orderNow = async () => {
+    if (!userRole) {
+      toast(toastConfig("error", "Failed", "Please login first!"));
+      navigate("/login");
+      return;
+    }
+    navigate("/checkout", { state: { cartItems } });
   };
 
   return (
@@ -257,19 +285,13 @@ const Cart = () => {
                   maximumFractionDigits: 2,
                 })}
               </Text>
-              <Text fontSize="xl" fontWeight="bold" mt={2}>
-                Shipping
-              </Text>
-              <Text fontSize="xl" mt={-2}>
-                Free
-              </Text>
               <Button
                 bg="black"
                 w={"full"}
                 color={"white"}
                 _hover={{ bg: "gray.300", color: "gray.800" }}
-                //   onClick={orderNow}
-                mt={5}
+                onClick={orderNow}
+                mt={10}
                 h={"50px"}
               >
                 <Text fontSize="xl">Checkout</Text>

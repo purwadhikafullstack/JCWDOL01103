@@ -7,6 +7,7 @@ import {
   MenuItem,
   MenuList,
   Text,
+  FormLabel,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { checkShippingCost } from "../../api/shipping";
@@ -42,7 +43,9 @@ const InputShipping = ({ isInvalid }) => {
   };
   return (
     <Flex w="full" my="5" flexDir="column">
-      <Text>Shipping :</Text>
+      <FormLabel fontSize={16} mt={1} fontWeight={"semibold"}>
+        Shipping
+      </FormLabel>
       <Menu>
         <MenuButton
           h="fit-content"

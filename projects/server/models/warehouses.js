@@ -9,8 +9,12 @@ module.exports = (sequelize, DataTypes) => {
       });
       Warehouses.hasMany(models.Warehouses_Users, {
         foreignKey: "warehouse_id",
-        as:"warehouse_admin"
-      })
+        as: "warehouse_admin",
+      });
+      Warehouses.hasMany(models.Shipping, {
+        foreignKey: "warehouse_id",
+        as: "shipping",
+      });
     }
   }
   Warehouses.init(

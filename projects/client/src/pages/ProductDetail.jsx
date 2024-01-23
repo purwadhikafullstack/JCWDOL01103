@@ -89,6 +89,7 @@ const ProductDetail = () => {
         quantity: quantity,
       });
       toast(toastConfig("success", "Success", response.data.message));
+      navigate("/cart");
     } catch (error) {
       console.error("Error adding to cart:", error);
     }
@@ -172,7 +173,6 @@ const ProductDetail = () => {
                     w="60px"
                     mr={1}
                     min={0}
-                    defaultValue={0}
                     max={product.totalStock}
                   />
                   <Button
